@@ -1,0 +1,26 @@
+body {
+    font-family: 'Wellfleet', monospace;
+}
+
+.bg-dark {
+    --bs-bg-opacity: .5;
+    background-color: rgba(var(--bs-dark-rgb), var(--bs-bg-opacity)) !important;
+}
+
+.logomm, .navmm {
+    color: rgb(237, 105, 102);
+}
+
+.navmm:hover {
+    color: rgb(185, 24, 24)
+}
+.signupbtn {
+    background-color: rgb(56, 67, 109);
+    border: 1px solid rgb(23, 38, 65);
+    color: rgb(237, 105, 102);
+}
+.signupbtn:hover {
+    background-color: rgb(23, 38, 65);
+    border: 1px solid rgb(56, 67, 109);
+    color: rgb(237, 105, 102);
+}
