@@ -42,39 +42,36 @@
                 <h1 class="float-md-start mb-0">VBG Games</h1>
                 <nav class="nav nav-masthead justify-content-center float-md-end bg-dark rounded-5">
                     <ul class="nav nav-pills">
+                        {% if user.is_authenticated %}
                         <li class="nav-item">
-                            <a class="nav-link navmm" aria-current="page" href="#">Active</a>
+                            <a class="nav-link navmm" aria-current="page" href="{% url 'account_logout' %}">Logout</a>
                         </li>
-                        <li class="nav-item dropdown logomm">
-                            <a class="nav-link dropdown-toggle navmm" data-bs-toggle="dropdown" href="#" role="button"
-                                aria-expanded="false">Dropdown</a>
-                            <ul class="dropdown-menu bg-dark">
-                                <li><a class="dropdown-item navmm" href="#">Action</a></li>
-                                <li><a class="dropdown-item navmm" href="#">Another action</a></li>
-                                <li><a class="dropdown-item navmm" href="#">Something else here</a></li>
-                                <li>
-                                    <hr class="dropdown-divider" />
-                                </li>
-                                <li><a class="dropdown-item navmm" href="#">Separated link</a></li>
-                            </ul>
+                        {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link navmm" aria-current="page" href="{% url 'account_signup' %}">Register</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link navmm" href="#">Link</a>
+                            <a class="nav-link navmm" href="{% url 'account_login' %}">Login</a>
                         </li>
+                        {% endif %}
                     </ul>
                 </nav>
             </div>
         </header>
-        <div class="bg-dark rounded-5">
-            <main class="px-3 text-light">
-                {% block content %}
-                <!-- Content Goes here -->
-                {% endblock content %}
-            </main>
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-6 bg-dark rounded-5">
+                    <main class="px-3 text-light p-3">
+                        {% block content %}
+                        <!-- Content Goes here -->
+                        {% endblock content %}
+                    </main>
+                </div>
+            </div>
         </div>
 
         <footer class="mt-auto text-white-50">
-            
+
         </footer>
     </div>
 

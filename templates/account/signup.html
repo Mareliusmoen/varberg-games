@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}{% trans "Signup" %}{% endblock head_title %}
+
+{% block content %}
+<h1>{% trans "Sign Up" %}</h1>
+
+<p>{% blocktrans %}Already have an account? Then please <a class="text-light" href="{{ login_url }}">sign in</a>.{% endblocktrans %}</p>
+
+<div class="container d-flex justify-content-center align-items-center">
+    <form method="post" class="login" id="signup_form" action="{% url 'account_login' %}">
+        {{ form.non_field_errors | safe }}
+        {% csrf_token %}
+        <div class="row g-2">
+            <div class="col-12">
+                <div class="form-floating form-group">
+                    {{ form.username }}
+                    <label for="{{form.id_username.id_for_label}}"></label>
+                    {{ form.username.errors|safe }}
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="form-floating form-group">
+                    {{ form.email }}
+                    <label for="{{form.id_email.id_for_label}}"></label>
+                    {{ form.email.errors|safe }}
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="form-floating form-group">
+					{{ form.password1 }}
+                    <label for="{{form.id_password1.id_for_label}}"></label>
+                    {{ form.password1.errors|safe }}
+                </div>
+            </div>
+			<div class="col-12">
+                <div class="form-floating form-group">
+					{{ form.password2 }}
+                    <label for="{{form.id_password2.id_for_label}}"></label>
+                    {{ form.password2.errors|safe }}
+                </div>
+            </div>
+			<div class="col-12">
+                <div class="form-floating form-group">
+					{{ form.first_name }}
+                    <label for="{{form.id_firstname.id_for_label}}"></label>
+                    {{ form.first_name.errors|safe }}
+                </div>
+            </div>
+			<div class="col-12">
+                <div class="form-floating form-group">
+					{{ form.last_name }}
+                    <label for="{{form.id_lastname.id_for_label}}"></label>
+                    {{ form.last_name.errors|safe }}
+                </div>
+            </div>
+            <div class="align-items-center">
+                {% if redirect_field_value %}
+                <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+                {% endif %}
+                <button class="btn signupbtn" type="submit">Sign up</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+{% endblock content %}
