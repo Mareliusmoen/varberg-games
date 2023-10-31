@@ -16,42 +16,42 @@
         <div class="row g-2">
             <div class="col-12">
                 <div class="form-floating form-group">
-                    {{ form.username }}
+                    <i class="fa-solid fa-user"></i>{{ form.username }}
                     <label for="{{form.id_username.id_for_label}}"></label>
                     {{ form.username.errors|safe }}
                 </div>
             </div>
             <div class="col-12">
                 <div class="form-floating form-group">
-                    {{ form.email }}
+                    <i class="fa-solid fa-envelope"></i>{{ form.email }}
                     <label for="{{form.id_email.id_for_label}}"></label>
                     {{ form.email.errors|safe }}
                 </div>
             </div>
             <div class="col-12">
                 <div class="form-floating form-group">
-					{{ form.password1 }}
+					<i class="fa-solid fa-lock"></i>{{ form.password1 }}
                     <label for="{{form.id_password1.id_for_label}}"></label>
                     {{ form.password1.errors|safe }}
                 </div>
             </div>
 			<div class="col-12">
                 <div class="form-floating form-group">
-					{{ form.password2 }}
+					<i class="fa-solid fa-key"></i>{{ form.password2 }}
                     <label for="{{form.id_password2.id_for_label}}"></label>
                     {{ form.password2.errors|safe }}
                 </div>
             </div>
 			<div class="col-12">
                 <div class="form-floating form-group">
-					{{ form.first_name }}
+					<i class="fa-solid fa-id-card"></i>{{ form.first_name }}
                     <label for="{{form.id_firstname.id_for_label}}"></label>
                     {{ form.first_name.errors|safe }}
                 </div>
             </div>
 			<div class="col-12">
                 <div class="form-floating form-group">
-					{{ form.last_name }}
+					<i class="fa-solid fa-id-card"></i>{{ form.last_name }}
                     <label for="{{form.id_lastname.id_for_label}}"></label>
                     {{ form.last_name.errors|safe }}
                 </div>
@@ -60,7 +60,7 @@
                 {% if redirect_field_value %}
                 <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
                 {% endif %}
-                <button class="btn signupbtn" type="submit">Sign up</button>
+                <button class="btn signupbtn" type="submit"><i class="fa-solid fa-check"></i>  Sign up</button>
             </div>
         </div>
     </form>

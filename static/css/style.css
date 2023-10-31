@@ -51,7 +51,7 @@ select.form-control:focus {
 }
 ::placeholder {
     color: white;
-    opacity: 1; /* Needed for Firefox browsers */
+    opacity: 0.8; /* Needed for Firefox browsers */
 }
 ::-ms-input-placeholder { /* Needed for Edge 12 -18 browsers */
     color: white;

@@ -4,7 +4,7 @@ from django import forms
 class CustomSignupForm(SignupForm):
     first_name = forms.CharField(max_length=30, label="First Name", required=True)
     last_name = forms.CharField(max_length=30, label="Last Name", required=True)
-    username = forms.CharField(max_length=30, label="Username", required=True)
+    username = forms.CharField(max_length=20, label="Username", required=True)
     email = forms.EmailField(label="Email", required=True)
     password1 = forms.CharField(widget=forms.PasswordInput, label="Password", required=True)
 

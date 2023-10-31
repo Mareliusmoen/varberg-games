@@ -2,11 +2,17 @@
 
 {% block content %}
 <div>
+    {% if user.is_authenticated %}
+    <p>You have successfully logged in, <br>
+        WELCOME!
+    </p>
+    {% else %}
     <p>Join Varberg's gaming hub! Sign up to host private or public meetups for Magic: The Gathering
         and board games.
         Explore events, message gamers, and trade cards/games in our marketplace. Get in on the action -
         create your
         account today!</p>
     <button class="signupbtn btn"><a class="navmm" href="{% url 'account_signup' %}">Sign up here!</a></button>
+    {% endif %}
 </div>
 {% endblock %}
