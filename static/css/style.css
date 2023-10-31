@@ -8,6 +8,17 @@ body {
     background-color: rgba(var(--bs-dark-rgb), var(--bs-bg-opacity)) !important;
 }
 
+.card-bg {
+    background-color: rgba(23, 38, 65);
+    border: 1px solid rgb(23, 38, 65);
+}
+
+.card {
+    color: white;
+    border: 1px solid rgb(23, 38, 65);
+    margin: 0px;
+}
+
 .logomm,
 .navmm {
     color: rgb(237, 105, 102);
@@ -21,6 +32,7 @@ body {
     background-color: rgb(56, 67, 109);
     border: 1px solid rgb(23, 38, 65);
     color: rgb(237, 105, 102);
+    margin:20px 0px;
 }
 
 .signupbtn:hover {

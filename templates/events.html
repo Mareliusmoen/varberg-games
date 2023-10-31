@@ -1,22 +1,27 @@
 {% extends "base.html" %}
 {% if user.is_authenticated %}
 {% block content %}
-<div>
-    
-    <h1>Public Events</h1>
-        {% if public_events %}
-    <ul>
-            {% for event in public_events %}
-        <li>
-            <h2>{{ event.title }}</h2>
-            <p>Description: {{ event.description }}</p>
-            <p>Date & Time: {{ event.date }}</p>
-            <p>Creator: {{ event.creator.username }}</p>
-        </li>
-            {% endfor %}
-    </ul>
-        {% else %}
+<h1 class="text-center">Public Events</h1>
+<div class="text-center mb-3">
+    <button class="btn signupbtn">Create new event <i class="fa-regular fa-calendar-plus"></i></button>
+</div>
+<div class="d-flex justify-content-center flex-wrap">
+    {% if public_events %}
+    {% for event in public_events %}
+    <div class="card w-75 mb-3 rounded-5 ">
+        <div class="card-body card-bg rounded-5">
+            <h2 class="card-title">{{ event.title }}</h2>
+            <p class="card-text"><i class="fa-solid fa-pen"></i> {{ event.description }}</p>
+            <p class="card-text"><i class="fa-regular fa-calendar-days"></i> <i class="fa-solid fa-clock"></i> {{ event.date }}</p>
+            <p class="card-text"><i class="fa-solid fa-user"></i> {{ event.creator.username }}</p>
+            <button class="btn signupbtn">Communicate <i class="fa-solid fa-comments"></i></button>
+            <button class="btn signupbtn">Join event! <i class="fa-solid fa-thumbs-up"></i></button>
+        </div>
+    </div>
+    {% endfor %}
+    {% else %}
     <p>No public events available.</p>
-        {% endif %}
+    {% endif %}
+</div>
 {% endblock %}
 {% endif %}

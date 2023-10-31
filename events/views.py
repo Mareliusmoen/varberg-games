@@ -3,10 +3,11 @@ from .models import Event, Invitation
 from .forms import EventForm, InvitationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.db.models import F
 
 @login_required
 def event_list(request):
-    public_events = Event.objects.filter(is_private=False)
+    public_events = Event.objects.filter(is_private=False).order_by('date')
     return render(request, 'events.html', {'public_events': public_events})
 
 @login_required
