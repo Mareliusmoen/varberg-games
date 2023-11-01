@@ -22,7 +22,7 @@ def create_event(request):
             return redirect('event_list')
     else:
         form = EventForm()
-    return render(request, 'event/create_event.html', {'form': form})
+    return render(request, 'create_event.html', {'form': form})
 
 # Need to work out how to invite with the username instead
 

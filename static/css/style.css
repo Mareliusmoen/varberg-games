@@ -9,8 +9,14 @@ body {
 }
 
 .card-bg {
-    background-color: rgba(23, 38, 65);
+    background-color: rgb(23, 38, 65);
     border: 1px solid rgb(23, 38, 65);
+}
+
+.custom-textarea {
+    background-color: rgba(23, 38, 65, 0.5);
+    border-radius: 10px;
+    color: white;
 }
 
 .card {
@@ -66,5 +72,10 @@ select.form-control:focus {
     opacity: 0.8; /* Needed for Firefox browsers */
 }
 ::-ms-input-placeholder { /* Needed for Edge 12 -18 browsers */
+    color: white;
+}
+
+#datetimepicker {
+    background-color: rgba(23, 38, 65, 0.5);
     color: white;
 }

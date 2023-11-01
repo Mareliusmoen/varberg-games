@@ -6,14 +6,12 @@ class EventForm(forms.ModelForm):
         model = Event
         fields = ['title', 'description', 'date', 'is_private']
 
-# Change time format to military time 24H
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['title'].widget = forms.TextInput(attrs={'placeholder': 'The title of your event'})
+        self.fields['description'].widget = forms.Textarea(attrs={'placeholder': 'Describe the game/format, power-level, bring drinks, or whatever describes the event', 'class': 'custom-textarea'})
+        self.fields['date'].widget = forms.DateTimeInput(attrs={'placeholder': 'Select date and time', 'class': 'datetimepicker-input', 'id': 'datetimepicker'})
 
-class MilitaryTimeInput(forms.TimeInput):
-    input_type = 'time'
-    format = '%H:%M'
-
-class YourForm(forms.Form):
-    your_time_field = forms.TimeField(widget=MilitaryTimeInput)
 
 # Needs to added with choices of friends or something AND remember to add Invitation to import next to Event
 class InvitationForm(forms.Form):
