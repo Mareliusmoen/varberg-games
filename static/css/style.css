@@ -79,3 +79,10 @@ select.form-control:focus {
     background-color: rgba(23, 38, 65, 0.5);
     color: white;
 }
+/* Customize the calendar table */
+.ui-datepicker {
+    font-size: 14px;
+    background-color: rgb(23, 38, 65);
+    border: 1px solid #ccc;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
