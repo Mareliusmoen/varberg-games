@@ -16,6 +16,9 @@
             <p class="card-text"><i class="fa-solid fa-user"></i> {{ event.creator.username }}</p>
             <button class="btn signupbtn">Communicate <i class="fa-solid fa-comments"></i></button>
             <button class="btn signupbtn">Join event! <i class="fa-solid fa-thumbs-up"></i></button>
+            {% if user.is_authenticated and user == event.creator %}
+            <a href="{% url 'delete_event' event.id %}" class="btn btn-danger">Delete Event</a>
+            {% endif %}
         </div>
     </div>
     {% endfor %}

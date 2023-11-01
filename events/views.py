@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import Event, Invitation
 from .forms import EventForm, InvitationForm
 from django.contrib.auth.decorators import login_required
@@ -24,6 +24,21 @@ def create_event(request):
         form = EventForm()
     return render(request, 'create_event.html', {'form': form})
 
+
+def delete_event(request, event_id):
+    # Check if the user is logged in
+    if not request.user.is_authenticated:
+        return redirect('login')  # Redirect to the login page
+
+    # Get the event by ID
+    event = get_object_or_404(Event, id=event_id)
+
+    # Check if the user is the creator of the event
+    if request.user == event.creator:
+        # Delete the event
+        event.delete()
+
+    return redirect('event_list')  # Redirect to the event list page
 # Need to work out how to invite with the username instead
 
 
