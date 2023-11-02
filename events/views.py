@@ -39,6 +39,7 @@ def delete_event(request, event_id):
         event.delete()
 
     return redirect('event_list')  # Redirect to the event list page
+    
 # Need to work out how to invite with the username instead
 
 
