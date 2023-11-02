@@ -1,14 +1,35 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Event, Invitation, EventParticipant
-from .forms import EventForm, InvitationForm
+from .models import Event, EventParticipant
+from .models import generate_access_code
+from .forms import EventForm, AccessCodeForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import F
+from django.urls import reverse
+import string
+import random
+from django.http import HttpResponseRedirect
 
 @login_required
 def event_list(request):
+    if request.method == "POST":
+        # Handle access code submission
+        form = AccessCodeForm(request.POST)
+        if form.is_valid():
+            access_code = form.cleaned_data["access_code"]
+            # Iterate over all events to find the one with the matching access code
+            for event in Event.objects.filter(is_private=True):
+                if event.access_code == access_code:
+                    # Add the user as a participant to the event
+                    event.participants.add(request.user)
+                    messages.success(request, "You have successfully joined the private event.")
+                    return redirect('joined_events')
+
+            # If no event matched the access code, display an error message
+            messages.error(request, "Invalid access code. Please try again.")
+
     public_events = Event.objects.filter(is_private=False).order_by('date')
-    return render(request, 'events.html', {'public_events': public_events})
+    return render(request, 'events.html', {'public_events': public_events, 'form': AccessCodeForm()})
 
 @login_required
 def create_event(request):
@@ -19,11 +40,20 @@ def create_event(request):
             event.creator = request.user
             event.save()
             event.participants.add(request.user)
+            if event.is_private:
+                event.access_code = generate_access_code()  # Generate and assign access code
+                event.save()
             messages.success(request, 'Event created successfully.')
             return redirect('event_list')
     else:
         form = EventForm()
     return render(request, 'create_event.html', {'form': form})
+
+# Function to generate a random access code
+def generate_access_code():
+    length = 10
+    characters = string.ascii_letters + string.digits
+    return ''.join(random.choice(characters) for _ in range(length))
 
 @login_required
 def delete_event(request, event_id):
@@ -39,7 +69,7 @@ def delete_event(request, event_id):
         # Delete the event
         event.delete()
 
-    return redirect('event_list')  # Redirect to the event list page
+    return redirect('joined_events')  # Redirect to the joined events page
 
 @login_required
 def join_event(request, event_id):
@@ -66,6 +96,27 @@ def joined_events(request):
     else:
         # Handle the case where the user is not authenticated
         return render(request, 'joined_events.html')
+
+
+@login_required
+def enter_access_code(request):
+    if request.method == "POST":
+        form = AccessCodeForm(request.POST)
+        if form.is_valid():
+            access_code = form.cleaned_data["access_code"]
+            # Iterate over all events to find the one with the matching access code
+            for event in Event.objects.filter(is_private=True):
+                if event.access_code == access_code:
+                    # Add the user as a participant to the event
+                    event.participants.add(request.user)
+                    messages.success(request, "You have successfully joined the private event.")
+                    return HttpResponseRedirect(reverse('joined_events'))
+            # If no event matched the access code, display an error message
+            messages.error(request, "Invalid access code. Please try again.")
+    else:
+        form = AccessCodeForm()
+
+    return render(request, "events.html", {"form": form})
 # Need to work out how to invite with the username instead
 
 

@@ -50,11 +50,14 @@
                                 Events
                             </button>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item navmm" href="{% url 'events' %}">List of events</a></li>
+                                <li><a class="dropdown-item navmm" href="{% url 'event_list' %}">List of events</a></li>
                                 <li><a class="dropdown-item navmm" href="{% url 'joined_events' %}">Joined events</a></li>
                                 <li><a class="dropdown-item navmm" href="{% url 'create_event' %}">Create event</a></li>
                             </ul>
                         </div>
+                        <li class="nav-item">
+                            <a class="nav-link navmm" aria-current="page" href="#">Chat</a>
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link navmm" aria-current="page" href="{% url 'account_logout' %}">Logout</a>
                         </li>

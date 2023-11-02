@@ -1,5 +1,5 @@
 from django import forms
-from .models import Event, Invitation
+from .models import Event
 
 class EventForm(forms.ModelForm):
     class Meta:
@@ -12,7 +12,5 @@ class EventForm(forms.ModelForm):
         self.fields['description'].widget = forms.Textarea(attrs={'placeholder': 'Describe the game/format, power-level, bring drinks, or whatever describes the event', 'class': 'custom-textarea'})
         self.fields['date'].widget = forms.DateTimeInput(attrs={'placeholder': 'Select date and time', 'class': 'datetimepicker-input', 'id': 'datetimepicker'})
 
-
-# Needs to added with choices of friends or something AND remember to add Invitation to import next to Event
-class InvitationForm(forms.Form):
-    invited_email = forms.EmailField(label='Email')
+class AccessCodeForm(forms.Form):
+    access_code = forms.CharField(max_length=10, label="Enter Access Code")

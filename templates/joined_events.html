@@ -15,8 +15,11 @@
             {% if user.is_authenticated and user == event.creator %}
             <ul style="list-style-type: none;">
                 {% for participant in event.participants.all %}
-                <li><i class="fa-solid fa-user"></i> {{ participant.username }}</li>
+                    <li><i class="fa-solid fa-user"></i> {{ participant.username }}</li>
                 {% endfor %}
+                {% if event.is_private %}
+                    <li><i class="fa-solid fa-key"></i> {{ event.access_code }}</li>
+                {% endif %}
             </ul>
             {% endif %}
             <button class="btn signupbtn">Communicate <i class="fa-solid fa-comments"></i></button>
