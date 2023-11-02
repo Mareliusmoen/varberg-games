@@ -1,15 +1,11 @@
 {% extends "base.html" %}
 {% if user.is_authenticated %}
 {% block content %}
-<h1 class="text-center">Public Events</h1>
-<div class="text-center mb-3">
-    <a href="{% url 'create_event' %}" class="btn signupbtn">Create new event <i
-            class="fa-regular fa-calendar-plus"></i></a>
-</div>
+<h1 class="text-center">Your Events</h1>
 <div class="d-flex justify-content-center flex-wrap">
-    {% if public_events %}
-    {% for event in public_events %}
-    <div class="card w-75 mb-3 rounded-5 ">
+    {% if user_participating_events %}
+    {% for event in user_participating_events %}
+    <div class="card w-75 mb-3 rounded-5">
         <div class="card-body card-bg rounded-5">
             <h2 class="card-title">{{ event.title }}</h2>
             <p class="card-text"><i class="fa-solid fa-pen"></i> {{ event.description }}</p>
@@ -17,14 +13,7 @@
             <p class="card-text">Created by <i class="fa-solid fa-user"></i> : {{ event.creator.username }}</p>
             <p class="card-text">Participants: {{ event.participants.count }}</p>
             <button class="btn signupbtn">Communicate <i class="fa-solid fa-comments"></i></button>
-            {% if request.user in event.participants.all %}
             <button type="button" class="btn signupbtn" disabled>Joined</button>
-            {% else %}
-            <form method="post" action="{% url 'join_event' event.id %}">
-            {% csrf_token %}
-            <button type="submit" class="btn signupbtn">Join event! <i class="fa-solid fa-thumbs-up"></i></button>
-            </form>
-            {% endif %}
             {% if user.is_authenticated and user == event.creator %}
             <a href="{% url 'delete_event' event.id %}" class="btn btn-danger">Delete Event</a>
             {% endif %}
@@ -32,7 +21,7 @@
     </div>
     {% endfor %}
     {% else %}
-    <p>No public events available.</p>
+    <p>You haven't joined any events yet.</p>
     {% endif %}
 </div>
 {% endblock %}

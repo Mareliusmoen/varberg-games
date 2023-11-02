@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Event, Invitation
+from .models import Event, Invitation, EventParticipant
 from .forms import EventForm, InvitationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -18,13 +18,14 @@ def create_event(request):
             event = form.save(commit=False)
             event.creator = request.user
             event.save()
+            event.participants.add(request.user)
             messages.success(request, 'Event created successfully.')
             return redirect('event_list')
     else:
         form = EventForm()
     return render(request, 'create_event.html', {'form': form})
 
-
+@login_required
 def delete_event(request, event_id):
     # Check if the user is logged in
     if not request.user.is_authenticated:
@@ -39,7 +40,32 @@ def delete_event(request, event_id):
         event.delete()
 
     return redirect('event_list')  # Redirect to the event list page
-    
+
+@login_required
+def join_event(request, event_id):
+    event = Event.objects.get(pk=event_id)
+    if request.user not in event.participants.all():
+        event.participants.add(request.user)
+        EventParticipant.objects.create(event=event, user=request.user)
+
+        if request.user not in event.participants.all():
+            event.participants.add(request.user)
+            event.save()
+
+        # Add a success message
+        messages.success(request, "You have successfully joined the event!")
+
+    return redirect('event_list')
+
+def joined_events(request):
+    if request.user.is_authenticated:
+        # Filter events where the logged-in user is a participant
+        user_participating_events = Event.objects.filter(participants=request.user)
+        context = {'user_participating_events': user_participating_events}
+        return render(request, 'joined_events.html', context)
+    else:
+        # Handle the case where the user is not authenticated
+        return render(request, 'joined_events.html')
 # Need to work out how to invite with the username instead
 
 
