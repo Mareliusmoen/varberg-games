@@ -1,13 +1,14 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Event, EventParticipant
+from .models import Event, EventParticipant, Comment
 from .models import generate_access_code
-from .forms import EventForm, AccessCodeForm
+from .forms import EventForm, AccessCodeForm, CommentForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import F
 from django.urls import reverse
 import string
 import random
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect
 
 @login_required
@@ -117,27 +118,41 @@ def enter_access_code(request):
         form = AccessCodeForm()
 
     return render(request, "events.html", {"form": form})
-# Need to work out how to invite with the username instead
 
+@login_required
+def event_detail(request, event_id):
+    event = get_object_or_404(Event, id=event_id)
+    comments = Comment.objects.filter(event=event)
 
-# @login_required
-# def invite_to_event(request, event_id):
-#     event = Event.objects.get(id=event_id)
+    # Create an instance of the CommentForm
+    comment_form = CommentForm()
+
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            text = form.cleaned_data['text']
+            user = request.user
+            comment = Comment(event=event, user=user, text=text)
+            comment.save()
+            messages.success(request, "You have successfully commented on this event.")
+            return redirect('event_detail', event_id=event_id)
     
-#     if request.method == 'POST':
-#         form = InvitationForm(request.POST)
-#         if form.is_valid():
-#             invited_email = form.cleaned_data['invited_email']
-#             # Check if the user with the provided email exists
-#             try:
-#                 invited_user = User.objects.get(email=invited_email)
-#                 invitation_code = "generate_unique_code_here"
-#                 invitation = Invitation(event=event, invited_user=invited_user, invitation_code=invitation_code)
-#                 invitation.save()
-#                 messages.success(request, 'Invitation sent successfully.')
-#                 return redirect('event_list')
-#             except User.DoesNotExist:
-#                 messages.error(request, 'User with the provided email does not exist.')
-#     else:
-#         form = InvitationForm()
-#     return render(request, 'event/invite_to_event.html', {'form': form, 'event': event})
+    context = {'event': event, 'comments': comments, 'comment_form': comment_form}
+    return render(request, 'event_detail.html', context)
+
+@login_required
+def add_comment(request, event_id):
+    event = get_object_or_404(Event, id=event_id)
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            text = form.cleaned_data['text']
+            user = request.user
+            comment = Comment(event=event, user=user, text=text)
+            comment.save()
+            messages.success(request, "You have successfully commented on this event.")
+            return redirect('event_detail', event_id=event_id)
+    else:
+        form = CommentForm()
+
+    return render(request, 'event_detail.html', {'event': event, 'comment_form': form})

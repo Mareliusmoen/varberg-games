@@ -121,9 +121,9 @@
             }, 3000); // <-- time in milliseconds, 1000 =  1 sec
     
             // delete message
-            $('.del-msg').live('click',function(){
-                $('.del-msg').parent().attr('style', 'display:none;');
-            })
+            $(document).on('click', '.del-msg', function(){
+                $(this).parent().attr('style', 'display:none;');
+            });
         });
     </script>
 </body>

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% if user.is_authenticated %}
+{% block content %}
+<!-- Event details -->
+<div  class="d-flex justify-content-center flex-wrap">
+<div class="card w-75 mb-3 rounded-5 card-bg">
+<h2>{{ event.title }}</h2>
+<p>{{ event.description }}</p>
+<p>{{ event.date }}</p>
+</div>
+</div>
+{% for message in messages %}
+{% if message.tags %}
+<div class="{{ message.tags }} message">
+    {% endif %}
+    {{ message }}
+</div>
+{% endfor %}
+<!-- Display comments -->
+<h5>Comments</h5>
+{% if comments %}
+{% for comment in comments %}
+<div class="d-flex justify-content-center flex-wrap">
+    <div class="w-75 mb-3 rounded-5 ">
+        <div class="card-body comment-bg rounded-5">
+            <p class="author-time-comment-font">{{ comment.created_at|date:"F d, Y H:i" }} By: {{ comment.user.username }}</p>
+            <p class="card-text">{{ comment.text }}</p>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% else %}
+<p>No comments made yet.</p>
+{% endif %}
+<!-- Comment form -->
+<form method="post" action="{% url 'add_comment' event.id %}">
+    {% csrf_token %}
+    {{ comment_form.text }}
+    <div>
+        <button class="btn signupbtn" type="submit">Submit</button>
+    </div>
+</form>
+{% endblock %}
+{% endif %}
