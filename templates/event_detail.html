@@ -22,7 +22,7 @@
 {% for comment in comments %}
 <div class="d-flex justify-content-center flex-wrap">
     <div class="w-75 mb-3 rounded-5 ">
-        <div class="card-body comment-bg rounded-5">
+        <div class="card-body card-bg-opacity rounded-5">
             <p class="author-time-comment-font">{{ comment.created_at|date:"F d, Y H:i" }} By: {{ comment.user.username }}</p>
             <p class="card-text">{{ comment.text }}</p>
         </div>
