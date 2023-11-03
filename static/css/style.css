@@ -3,6 +3,8 @@ body {
     background-image: url("../images/pp4-background.gif");
 }
 
+/* Items background styling*/
+
 .bg-dark {
     --bs-bg-opacity: .5;
     background-color: rgba(var(--bs-dark-rgb), var(--bs-bg-opacity)) !important;
@@ -41,13 +43,27 @@ body {
     margin: 0px;
 }
 
-.logomm,
-.navmm {
+/* Buttons styling */
+
+.logobtn {
+    text-decoration: none;
+}
+
+.logobtn,
+.orange-btn {
     color: rgb(237, 105, 102);
 }
 
-.navmm:hover {
+.orange-btn:hover {
     color: rgb(185, 24, 24);
+}
+.deletebtn {
+    background-color: rgb(185, 24, 24);
+}
+.deletebtn:hover {
+    background-color: None;
+    color: rgb(185, 24, 24);
+    border: 1px solid rgb(185, 24, 24);
 }
 
 .signupbtn {
@@ -60,7 +76,7 @@ body {
 .signupbtn:hover {
     background-color: rgb(23, 38, 65);
     border: 1px solid rgb(56, 67, 109);
-    color: rgb(237, 105, 102);
+    color: rgb(185, 24, 24);
 }
 
 input[type="text"],
@@ -91,10 +107,7 @@ select.form-control:focus {
     color: white;
 }
 
-#datetimepicker {
-    background-color: rgba(23, 38, 65, 0.5);
-    color: white;
-}
+
 /* Customize the calendar table */
 .ui-datepicker {
     font-size: 14px;
@@ -102,6 +115,12 @@ select.form-control:focus {
     border: 1px solid #ccc;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
 }
+
+#datetimepicker {
+    background-color: rgba(23, 38, 65, 0.5);
+    color: white;
+}
+
 /* django messages styling */
 .success {
     background-color: #4CAF50;

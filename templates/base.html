@@ -37,36 +37,36 @@
 
 <body class="d-flex h-100 text-center text-white">
 
-    <div class="logomm cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+    <div class="logobtn cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
         <header class="mb-auto">
             <div>
-                <h1 class="float-md-start mb-0"><a href="/"> VBG Games</a></h1>
+                <h1 class="float-md-start mb-0"><a class="logobtn orange-btn" href="/"> VBG Games</a></h1>
                 <nav class="nav nav-masthead justify-content-center float-md-end bg-dark rounded-5">
                     <ul class="nav nav-pills">
                         {% if user.is_authenticated %}
                         <div class="dropdown">
-                            <button class="btn dropdown-toggle navmm" type="button" data-bs-toggle="dropdown"
+                            <button class="btn dropdown-toggle orange-btn" type="button" data-bs-toggle="dropdown"
                                 aria-expanded="false">
                                 Events
                             </button>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item navmm" href="{% url 'event_list' %}">List of events</a></li>
-                                <li><a class="dropdown-item navmm" href="{% url 'joined_events' %}">Joined events</a></li>
-                                <li><a class="dropdown-item navmm" href="{% url 'create_event' %}">Create event</a></li>
+                                <li><a class="dropdown-item orange-btn" href="{% url 'event_list' %}">List of events</a></li>
+                                <li><a class="dropdown-item orange-btn" href="{% url 'joined_events' %}">Joined events</a></li>
+                                <li><a class="dropdown-item orange-btn" href="{% url 'create_event' %}">Create event</a></li>
                             </ul>
                         </div>
                         <li class="nav-item">
-                            <a class="nav-link navmm" aria-current="page" href="#">Chat</a>
+                            <a class="nav-link orange-btn" aria-current="page" href="#">Chat</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link navmm" aria-current="page" href="{% url 'account_logout' %}">Logout</a>
+                            <a class="nav-link orange-btn" aria-current="page" href="{% url 'account_logout' %}">Logout</a>
                         </li>
                         {% else %}
                         <li class="nav-item">
-                            <a class="nav-link navmm" aria-current="page" href="{% url 'account_signup' %}">Register</a>
+                            <a class="nav-link orange-btn" aria-current="page" href="{% url 'account_signup' %}">Register</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link navmm" href="{% url 'account_login' %}">Login</a>
+                            <a class="nav-link orange-btn" href="{% url 'account_login' %}">Login</a>
                         </li>
                         {% endif %}
                     </ul>
