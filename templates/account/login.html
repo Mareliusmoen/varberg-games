@@ -59,6 +59,13 @@
 				<a class="signupbtn btn secondaryAction" href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
 				<button class="primaryAction signupbtn btn" type="submit"><i class="fa-solid fa-check"></i>  {% trans "Sign In" %}</button>
 	</form>
+	{% for message in messages %}
+	{% if message.tags %}
+	<div class="{{ message.tags }} message">
+	{% endif %}
+	{{ message }}
+	</div>
+	{% endfor %}
 </div>
 </div>
 </form>

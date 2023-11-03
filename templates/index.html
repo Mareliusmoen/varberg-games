@@ -12,6 +12,14 @@
         create your
         account today!</p>
     <button class="signupbtn btn"><a class="navmm" href="{% url 'account_signup' %}">Sign up here!</a></button>
+    <button class="signupbtn btn"><a class="navmm" href="{% url 'account_login' %}">Login</a></button>
     {% endif %}
 </div>
+{% for message in messages %}
+{% if message.tags %}
+<div class="{{ message.tags }} message">
+{% endif %}
+{{ message }}
+</div>
+{% endfor %}
 {% endblock %}

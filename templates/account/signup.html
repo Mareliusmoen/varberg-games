@@ -65,5 +65,11 @@
         </div>
     </form>
 </div>
-
+{% for message in messages %}
+{% if message.tags %}
+<div class="{{ message.tags }} message">
+{% endif %}
+{{ message }}
+</div>
+{% endfor %}
 {% endblock content %}

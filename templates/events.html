@@ -9,7 +9,7 @@
                     class="fa-regular fa-calendar-plus"></i></a>
         </div>
         <div class="text-center mb-3">
-            <p>Do you have a private-event passcode?</p>
+            <p>Do you have a private-event access code?</p>
             <form method="post" action="">
                 {% csrf_token %}
                 <input type="text" id="access_code" name="access_code" placeholder="Enter Access Code">
@@ -18,6 +18,13 @@
         </div>
     </div>
 </div>
+{% for message in messages %}
+{% if message.tags %}
+<div class="{{ message.tags }} message">
+{% endif %}
+{{ message }}
+</div>
+{% endfor %}
 <div class="d-flex justify-content-center flex-wrap">
     {% if public_events %}
     {% for event in public_events %}

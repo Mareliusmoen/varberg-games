@@ -2,6 +2,13 @@
 {% if user.is_authenticated %}
 {% block content %}
 <h1 class="text-center">Your Events</h1>
+{% for message in messages %}
+{% if message.tags %}
+<div class="{{ message.tags }} message">
+{% endif %}
+{{ message }}
+</div>
+{% endfor %}
 <div class="d-flex justify-content-center flex-wrap">
     {% if user_participating_events %}
     {% for event in user_participating_events %}

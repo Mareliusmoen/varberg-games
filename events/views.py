@@ -68,7 +68,7 @@ def delete_event(request, event_id):
     if request.user == event.creator:
         # Delete the event
         event.delete()
-
+    messages.success(request, "You have successfully deleted the event.")
     return redirect('joined_events')  # Redirect to the joined events page
 
 @login_required
