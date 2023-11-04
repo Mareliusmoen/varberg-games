@@ -23,7 +23,11 @@
 <div class="d-flex justify-content-center flex-wrap">
     <div class="w-75 mb-3 rounded-5 ">
         <div class="card-body card-bg-opacity rounded-5">
-            <p class="author-time-comment-font">{{ comment.created_at|date:"F d, Y H:i" }} By: {{ comment.user.username }}</p>
+            <p class="author-time-comment-font">{{ comment.created_at|date:"F d, Y H:i" }} By: {{ comment.user.username }}
+                {% if user.is_authenticated and user == comment.user %}
+                <a href="{% url 'delete_comment' comment.id %}" class="delete-comment"><i class="fa-solid fa-trash"></i></a>
+                {% endif %}
+            </p>
             <p class="card-text">{{ comment.text }}</p>
         </div>
     </div>

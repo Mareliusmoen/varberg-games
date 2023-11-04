@@ -65,6 +65,13 @@
         </div>
     </form>
 </div>
+{% if form.errors %}
+    {% for error in form.non_field_errors %}
+        <div class="error">
+            {{ error }}
+        </div>
+    {% endfor %}
+{% endif %}
 {% for message in messages %}
 {% if message.tags %}
 <div class="{{ message.tags }} message">

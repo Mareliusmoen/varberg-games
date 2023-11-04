@@ -156,3 +156,23 @@ def add_comment(request, event_id):
         form = CommentForm()
 
     return render(request, 'event_detail.html', {'event': event, 'comment_form': form})
+
+
+@login_required
+def delete_comment(request, comment_id):
+    # Check if the user is logged in
+    if not request.user.is_authenticated:
+        return redirect('login')  # Redirect to the login page
+
+    # Get the comment by ID
+    comment = get_object_or_404(Comment, id=comment_id)
+
+    # Check if the user is the author of the comment
+    if request.user == comment.user:
+        # Delete the comment
+        comment.delete()
+        messages.success(request, "You have successfully deleted the comment.")
+    else:
+        messages.error(request, "You are not authorized to delete this comment.")
+
+    return redirect('event_detail', event_id=comment.event.id)
