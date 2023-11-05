@@ -58,8 +58,8 @@
 {% block page_scripts %}
 <script>
     var chatSocketURL = "wss://" + window.location.host + "/wss/some_chat/{{ chat.id }}/";
-</script>
-<script>
+    var chatSocket = new WebSocket(chatSocketURL);
+
     $(document).ready(function () {
         // Handle user search and initiate a chat
         function searchAndInitiateChat() {
@@ -143,12 +143,12 @@
             });
 
             // Set up a WebSocket connection for real-time chat
-            var chatSocket = new WebSocket(chatSocketURL);
             chatSocket.onmessage = function (e) {
                 var data = JSON.parse(e.data);
                 displayChatMessage(data);
             };
         }
+
         // Function to display chat messages
         function displayChatMessage(message) {
             var chatMessages = $("#chat-messages");
@@ -160,13 +160,10 @@
             var messageInput = $("#message-input");
             var message = messageInput.val().trim();
             if (message) {
-                // Send the message via WebSocket
-                var chatSocket = new WebSocket(chatSocketURL);
-                chatSocket.onopen = function () {
-                    chatSocket.send(JSON.stringify({
-                        'message': message
-                    }));
-                }
+                // Send the message via the existing WebSocket connection
+                chatSocket.send(JSON.stringify({
+                    'message': message
+                }));
                 messageInput.val("");
             }
         });
