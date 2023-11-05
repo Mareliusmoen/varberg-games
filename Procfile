@@ -1,2 +1,2 @@
 web: gunicorn varberggames.wsgi
-worker: gunicorn varberggames.routing:application
+worker: daphne varberggames.asgi:application
