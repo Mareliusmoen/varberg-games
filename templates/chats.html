@@ -57,7 +57,7 @@
 
 {% block page_scripts %}
 <script>
-    var chatSocketURL = "wss://" + window.location.host + "/wss/some_chat/{{ chat.id }}/";
+    var chatSocketURL = "wss://vareberg-games-a44cb52aa87b.herokuapp.com/chats/chats/";
     var chatSocket = new WebSocket(chatSocketURL);
 
     $(document).ready(function () {
