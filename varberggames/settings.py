@@ -47,6 +47,8 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'profiles',
     'events',
+    'channels',
+    'chats',
 ]
 
 SITE_ID = 1

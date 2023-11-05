@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="input-group mb-3">
+                    <input type="text" id="user-search" class="form-control" placeholder="Search for users...">
+                    <button class="btn btn-outline-primary" id="search-button" type="button">Search</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <h1>Chat List</h1>
+    <ul>
+        {% for chat in user.chats.all %}
+        <li><a href="#" class="chat-link" data-chat-id="{{ chat.id }}">{{ chat.name }}</a></li>
+        {% endfor %}
+    </ul>
+</div>
+{% block page_scripts %}
+<script>
+    $(document).ready(function () {
+        $('.chat-link').click(function (event) {
+            event.preventDefault();
+            var chatId = $(this).data('chat-id');
+            $('#chat-modal').modal('show');
+            // Fetch chat messages using AJAX and display in the modal
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        // Function to handle user search and initiate a chat
+        function searchAndInitiateChat() {
+            var searchInput = $("#user-search");
+            var searchQuery = searchInput.val();
+
+            // Send a request to the server to search for users
+            $.ajax({
+                url: "{% url 'user_search' %}",
+                method: "GET",
+                data: { search_query: searchQuery },
+                success: function (data) {
+                    // Handle the search results
+                    var resultsContainer = $("#search-results");
+                    resultsContainer.empty();
+
+                    if (data.users.length > 0) {
+                        // Display search results
+                        var users = data.users;
+                        for (var i = 0; i < users.length; i++) {
+                            var user = users[i];
+                            var userItem = $("<div class='user-item'></div>");
+                            userItem.text(user.username + " (" + user.first_name + " " + user.last_name + ")");
+                            userItem.attr("data-user-id", user.id);
+                            resultsContainer.append(userItem);
+                        }
+
+                        // Handle user selection and chat initiation
+                        resultsContainer.on("click", ".user-item", function () {
+                            var userId = $(this).data("user-id");
+
+                            // Perform the chat initiation logic, e.g., open the chat modal
+                            initiateChat(userId);
+
+                            // Clear the search input
+                            searchInput.val("");
+                            resultsContainer.empty();
+                        });
+                    } else {
+                        resultsContainer.html("<p>No users found.</p>");
+                    }
+                }
+            });
+        }
+
+        // Handle search button click
+        $("#search-button").on("click", function () {
+            searchAndInitiateChat();
+        });
+
+        // Handle Enter key press in the search input
+        $("#user-search").on("keypress", function (e) {
+            if (e.which === 13) {
+                searchAndInitiateChat();
+            }
+        });
+
+        // Function to initiate a chat with a selected user
+        function initiateChat(userId) {
+            // Open the chat modal
+            $('#chat-modal').modal('show');
+
+            // Fetch chat messages using AJAX and display in the modal
+            $.ajax({
+                url: "{% url 'fetch_chat_history' %}",
+                method: "GET",
+                data: { user_id: userId },
+                success: function (data) {
+                    // Clear previous chat messages in the modal
+                    $('#chat-messages').empty();
+
+                    if (data.messages.length > 0) {
+                        // Loop through chat messages and display them in the modal
+                        $.each(data.messages, function (index, message) {
+                            displayChatMessage(message);
+                        });
+                    }
+                }
+            });
+
+            // Set up a WebSocket connection for real-time chat (optional)
+            var chatSocket = new WebSocket('ws://your-websocket-url/');
+            chatSocket.onmessage = function (e) {
+                var data = JSON.parse(e.data);
+                displayChatMessage(data);
+            };
+        }
+    }
+    );
+</script>
+{% endblock %}
+{% endblock %}
