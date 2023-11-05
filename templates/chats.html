@@ -57,7 +57,7 @@
 
 {% block page_scripts %}
 <script>
-    var chatSocket = new WebSocket('wss://vareberg-games-a44cb52aa87b.herokuapp.com/ws/some_chat//USER_ID/');
+    const chatSocket = new WebSocket(`ws://' + window.location.host + '/ws/chat/`);
 
     $(document).ready(function () {
         // Handle user search and initiate a chat
@@ -120,10 +120,9 @@
             }
         });
 
-        // Function to initiate a chat with a selected user
         function initiateChat(userId) {
             // Dynamically generate the WebSocket URL with the selected user's ID
-            var chatSocketURL = 'wss://vareberg-games-a44cb52aa87b.herokuapp.com/ws/some_chat/${userId}/';
+            var chatSocketURL = `ws://${window.location.host}/ws/chat/${userId}/`;
 
             // Open the chat modal
             $('#chat-modal').modal('show');
