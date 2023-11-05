@@ -57,7 +57,7 @@
 
 {% block page_scripts %}
 <script>
-    const chatSocket = new WebSocket('wss://' + window.location.host + '/ws/chat/');
+    const chatSocket = new WebSocket('wss://' + window.location.host + '/wss/chat/');
 
     $(document).ready(function () {
         // Handle user search and initiate a chat
@@ -122,7 +122,7 @@
 
         function initiateChat(userId) {
             // Dynamically generate the WebSocket URL with the selected user's ID
-            var chatSocketURL = 'ws://' + window.location.host + '/ws/chat/' + userId + '/';
+            var chatSocketURL = 'wss://' + window.location.host + '/wss/chat/' + userId + '/';
 
             // Open the chat modal
             $('#chat-modal').modal('show');
