@@ -57,7 +57,7 @@
 
 {% block page_scripts %}
 <script>
-    var chatSocket = new WebSocket('wss://vareberg-games-a44cb52aa87b.herokuapp.com/ws/some_chat/some_chat_id/');
+    var chatSocket = new WebSocket('wss://vareberg-games-a44cb52aa87b.herokuapp.com/ws/some_chat//USER_ID/');
     var chatSocket = new WebSocket(chatSocketURL);
 
     $(document).ready(function () {
@@ -123,6 +123,9 @@
 
         // Function to initiate a chat with a selected user
         function initiateChat(userId) {
+            // Dynamically generate the WebSocket URL with the selected user's ID
+            var chatSocketURL = 'wss://vareberg-games-a44cb52aa87b.herokuapp.com/ws/some_chat/${userId}/';
+
             // Open the chat modal
             $('#chat-modal').modal('show');
 
@@ -142,11 +145,13 @@
                 }
             });
 
-            // Set up a WebSocket connection for real-time chat
+            // Set up a WebSocket connection with the dynamically generated URL
+            var chatSocket = new WebSocket(chatSocketURL);
+
             chatSocket.onmessage = function (e) {
                 var data = JSON.parse(e.data);
                 displayChatMessage(data);
-            };
+            }
         }
 
         // Function to display chat messages
