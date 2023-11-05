@@ -32,7 +32,7 @@
         var chatID = 'chat_id_value';
 
         // Create a WebSocket connection
-        var chatSocket = new WebSocket("ws://vareberg-games-a44cb52aa87b.herokuapp.com/ws/some_chat/" + chatID + "/");
+        var chatSocket = new WebSocket("wss://vareberg-games-a44cb52aa87b.herokuapp.com/ws/some_chat/" + chatID + "/");
 
         // Handle incoming messages from the server
         chatSocket.onmessage = function (e) {
