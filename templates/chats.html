@@ -58,7 +58,6 @@
 {% block page_scripts %}
 <script>
     var chatSocket = new WebSocket('wss://vareberg-games-a44cb52aa87b.herokuapp.com/ws/some_chat//USER_ID/');
-    var chatSocket = new WebSocket(chatSocketURL);
 
     $(document).ready(function () {
         // Handle user search and initiate a chat
