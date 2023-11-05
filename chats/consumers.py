@@ -3,15 +3,25 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        self.chat_id = self.scope['url_route']['kwargs']['chat_id']
-        await self.channel_layer.group_add(
-            self.chat_group_name,
-            self.channel_name
-        )
-        await self.accept()
+        user_id = self.scope['url_route']['kwargs']['user_id']
+        self.user = self.scope["user"]  # The current user
+        self.target_user = User.objects.get(id=user_id)  # The user you are chatting with
 
-    async def disconnect(self, close_code):
-        await self.channel_layer.group_discard(
+        if self.user.is_authenticated and self.user != self.target_user:
+            # Check if the current user is authenticated and not chatting with themselves
+            self.chat_group_name = f"chat_{self.user.id}_with_{self.target_user.id}"
+
+            await self.channel_layer.group_add(
+                self.chat_group_name,
+                self.channel_name
+            )
+            await self.accept()
+        else:
+            await self.close()
+            await self.accept()
+
+        async def disconnect(self, close_code):
+            await self.channel_layer.group_discard(
             self.chat_group_name,
             self.channel_name
         )

@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.contrib.auth.models import User
 from .models import Chat, Message
+from django.db.models import Q
 
 def chats_view(request):
     # Retrieve a list of chat conversations that the logged-in user is a part of
@@ -28,7 +29,8 @@ def user_search(request):
 def fetch_chat_history(request):
     user_id = request.GET.get("user_id")
     # Implement a query to retrieve chat history with the selected user
-    messages = Message.objects.filter(sender=request.user, receiver_id=user_id).order_by('timestamp')
+    messages = Message.objects.filter(
+    Q(sender=request.user, receiver_id=user_id) | Q(sender_id=user_id, receiver=request.user)).order_by('timestamp')
 
     chat_history = []
     for message in messages:

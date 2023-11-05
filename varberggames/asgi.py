@@ -17,10 +17,9 @@ application = ProtocolTypeRouter({
     "http": get_asgi_application(),
     "websocket": AuthMiddlewareStack(
         URLRouter(
-            websocket_urlpatterns  # Add your WebSocket URL routing here
+            websocket_urlpatterns  # Include your WebSocket URL routing here
         )
     ),
 })
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'varberggames.settings')
-
