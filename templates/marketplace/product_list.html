@@ -20,7 +20,8 @@
             <div class="card-bg-opacity rounded-5 product-item">
                 <div class="product-item">
                     <h5 class="card-title">
-                        <a href="#" class="logobtn orange-btn product-title" data-toggle="modal"
+                        <a href="#" class="logobtn orange-btn product-title"
+                            data-card_image_url="{{ product.card_image_url }}" data-toggle="modal"
                             data-target="#productModal" data-title="{{ product.title }}"
                             data-description="{{ product.description }}" data-price="{{ product.price }}"
                             data-category="{{ product.category.name }}" data-seller="{{ product.seller.username }}"
@@ -53,7 +54,7 @@
                 <p id="modalProductCategory"></p>
                 <p id="modalProductSeller"></p>
                 <p id="modalProductCreated"></p>
-                <!-- Add more details here -->
+                <img id="modalCardImage">
             </div>
             <div class="custom-modal-footer">
                 <button type="button" class="p-2 btn signupbtn" data-bs-dismiss="modal">Close</button>
@@ -72,6 +73,10 @@
             var category = $(this).data('category');
             var seller = $(this).data('seller');
             var created = $(this).data('created');
+            var cardImage = $(this).data('card_image_url');
+
+            // Log the cardImage URL to the console
+            console.log('Card Image URL:', cardImage);
 
             $('#modalProductTitle').text(title);
             $('#modalProductDescription').text(description);
@@ -79,7 +84,7 @@
             $('#modalProductCategory').text('Category: ' + category);
             $('#modalProductSeller').text('Seller: ' + seller);
             $('#modalProductCreated').text('Created at: ' + created);
-            // Add more details here
+            $('#modalCardImage').attr('src', cardImage);
 
             // Show the modal
             $('#productModal').modal('show');

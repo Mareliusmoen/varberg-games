@@ -1,10 +1,12 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Product, Category
 from .forms import ProductForm
+from mtgsdk import Card
+import requests
 
 def create_product(request):
     if request.method == 'POST':
-        form = ProductForm(request.POST)
+        form = ProductForm(request.POST, request.FILES)
         if form.is_valid():
             product = form.save(commit=False)
             
@@ -17,11 +19,27 @@ def create_product(request):
 
             # Set the seller to the current user
             product.seller = request.user
+
+            # Add card_name handling here
+            card_name = form.cleaned_data['card_name']
+            if card_name:
+                # Handle card search and API request here
+                api_url = 'https://api.magicthegathering.io/v1/cards'
+                params = {'name': card_name}
+                response = requests.get(api_url, params=params)
+                if response.status_code == 200:
+                    card_data = response.json()
+                    if 'cards' in card_data and len(card_data['cards']) > 0:
+                        # Fetch the first card's data
+                        card = card_data['cards'][0]
+                        # Set the card data in the product
+                        product.card_name = card['name']
+                        product.card_image_url = card['imageUrl']
             
-            # Save the product
+            # Save the product after card handling
             product.save()
             
-            return redirect('product_list')
+            return redirect('product_list')  # Redirect to product_list after successfully saving the product
     else:
         form = ProductForm()
     return render(request, 'marketplace/create_product.html', {'form': form})

@@ -61,9 +61,17 @@
                         <li class="nav-item">
                             <a class="nav-link orange-btn" aria-current="page" href="{% url 'chats' %}">Chat</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link orange-btn" aria-current="page" href="{% url 'product_list' %}">Marketplace</a>
-                        </li>
+                        <div class="dropdown">
+                            <button class="btn dropdown-toggle orange-btn" type="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                Markedplace
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item orange-btn" href="{% url 'product_list' %}">Items for sale</a></li>
+                                <li><a class="dropdown-item orange-btn" href="{% url 'create_product' %}">New item for sale</a></li>
+                                <li><a class="dropdown-item orange-btn" href="{% url 'create_event' %}">Your sale items</a></li>
+                            </ul>
+                        </div>
                         <li class="nav-item">
                             <a class="nav-link orange-btn" aria-current="page" href="{% url 'account_logout' %}">Logout</a>
                         </li>

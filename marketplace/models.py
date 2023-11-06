@@ -14,4 +14,5 @@ class Product(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     seller = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
-
+    card_name = models.CharField(max_length=255, blank=True, null=True)
+    card_image_url = models.URLField(null=True, blank=True)
