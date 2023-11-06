@@ -6,10 +6,9 @@ from django.db.models import Q
 
 def chats_view(request):
     # Retrieve a list of chat conversations that the logged-in user is a part of
-    user = request.user  # Assuming you have user authentication
+    user = request.user
     chat_conversations = Chat.objects.filter(users=user)
 
-    # You can add more context data if needed
     context = {
         'chat_conversations': chat_conversations,
     }
