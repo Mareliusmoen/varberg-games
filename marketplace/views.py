@@ -3,6 +3,7 @@ from .models import Product, Category
 from .forms import ProductForm
 from mtgsdk import Card
 import requests
+from django.contrib import messages
 
 def create_product(request):
     if request.method == 'POST':
@@ -38,7 +39,7 @@ def create_product(request):
             
             # Save the product after card handling
             product.save()
-            
+            messages.success(request, 'Your item was listed for sale successfully.')
             return redirect('product_list')  # Redirect to product_list after successfully saving the product
     else:
         form = ProductForm()
