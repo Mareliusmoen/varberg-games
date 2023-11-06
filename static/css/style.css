@@ -6,11 +6,19 @@ body {
     background-attachment: fixed;
 }
 
+.product-item {
+    height: 250px;
+}
+
 /* Items background styling*/
 
 .bg-dark {
     --bs-bg-opacity: .5;
     background-color: rgba(var(--bs-dark-rgb), var(--bs-bg-opacity)) !important;
+}
+
+.modal-background {
+    background-color: rgba(23, 38, 65, 0.9);
 }
 
 .card-bg {
@@ -66,9 +74,11 @@ body {
 .orange-btn:hover {
     color: rgb(185, 24, 24);
 }
+
 .deletebtn {
     background-color: rgb(185, 24, 24);
 }
+
 .deletebtn:hover {
     background-color: None;
     color: rgb(185, 24, 24);
@@ -79,7 +89,7 @@ body {
     background-color: rgb(56, 67, 109);
     border: 1px solid rgb(23, 38, 65);
     color: rgb(237, 105, 102);
-    margin:20px 0px;
+    margin: 20px 0px;
 }
 
 .signupbtn a {
@@ -117,11 +127,15 @@ select.form-control:focus {
     -webkit-box-shadow: none;
     box-shadow: none;
 }
+
 ::placeholder {
     color: white;
-    opacity: 0.8; /* Needed for Firefox browsers */
+    opacity: 0.8;
+    /* Needed for Firefox browsers */
 }
-::-ms-input-placeholder { /* Needed for Edge 12 -18 browsers */
+
+::-ms-input-placeholder {
+    /* Needed for Edge 12 -18 browsers */
     color: white;
 }
 
@@ -156,4 +170,9 @@ select.form-control:focus {
 .author-time-comment-font {
     font-size: smaller;
     opacity: 0.8;
+}
+
+/* Markedplace modal styling */
+.modal-product-background {
+    background-color: rgba(56, 67, 109, 0.5);
 }
