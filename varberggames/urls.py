@@ -23,4 +23,5 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
     path('events/', include('events.urls')),
     path('chats/', include('chats.urls')),
+    path('marketplace/', include('marketplace.urls')),
 ]

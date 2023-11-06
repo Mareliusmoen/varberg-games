@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% if user.is_authenticated %}
+{% block content %}
+<div class="container">
+    <h1>Products For Sale</h1>
+    <div class="row">
+        {% for product in products %}
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <!-- <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.title }}"> -->
+                <div class="card-body">
+                    <h5 class="card-title"><a href="{% url 'product_detail' product.id %}">{{ product.title }}</a></h5>
+                    <p class="card-text">Price: ${{ product.price }}</p>
+                    <p class="card-text">Category: {{ product.category.name }}</p>
+                    <p class="card-text">Seller: {{ product.seller.username }}</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+{% endif %}
