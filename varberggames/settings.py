@@ -35,6 +35,7 @@ ALLOWED_HOSTS = ['vareberg-games-a44cb52aa87b.herokuapp.com', 'localhost', '127.
 # Application definition
 
 INSTALLED_APPS = [
+    'channels',
     'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -48,7 +49,6 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'profiles',
     'events',
-    'channels',
     'chats',
     'marketplace',
 ]
@@ -144,12 +144,14 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Daphne
-ASGI_APPLICATION = "varberggames.asgi.application"
+ASGI_APPLICATION = "chats.routing.application"
 CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels_redis.core.RedisChannelLayer",
+    'default': {
+        "BACKEND": "asgi_redis.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [os.environ.get("REDIS_URL", "redis://localhost:6379")],
+            "hosts": [os.environ.get('REDIS_URL', 'redis://localhost:6379')]
         },
-    },
+        'ROUTING': 'chats.routing.websocket_urlpatterns',
+    }
 }
+

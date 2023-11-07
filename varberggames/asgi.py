@@ -7,22 +7,11 @@ For more information on this file, see
 https://docs.djangoproject.com/en/4.2/howto/deployment/asgi/
 """
 
-import os
-from django.core.asgi import get_asgi_application
-from channels.routing import ProtocolTypeRouter, URLRouter
-import chats.routing
+import os, django
+from channels.routing import get_default_application
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "varberg-games.settings")
-
-application = ProtocolTypeRouter(
-    {
-    "http": get_asgi_application(),
-
-    "websocket":
-        URLRouter(
-            chats.routing.websocket_urlpatterns
-        )
-}),
-
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'varberggames.settings')
+django.setup()
+application = get_default_application()
 
 
