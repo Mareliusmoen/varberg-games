@@ -144,15 +144,7 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Daphne
-ASGI_APPLICATION = "chats.routing.application"
-CHANNEL_LAYERS = {
-    'default': {
-        "BACKEND": "asgi_redis.RedisChannelLayer",
-        "CONFIG": {
-            "hosts": [os.environ.get('REDIS_URL', 'redis://localhost:6379')]
-        },
-        'ROUTING': 'chats.routing.websocket_urlpatterns',
-    }
-}
 
+# Daphne
+ASGI_APPLICATION = "varberggames.asgi.application"
+CHANNEL_LAYERS = { "default": { "BACKEND": "channels_redis.core.RedisChannelLayer", "CONFIG": { "hosts": "redis-13025.c268.eu-west-1-2.ec2.cloud.redislabs.com:13025"},},}
