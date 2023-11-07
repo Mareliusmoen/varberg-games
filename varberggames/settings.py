@@ -148,7 +148,7 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": "redis-13025.c268.eu-west-1-2.ec2.cloud.redislabs.com:13025",
+            "hosts": [os.environ.get("REDIS_ENDPOINT_URI")],
         },
     },
 }
