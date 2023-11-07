@@ -45,12 +45,11 @@
                 <div id="chat-messages">
                     <!-- Chat messages will be displayed here -->
                 </div>
-                <div class="input-group">
+                <form id="message-form">
+                    {% csrf_token %}
                     <input type="text" id="message-input" class="custom-textarea" placeholder="Type a message">
-                    <div class="input-group-append">
-                        <button class="btn orange-btn signupbtn m-3" id="send-button">Send</button>
-                    </div>
-                </div>
+                    <button class="btn orange-btn signupbtn m-3" id="send-button" type="button">Send</button>
+                </form>
             </div>
         </div>
     </div>
@@ -58,7 +57,6 @@
 
 {% block page_scripts %}
 <script>
-    var chatSocket;
 
     $(document).ready(function () {
 
@@ -144,30 +142,25 @@
                 }
             });
 
-            chatSocket.onmessage = function (e) {
-                var data = JSON.parse(e.data);
-                displayChatMessage(data);
-            }
-
             $("#send-button").on("click", function () {
                 var messageInput = $("#message-input");
                 var message = messageInput.val().trim();
                 if (message) {
-                    // Check if the WebSocket is open before sending the message
-                    if (chatSocket.readyState === WebSocket.OPEN) {
-                        chatSocket.send(JSON.stringify({
-                            'message': message
-                        }));
-                        messageInput.val("");
-                    } else {
-                        // Wait for the WebSocket to become open
-                        chatSocket.addEventListener("open", function () {
-                            chatSocket.send(JSON.stringify({
-                                'message': message
-                            }));
+                    // Send the message via AJAX
+                    var csrfToken = $("input[name=csrfmiddlewaretoken]").val();
+
+                    $.ajax({
+                        url: "{% url 'send_message' %}",
+                        method: "POST",
+                        data: {
+                            user_id: userId,
+                            message: message,
+                            csrfmiddlewaretoken: csrfToken,
+                        },
+                        success: function () {
                             messageInput.val("");
-                        });
-                    }
+                        }
+                    });
                 }
             });
 
@@ -176,7 +169,8 @@
                 var chatMessages = $("#chat-messages");
                 chatMessages.append("<p>" + message.sender + ": " + message.content + "</p>");
             }
-        }});
+        }
+    });
 </script>
 {% endblock %}
 {% endblock %}

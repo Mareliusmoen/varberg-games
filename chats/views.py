@@ -39,3 +39,24 @@ def fetch_chat_history(request):
         })
 
     return JsonResponse({'messages': chat_history})
+
+
+def send_message(request):
+    if request.method == 'POST':
+        user_id = request.POST.get("user_id")
+        message_content = request.POST.get("message")
+
+        # Retrieve the user corresponding to user_id
+        receiver_user = User.objects.get(id=user_id)
+
+        # Create a Message object and save it to the database
+        message = Message(
+            sender=request.user,
+            receiver=receiver_user,
+            content=message_content
+        )
+        message.save()
+
+        return JsonResponse({"status": "success"})
+    else:
+        return JsonResponse({"status": "error", "message": "Invalid request method"})
