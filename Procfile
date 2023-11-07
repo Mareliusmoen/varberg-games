@@ -1,2 +1,2 @@
-web: daphne varberggames.asgi:channel_layer --port $PORT --bind 0.0.0.0 -v2
+web: gunicorn varberggames.wsgi
 chatworker: python manage.py runworker --settings=varberggames.settings -v2
