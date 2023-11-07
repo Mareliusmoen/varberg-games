@@ -49,7 +49,6 @@ INSTALLED_APPS = [
     'profiles',
     'events',
     'channels',
-    'channels-redis',
     'chats',
     'marketplace',
 ]
