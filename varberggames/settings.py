@@ -72,6 +72,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'allauth.account.middleware.AccountMiddleware',
+    'channels.middleware.WebsocketMiddleware',
 ]
 
 ROOT_URLCONF = 'varberggames.urls'
