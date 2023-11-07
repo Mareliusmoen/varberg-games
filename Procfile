@@ -1,2 +1,2 @@
 web: gunicorn varberggames.wsgi
-chatworker: python manage.py runworker --settings=varberggames.settings -v2
+worker: python manage.py runworker channels --settings=varberggames.settings -v2

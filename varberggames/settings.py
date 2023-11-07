@@ -15,7 +15,6 @@ import os
 import dj_database_url
 if os.path.isfile('env.py'):
     import env
-from chats import routing
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -36,7 +35,6 @@ ALLOWED_HOSTS = ['vareberg-games-a44cb52aa87b.herokuapp.com', 'localhost', '127.
 # Application definition
 
 INSTALLED_APPS = [
-    'channels',
     'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -50,6 +48,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'profiles',
     'events',
+    'channels',
     'chats',
     'marketplace',
 ]
@@ -73,7 +72,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'allauth.account.middleware.AccountMiddleware',
-    'channels.middleware.WebsocketMiddleware',
 ]
 
 ROOT_URLCONF = 'varberggames.urls'
@@ -144,7 +142,13 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
 # Daphne
 ASGI_APPLICATION = "varberggames.asgi.application"
-CHANNEL_LAYERS = { "default": { "BACKEND": "channels_redis.core.RedisChannelLayer", "CONFIG": { "hosts": "redis-13025.c268.eu-west-1-2.ec2.cloud.redislabs.com:13025"},},}
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": "redis-13025.c268.eu-west-1-2.ec2.cloud.redislabs.com:13025",
+        },
+    },
+}
