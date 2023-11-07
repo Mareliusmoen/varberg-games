@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'profiles',
     'events',
     'channels',
+    'channels-redis',
     'chats',
     'marketplace',
 ]
@@ -149,7 +150,7 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": "redis-13025.c268.eu-west-1-2.ec2.cloud.redislabs.com:13025",
+            "hosts": [os.environ.get("REDIS_URL", "redis://localhost:6379")],
         },
     },
 }

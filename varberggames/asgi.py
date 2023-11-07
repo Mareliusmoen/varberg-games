@@ -19,11 +19,11 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'varberggames.settings')
 
 application = ProtocolTypeRouter({
     "http": django_asgi_app,
-    "websocket": AuthMiddlewareStack(
+    "websocket":
         URLRouter(
             chats.routing.websocket_urlpatterns
         )
-    ),
-})
+}),
+
 
 
