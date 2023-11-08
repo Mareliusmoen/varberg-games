@@ -17,17 +17,22 @@
             </div>
             <div id="search-results-container">
                 <ul id="search-results">
-                    <!-- Search results will be added here dynamically -->
+                    <!-- Search results are added here dynamically with JS -->
                 </ul>
             </div>
         </div>
         <div class="d-flex container justify-content-center align-items-center">
-            <h1>Chat List</h1>
-            <ul>
-                {% for chat in chat_conversations %}
-                <li><a href="#" class="chat-link" data-chat-id="{{ chat.id }}">{{ chat.name }}</a></li>
-                {% endfor %}
-            </ul>
+            <div class="col">
+                <h1>Chat List</h1>
+                <div>
+                    <ul>
+                        {% for chat_info in chat_list %}
+                        <button class="orange-btn signupbtn rounded-1 m-3"><a href="#" class="chat-link" data-chat-id="{{ chat_info.chat.id }}"
+                                data-user-id="{{ chat_info.other_user.id }}">{{ chat_info.other_user.username }}</a></button>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -60,13 +65,21 @@
 
     $(document).ready(function () {
 
+        // Handle chat conversation click
+        $(".chat-link").on("click", function (event) {
+            event.preventDefault();
+            var chatId = $(this).data("chat-id");
+            var userId = $(this).data("user-id");
+            initiateChat(userId, chatId);
+        });
+
         function searchAndInitiateChat() {
             var searchInput = $("#user-search");
             var searchQuery = searchInput.val();
 
             // Send a request to the server to search for users
             $.ajax({
-                url: "{% url 'user_search' %}",
+                url: "{% url 'chats:user_search' %}",
                 method: "GET",
                 data: { search_query: searchQuery },
                 success: function (data) {
@@ -93,9 +106,6 @@
                         resultsContainer.on("click", ".start-chat-button", function () {
                             var userId = $(this).parent().data("user-id"); // Set the userId when starting the chat
 
-                            // Dynamically generate the WebSocket URL with the selected user's ID
-                            chatSocket = new WebSocket('wss://' + window.location.host + '/ws/chat/' + userId + '/');
-
                             // Perform the chat initiation logic
                             initiateChat(userId);
 
@@ -121,14 +131,35 @@
                 searchAndInitiateChat();
             }
         });
+        // Function to load and display the chat history
+        function loadChatHistory(userId) {
+            $.ajax({
+                url: "{% url 'chats:fetch_chat_history' %}",
+                method: "GET",
+                data: { user_id: userId },
+                success: function (data) {
+                    $('#chat-messages').empty();
 
-        function initiateChat(userId) {
+                    if (data.messages.length > 0) {
+                        $.each(data.messages, function (index, message) {
+                            displayChatMessage(message);
+                        });
+                    }
+                }
+            });
+        }
+        // Function to display chat messages
+        function displayChatMessage(message) {
+            var chatMessages = $("#chat-messages");
+            chatMessages.append("<p>" + message.sender + ": " + message.content + "</p>");
+        }
+        function initiateChat(userId, chatId) {
             // Open the chat modal
             $('#chat-modal').modal('show');
 
             // Fetch chat messages using AJAX and display in the modal
             $.ajax({
-                url: "{% url 'fetch_chat_history' %}",
+                url: "{% url 'chats:fetch_chat_history' %}",
                 method: "GET",
                 data: { user_id: userId },
                 success: function (data) {
@@ -150,25 +181,21 @@
                     var csrfToken = $("input[name=csrfmiddlewaretoken]").val();
 
                     $.ajax({
-                        url: "{% url 'send_message' %}",
+                        url: "{% url 'chats:send_message' %}",
                         method: "POST",
                         data: {
                             user_id: userId,
+                            chat_id: chatId,  // Pass chatId, not chat
                             message: message,
                             csrfmiddlewaretoken: csrfToken,
                         },
                         success: function () {
                             messageInput.val("");
+                            loadChatHistory(userId);
                         }
                     });
                 }
             });
-
-            // Function to display chat messages
-            function displayChatMessage(message) {
-                var chatMessages = $("#chat-messages");
-                chatMessages.append("<p>" + message.sender + ": " + message.content + "</p>");
-            }
         }
     });
 </script>
