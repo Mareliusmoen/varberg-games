@@ -57,10 +57,6 @@
                 <img id="modalCardImage">
             </div>
             <div class="custom-modal-footer">
-                <button type="button" class="btn signupbtn orange-btn open-chat-button"
-                    data-seller-id="{{ product.seller.id }}" data-toggle="modal" data-target="#productModal">
-                    Chat with Seller
-                </button>
                 <button type="button" class="p-2 btn signupbtn" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
@@ -92,39 +88,6 @@
 
             // Show the modal
             $('#productModal').modal('show');
-        });
-    });
-</script>
-<script>
-    $(document).ready(function () {
-        $('.open-chat-button').click(function () {
-            var sellerUserId = $(this).data('seller-id');
-
-            // Check if sellerUserId is not empty or null
-            if (sellerUserId) {
-                // Perform the AJAX request to initiate or open the chat
-                $.ajax({
-                    url: '{% url "chats:fetch_chat_history" %}',
-                    method: 'POST',
-                    data: {
-                        user_id: sellerUserId,
-                        csrfmiddlewaretoken: '{{ csrf_token }}'
-                    },
-                    success: function (data) {
-                        if (data.chat_id) {
-                            // Redirect to the chats_view with the chat_id
-                            window.location.href = '{% url "chats:chats_view" %}?chat_id=' + data.chat_id;
-                        } else {
-                            alert('Failed to initiate or open the chat.');
-                        }
-                    },
-                    error: function () {
-                        alert('Error occurred during the chat initiation/opening.');
-                    }
-                });
-            } else {
-                alert('Invalid user ID');
-            }
         });
     });
 </script>
