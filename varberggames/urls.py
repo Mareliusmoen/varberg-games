@@ -16,6 +16,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from dal import autocomplete
+from django.contrib.auth.models import User
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -23,4 +25,5 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
     path('events/', include('events.urls')),
     path('marketplace/', include('marketplace.urls')),
+    path('postman/', include('postman.urls')),
 ]

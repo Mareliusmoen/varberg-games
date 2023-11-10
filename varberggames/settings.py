@@ -47,9 +47,14 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'profiles',
     'events',
-    'channels',
     'marketplace',
+    'dj_pagination',
+    'postman',
 ]
+
+POSTMAN_AUTOCOMPLETER_APP = {
+    'name': 'ajax_select',
+}
 
 SITE_ID = 1
 

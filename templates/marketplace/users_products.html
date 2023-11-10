@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% if user.is_authenticated %}
+{% block content %}
+<div class="container">
+    <div class="text-center mb-3">
+        <a href="{% url 'create_product' %}" class="btn signupbtn orange-btn">New item for sale <i
+                class="fa-solid fa-money-check-dollar"></i></a>
+    </div>
+    <h1>Products For Sale</h1>
+    {% for message in messages %}
+    {% if message.tags %}
+    <div class="{{ message.tags }} message">
+        {% endif %}
+        {{ message }}
+    </div>
+    {% endfor %}
+    <div class="row">
+        {% for product in products %}
+        <div class="col-md-6 mb-6">
+            <div class="card-bg-opacity rounded-5 product-item m-2">
+                <div class="product-item">
+                    <h5 class="card-title">
+                        <a href="#" class="logobtn orange-btn product-title"
+                            data-card_image_url="{{ product.card_image_url }}" data-toggle="modal"
+                            data-target="#productModal" data-title="{{ product.title }}"
+                            data-description="{{ product.description }}" data-price="{{ product.price }}"
+                            data-category="{{ product.category.name }}" data-seller="{{ product.seller.username }}"
+                            data-created="{{ product.created_at }}">
+                            {{ product.title|slice:":25" }}{% if product.title|length > 25 %}...{% endif %}
+                        </a>
+                    </h5>
+                    <p>{{ product.description|slice:":25" }}{% if product.description|length > 25 %}...{% endif %}</p>
+                    <p class="card-text">Price: {{ product.price }} SEK</p>
+                    <p class="card-text">Category: {{ product.category.name }}</p>
+                    <p class="card-text">Seller: {{ product.seller.username }}</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+<!-- Bootstrap Modal for Product Details -->
+<div class="modal fade row justify-content-center" id="productModal" tabindex="-1" role="dialog"
+    aria-labelledby="productModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+        <div class="align-items-center modal-content col-md-6 modal-background rounded-5">
+            <div class="custom-modal-header px-3 text-light p-3">
+                <h5 class="modal-title logobtn" id="productModalLabel">Product Details</h5>
+            </div>
+            <div class="modal-product-background rounded-5 col-md-9 px-3 text-light p-3">
+                <h5 id="modalProductTitle"></h5>
+                <p id="modalProductDescription"></p>
+                <p id="modalProductPrice"></p>
+                <p id="modalProductCategory"></p>
+                <p id="modalProductSeller"></p>
+                <p id="modalProductCreated"></p>
+                <img id="modalCardImage">
+            </div>
+            <div class="custom-modal-footer">
+                <button type="button" class="p-2 btn signupbtn" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% block page_scripts %}
+<script>
+    $(document).ready(function () {
+        // Handle the click event for the product title link
+        $('.product-title').click(function () {
+            var title = $(this).data('title');
+            var description = $(this).data('description');
+            var price = $(this).data('price');
+            var category = $(this).data('category');
+            var seller = $(this).data('seller');
+            var created = $(this).data('created');
+            var cardImage = $(this).data('card_image_url');
+
+            // Log the cardImage URL to the console
+            console.log('Card Image URL:', cardImage);
+
+            $('#modalProductTitle').text(title);
+            $('#modalProductDescription').text(description);
+            $('#modalProductPrice').text('Price: ' + price + ' SEK');
+            $('#modalProductCategory').text('Category: ' + category);
+            $('#modalProductSeller').text('Seller: ' + seller);
+            $('#modalProductCreated').text('Created at: ' + created);
+            $('#modalCardImage').attr('src', cardImage);
+
+            // Show the modal
+            $('#productModal').modal('show');
+        });
+    });
+</script>
+{% endblock %}
+{% endblock %}
+{% endif %}
