@@ -31,7 +31,7 @@ class BaseWriteForm(forms.ModelForm):
         widgets = {
             # for better confort, ensure a 'cols' of at least
             # the 'width' of the body quote formatter.
-            'body': forms.Textarea(attrs={'cols': WRAP_WIDTH, 'rows': 12}),
+            'body': forms.Textarea(attrs={'cols': WRAP_WIDTH, 'rows': 12, 'class': 'custom-textarea', 'placeholder': 'Write your message here...'}),
         }
 
     error_css_class = 'error'
