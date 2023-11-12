@@ -147,9 +147,10 @@ class BaseWriteForm(forms.ModelForm):
 
 
 class WriteForm(BaseWriteForm):
-    recipients = CommaSeparatedUserField(label=_("Recipients"), help_text='')
-    subject = forms.CharField(label=_("Subject"))
-    body = forms.CharField(label=_("Message"), widget=forms.Textarea(attrs={'cols': WRAP_WIDTH, 'rows': 12}))
+    recipients = CommaSeparatedUserField(help_text='', widget=forms.TextInput(attrs={'placeholder': 'Recipient'}))
+    subject = forms.CharField(label=_("Subject"), widget=forms.TextInput(attrs={'placeholder': 'Subject'}))
+    body = forms.CharField(label=_("Message"), widget=forms.Textarea(attrs={'cols': WRAP_WIDTH, 'rows': 12, 'class': 'custom-textarea', 'placeholder': 'Write your message here...'}))
+
 
     class Meta(BaseWriteForm.Meta):
         fields = ('recipients', 'subject', 'body')

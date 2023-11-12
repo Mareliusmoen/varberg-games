@@ -13,8 +13,24 @@
 <div id="postman">
     <form method="post" action="{% url 'postman:write' %}">
         {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" value="Send Message">
+        <div class="form-row">
+            <div class="form-group">
+                {{ form.recipients }}
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                {{ form.subject }}
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                {{ form.body }}
+            </div>
+        </div>
+        <div class="form-row">
+            <input class="postman-nav-btn orange-btn" type="submit" value="Send Message">
+        </div>
     </form>
 </div>
 {% block page_scripts %}
