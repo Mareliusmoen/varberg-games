@@ -58,6 +58,9 @@
                                 <li><a class="dropdown-item orange-btn" href="{% url 'create_event' %}">Create event</a></li>
                             </ul>
                         </div>
+                        <li class="nav-item">
+                            <a class="nav-link orange-btn" aria-current="page" href="{% url 'postman:inbox' %}">Messages</a>
+                        </li>
                         <div class="dropdown">
                             <button class="btn dropdown-toggle orange-btn" type="button" data-bs-toggle="dropdown"
                                 aria-expanded="false">
@@ -66,7 +69,7 @@
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item orange-btn" href="{% url 'product_list' %}">Items for sale</a></li>
                                 <li><a class="dropdown-item orange-btn" href="{% url 'create_product' %}">New item for sale</a></li>
-                                <li><a class="dropdown-item orange-btn" href="{% url 'postman:inbox' %}">Your sale items</a></li>
+                                <li><a class="dropdown-item orange-btn" href="#">Your sale items</a></li>
                             </ul>
                         </div>
                         <li class="nav-item">
