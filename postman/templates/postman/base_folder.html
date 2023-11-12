@@ -19,6 +19,13 @@ in the INSTALLED_APPS setting.
                     <span class="pm_by-mode orange-btn bg-dark p-1 rounded-2">{% if by_message %}<a href="{{ by_conversation_url }}">{% endif %}{% trans "by conversation" %}{% if by_message %}</a>{% endif %}</span>
                     <span class="pm_by-mode orange-btn bg-dark p-1 rounded-2">{% if by_conversation %}<a href="{{ by_message_url }}">{% endif %}{% trans "by message" %}{% if by_conversation %}</a>{% endif %}</span>
                 </div>{% endblock pm_by_modes %}
+                {% for message in messages %}
+                    {% if message.tags %}
+                <div class="{{ message.tags }} message">
+                    {% endif %}
+                    {{ message }}
+                </div>
+                {% endfor %}
                 <form action="{% block pm_form_action %}{% endblock %}" method="post">{% csrf_token %}
                     {% block pm_form_buttons %}<span id="pm_buttons">
                         {% block pm_delete_button %}<button type="submit" class="pm_btn pm_btn-delete postman-nav-btn orange-btn" id="delete-btn">{% trans 'Delete' %}</button>{% endblock %}
