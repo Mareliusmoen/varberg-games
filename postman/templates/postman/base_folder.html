@@ -16,16 +16,16 @@ in the INSTALLED_APPS setting.
         {% else %}
             {% if pm_messages %}
                 {% block pm_by_modes %}<div id="pm_byModes">
-                    <span class="pm_by-mode">{% if by_message %}<a href="{{ by_conversation_url }}">{% endif %}{% trans "by conversation" %}{% if by_message %}</a>{% endif %}</span>
-                    <span class="pm_by-mode">{% if by_conversation %}<a href="{{ by_message_url }}">{% endif %}{% trans "by message" %}{% if by_conversation %}</a>{% endif %}</span>
+                    <span class="pm_by-mode orange-btn bg-dark p-1 rounded-2">{% if by_message %}<a href="{{ by_conversation_url }}">{% endif %}{% trans "by conversation" %}{% if by_message %}</a>{% endif %}</span>
+                    <span class="pm_by-mode orange-btn bg-dark p-1 rounded-2">{% if by_conversation %}<a href="{{ by_message_url }}">{% endif %}{% trans "by message" %}{% if by_conversation %}</a>{% endif %}</span>
                 </div>{% endblock pm_by_modes %}
                 <form action="{% block pm_form_action %}{% endblock %}" method="post">{% csrf_token %}
                     {% block pm_form_buttons %}<span id="pm_buttons">
-                        {% block pm_delete_button %}<button type="submit" class="pm_btn pm_btn-delete" id="delete-btn">{% trans 'Delete' %}</button>{% endblock %}
-                        {% block pm_archive_button %}<button type="submit" class="pm_btn pm_btn-archive" id="archive-btn">{% trans 'Archive' %}</button>{% endblock %}
-                        {% block pm_undelete_button %}<button type="submit" class="pm_btn pm_btn-undelete" id="undelete-btn">{% trans 'Undelete' %}</button>{% endblock %}
-                        {% block pm_read_button %}<button type="submit" class="pm_btn pm_btn-read" id="mark-read-btn">{% trans 'Mark as read' %}</button>{% endblock %}
-                        {% block pm_unread_button %}<button type="submit" class="pm_btn pm_btn-unread" id="mark-unread-btn">{% trans 'Mark as unread' %}</button>{% endblock %}
+                        {% block pm_delete_button %}<button type="submit" class="pm_btn pm_btn-delete postman-nav-btn orange-btn" id="delete-btn">{% trans 'Delete' %}</button>{% endblock %}
+                        {% block pm_archive_button %}<button type="submit" class="pm_btn pm_btn-archive postman-nav-btn orange-btn" id="archive-btn">{% trans 'Archive' %}</button>{% endblock %}
+                        {% block pm_undelete_button %}<button type="submit" class="pm_btn pm_btn-undelete postman-nav-btn orange-btn" id="undelete-btn">{% trans 'Undelete' %}</button>{% endblock %}
+                        {% block pm_read_button %}<button type="submit" class="pm_btn pm_btn-read postman-nav-btn orange-btn" id="mark-read-btn">{% trans 'Mark as read' %}</button>{% endblock %}
+                        {% block pm_unread_button %}<button type="submit" class="pm_btn pm_btn-unread postman-nav-btn orange-btn" id="mark-unread-btn">{% trans 'Mark as unread' %}</button>{% endblock %}
                     </span>{% endblock %}
                     <table id="pm_messages">
                         <thead>
