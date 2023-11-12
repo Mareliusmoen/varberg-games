@@ -1,6 +1,6 @@
 import hashlib
 from importlib import import_module
-
+from django.contrib.auth.models import User
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -273,12 +273,10 @@ class Message(models.Model):
 
     SUBJECT_MAX_LENGTH = 120
 
-    subject = models.CharField(_("subject"), max_length=SUBJECT_MAX_LENGTH)
-    body = models.TextField(_("body"), blank=True)
-    sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='sent_messages',
-        null=True, blank=True, verbose_name=_("sender"))
-    recipient = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='received_messages',
-        null=True, blank=True, verbose_name=_("recipient"))
+    sender = models.ForeignKey(User, on_delete=models.CASCADE)
+    recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='recipient_messages')
+    subject = models.CharField(max_length=255)
+    body = models.TextField()
     email = models.EmailField(_("visitor"), blank=True)  # instead of either sender or recipient, for an AnonymousUser
     parent = models.ForeignKey('self', on_delete=models.CASCADE, related_name='next_messages',
         null=True, blank=True, verbose_name=_("parent message"))
@@ -292,7 +290,7 @@ class Message(models.Model):
     sender_deleted_at = models.DateTimeField(_("deleted by sender at"), null=True, blank=True)
     recipient_deleted_at = models.DateTimeField(_("deleted by recipient at"), null=True, blank=True)
     # moderation fields
-    moderation_status = models.CharField(_("status"), max_length=1, choices=STATUS_CHOICES, default=STATUS_PENDING)
+    moderation_status = models.CharField(_("status"), max_length=1, choices=STATUS_CHOICES, default=STATUS_ACCEPTED)
     moderation_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='moderated_messages',
         null=True, blank=True, verbose_name=_("moderator"))
     moderation_date = models.DateTimeField(_("moderated at"), null=True, blank=True)
@@ -306,7 +304,7 @@ class Message(models.Model):
         ordering = ['-sent_at', '-id']
 
     def __str__(self):
-        return "{0}>{1}:{2}".format(self.obfuscated_sender, self.obfuscated_recipient, Truncator(self.subject).words(5))
+        return f'{self.sender} to {self.recipient}: {self.subject}'
 
     def get_absolute_url(self):
         "Usage is deprecated since v3.3.0, because it doesn't integrate well with the addition of namespaces."

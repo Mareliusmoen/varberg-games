@@ -246,9 +246,11 @@ class WriteView(ComposeMixin, FormView):
         + those of ComposeMixin
 
     """
-    form_classes = (WriteForm, AnonymousWriteForm)
-    autocomplete_channels = ('channel1', 'channel2')
+    form_class = WriteForm
     template_name = 'postman/write.html'
+    success_url = 'postman:inbox'
+    form_classes = [WriteForm, AnonymousWriteForm]
+    autocomplete_channels = None
 
     @sensitive_post_parameters_m
     @never_cache_m
@@ -276,7 +278,7 @@ class WriteView(ComposeMixin, FormView):
                     **{'{0}__in'.format(name_user_as): [r.strip() for r in recipients.split(':') if r and not r.isspace()]}
                 ).order_by(name_user_as))
                 if usernames:
-                    initial['recipients'] = ', '.join(map(force_str, usernames))
+                    initial['recipients'] = usernames[0]
         return initial
 
     def get_form_kwargs(self):
@@ -285,9 +287,23 @@ class WriteView(ComposeMixin, FormView):
             channel = self.autocomplete_channels[1 if self.request.user.is_anonymous else 0]
         else:
             channel = self.autocomplete_channels
-        kwargs['channel'] = channel
+            kwargs['channel'] = channel
         return kwargs
 
+    def form_valid(self, form):
+        recipients = form.cleaned_data.get('recipients')
+        subject = form.cleaned_data.get('subject')
+        body = form.cleaned_data.get('body')
+
+        # Assuming recipients is already a list of usernames
+        recipient_usernames = recipients
+        recipients = User.objects.filter(username__in=recipient_usernames)
+
+        # Now you can save the message to the database with the provided data
+        # You might need to adjust this based on your model structure
+        Message.objects.create(sender=self.request.user, recipient=recipients[0], subject=subject, body=body)
+
+        return super().form_valid(form)
 
 class ReplyView(ComposeMixin, FormView):
     """

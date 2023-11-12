@@ -26,7 +26,7 @@ urlpatterns = [
     re_path(r'^$', IndexView.as_view()),
 
     re_path(r'^api/', include(api_urls)),
-    re_path(r'^write/$', WriteView.as_view(autocomplete_channels=(None,'anonymous_ac')), name='write'),
-    re_path(r'^reply/$', ReplyView.as_view(autocomplete_channel='reply_ac'), name='reply'),
+    re_path(r'^write/$', WriteView.as_view(), name='write'),
+    re_path(r'^reply/$', ReplyView.as_view(), name='reply'),
     path('autocomplete_recipients/', autocomplete_recipients, name='autocomplete_recipients'),
 ]

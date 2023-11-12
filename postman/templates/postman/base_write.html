@@ -4,28 +4,22 @@
 <script type="text/javascript" src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 {% if autocompleter_app.is_active %}{# using the available admin jQuery is enough #}
 {# should not be necessary since AS v1.3 with AJAX_SELECT_BOOTSTRAP set #}
-{#<script type="text/javascript" src="{% static 'admin/js/jquery.min.js' %}"></script>#}
+{#
+<script type="text/javascript" src="{% static 'admin/js/jquery.min.js' %}"></script>#}
 {% endif %}
 {{ form.media }}{# for ajax_selects (v1.3.6 at least) #}
 {% endblock %}
 {% block content %}
 <div id="postman">
-<h1>{% block pm_write_title %}{% endblock %}</h1>
-<form action="{% if next_url %}?next={{ next_url|urlencode }}{% endif %}" method="post">{% csrf_token %}
-<table>
-    {% block pm_write_recipient %}
-    <tr>
-        <th>{{ form.recipients.label_tag }}</th>
-        <td>{{ form.recipients }}</td>
-    </tr>
-    {% endblock %}
-</table>
-<button type="submit" class="btn signupbtn orange-btn">{% trans "Send" %}</button>
-</form>
+    <form method="post" action="{% url 'postman:write' %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Send Message">
+    </form>
 </div>
 {% block page_scripts %}
 <script type="text/javascript">
-    $(function() {
+    $(function () {
         // Initialize autocomplete
         $("#id_recipients").autocomplete({
             source: "{% url 'postman:autocomplete_recipients' %}",

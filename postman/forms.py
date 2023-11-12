@@ -147,9 +147,9 @@ class BaseWriteForm(forms.ModelForm):
 
 
 class WriteForm(BaseWriteForm):
-    """The form for an authenticated user, to compose a message."""
-    # specify help_text only to avoid the possible default 'Enter text to search.' of ajax_select v1.2.5
-    recipients = CommaSeparatedUserField(label=(_("Recipients"), _("Recipient")), help_text='')
+    recipients = CommaSeparatedUserField(label=_("Recipients"), help_text='')
+    subject = forms.CharField(label=_("Subject"))
+    body = forms.CharField(label=_("Message"), widget=forms.Textarea(attrs={'cols': WRAP_WIDTH, 'rows': 12}))
 
     class Meta(BaseWriteForm.Meta):
         fields = ('recipients', 'subject', 'body')
@@ -210,10 +210,10 @@ class QuickReplyForm(BaseReplyForm):
 
 allow_copies = not getattr(settings, 'POSTMAN_DISALLOW_COPIES_ON_REPLY', False)
 class FullReplyForm(BaseReplyForm):
-    """The complete reply form."""
-    if allow_copies:
-        recipients = CommaSeparatedUserField(
-            label=(_("Additional recipients"), _("Additional recipient")), help_text='', required=False)
+    recipients = CommaSeparatedUserField(
+        label=_("Additional recipients"), help_text='', required=False)
+    subject = forms.CharField(label=_("Subject"))
+    body = forms.CharField(label=_("Message"), widget=forms.Textarea(attrs={'cols': WRAP_WIDTH, 'rows': 12}))
 
     class Meta(BaseReplyForm.Meta):
-        fields = (['recipients'] if allow_copies else []) + ['subject', 'body']
+        fields = ['recipients', 'subject', 'body'] if allow_copies else ['subject', 'body']
