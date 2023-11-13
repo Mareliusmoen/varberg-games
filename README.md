@@ -86,9 +86,9 @@ This Django project is made for those that:
     - **JQuery UI,**
     - **JQuery UI Datepicker + timepicker from ......**
     - **Django Autocomplete Light,** to setup atocomplete for recipient user search in messaging functionality.
-    - **Psycopg-2,**
+    - **Psycopg-2,** database driver.
 - ### Databases:
-    - **PostgreSQL,**
+    - **PostgreSQL,** database set up.
 - ### Other tools:
     - **Adobe Illustrator,** for creating the background image.
     - **VS Code,** the IDE used to write all the code.
@@ -132,7 +132,7 @@ The create-event page consists of a Title input-field, Description textarea inpu
 If you check the private event box, you as the creator of a private event will see the access-code for the specific event in the event when you head to your joined events section and this is the code you share with users you would like to join your event.
 
 **Joined events**<br>
-This page lists all the events you have joined/created.
+This page lists all the events you have oined/created.
 Each event lists the event title, description, host, time and date, how many participants and 3 buttons: Communicate(opens a message-board for the specific event), a gray joined "button", and if you are the creator of the event you have a delete button so you can delete the event. All events are sorted so the events that are happing soonest is displayed at the top if the list and sorted in descending order. There is also a code running in heroku everyday at midnight that deletes all events that happened during the day.
 
 **Messages Inbox**<br>
@@ -159,6 +159,15 @@ Each event lists the event title, description, host, time and date, how many par
 ---
 
 ## Future Improvements and Features
+---
+**Social media verification (facebook, Google...)** <br>
+In future releases I would like to add that you can sign up to the site with google, facebook or similar account.
+
+**Add email notifications**
+Add email notifications for new messeges, users joining your events, users show interest in your product for sale.
+
+
+
 
 ---
 
