@@ -299,10 +299,6 @@ class WriteView(ComposeMixin, FormView):
         recipient_usernames = recipients
         recipients = User.objects.filter(username__in=recipient_usernames)
 
-        # Now you can save the message to the database with the provided data
-        # You might need to adjust this based on your model structure
-        Message.objects.create(sender=self.request.user, recipient=recipients[0], subject=subject, body=body)
-
         return super().form_valid(form)
 
 class ReplyView(ComposeMixin, FormView):
