@@ -6,6 +6,12 @@ body {
     background-attachment: fixed;
 }
 
+textarea {
+    background-color: rgba(23, 38, 65, 0.5);
+    border-radius: 10px;
+    color: white;
+}
+
 .product-item {
     height: 250px;
 }
