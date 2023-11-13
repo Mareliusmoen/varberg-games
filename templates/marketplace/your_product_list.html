@@ -16,35 +16,38 @@
     {% endfor %}
     <div class="row">
         {% if products %}
-            {% for product in products %}
-                {% if user.is_authenticated and user == product.seller %}
-                    <div class="col-md-6 mb-6">
-                        <div class="card-bg-opacity rounded-5 product-item m-2">
-                            <div class="product-item">
-                                <h5 class="card-title">
-                                    <a href="#" class="logobtn orange-btn product-title"
-                                        data-card_image_url="{{ product.card_image_url }}" data-toggle="modal"
-                                        data-target="#productModal" data-title="{{ product.title }}"
-                                        data-description="{{ product.description }}" data-price="{{ product.price }}"
-                                        data-category="{{ product.category.name }}" data-seller="{{ product.seller.username }}"
-                                        data-created="{{ product.created_at }}">
-                                        {{ product.title|slice:":25" }}{% if product.title|length > 25 %}...{% endif %}
-                                    </a>
-                                </h5>
-                                <p>{{ product.description|slice:":25" }}{% if product.description|length > 25 %}...{% endif %}</p>
-                                <p class="card-text">Price: {{ product.price }} SEK</p>
-                                <p class="card-text">Category: {{ product.category.name }}</p>
-                                <p class="card-text">Seller: {{ product.seller.username }}</p>
-                            </div>
-                        </div>
-                    </div>
-                {% endif %}
-            {% endfor %}
-        {% else %}
-            <div>You got no products for sale at the moment...</div>
-            
+        {% for product in products %}
+        {% if user.is_authenticated and user == product.seller %}
+        <div class="col-md-6 mb-6">
+            <div class="card-bg-opacity rounded-5 product-item m-2">
+                <div class="product-item">
+                    <h5 class="card-title">
+                        <a href="#" class="logobtn orange-btn product-title"
+                            data-card_image_url="{{ product.card_image_url }}" data-toggle="modal"
+                            data-target="#productModal" data-title="{{ product.title }}"
+                            data-description="{{ product.description }}" data-price="{{ product.price }}"
+                            data-category="{{ product.category.name }}" data-seller="{{ product.seller.username }}"
+                            data-created="{{ product.created_at }}">
+                            {{ product.title|slice:":25" }}{% if product.title|length > 25 %}...{% endif %}
+                        </a>
+                    </h5>
+                    <p>{{ product.description|slice:":25" }}{% if product.description|length > 25 %}...{% endif %}</p>
+                    <p class="card-text">Price: {{ product.price }} SEK</p>
+                    <p class="card-text">Category: {{ product.category.name }}</p>
+                    <p class="card-text">Seller: {{ product.seller.username }}</p>
+                    {% if user.is_authenticated and user == product.seller %}
+                    <a href="{% url 'delete_product' product.id %}" class="btn deletebtn">Delete product</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
         {% endif %}
-        
+        {% endfor %}
+        {% else %}
+        <div>You got no products for sale at the moment...</div>
+
+        {% endif %}
+
     </div>
 </div>
 <!-- Bootstrap Modal for Product Details -->

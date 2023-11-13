@@ -58,3 +58,19 @@ def product_detail(request, product_id):
 def your_product_list(request):
     products = Product.objects.filter(seller=request.user)
     return render(request, 'marketplace/your_product_list.html', {'products': products})
+
+@login_required
+def delete_product(request, product_id):
+    # Check if the user is logged in
+    if not request.user.is_authenticated:
+        return redirect('login')  # Redirect to the login page
+
+    # Get the product by ID
+    product = get_object_or_404(Product, id=product_id)
+
+    # Check if the user is the seller of the product
+    if request.user == product.seller:
+        # Delete the event
+        product.delete()
+    messages.success(request, "You have successfully deleted the item for 	sale.")
+    return redirect('your_product_list')
