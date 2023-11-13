@@ -4,6 +4,55 @@
 You can head to the live website here -----> LINK
 The VBG Games site is a Magic the Gathering and boardgaming network, connecting players in the area in and around Varberg city on the west coast of Sweden. The main goal is to give different playgroups a common site to plan events, sell or buy games, cards and accessories, communicate with eacother. Since the gameshop in Varberg closed down there is no place for people who loves games to connect and meet with likeminded people who are engaged in the same hobby.
 
+## Table of Contents
+
+- [Varberg MtG and Boardgaming Network](#varberg-mtg-and-boardgaming-network)
+  - [About](#about)
+  - [User Experience Design](#user-experience-design)
+    - [Strategy](#strategy)
+    - [Target Audience](#target-audience)
+    - [User Stories](#user-stories)
+  - [Technologies used](#technologies-used)
+    - [Languages](#languages)
+    - [Frameworks and Libraries](#frameworks-and-libraries)
+    - [Databases](#databases)
+    - [Other tools](#other-tools)
+  - [Features](#features)
+    - [Landing page/Homepage](#landing-pagehomepage)
+    - [Login](#login)
+    - [Register new user](#register-new-user)
+    - [Logged-in welcome](#logged-in-welcome)
+    - [Log-out](#log-out)
+    - [Browse events](#browse-events)
+    - [Events communication](#events-communication)
+    - [Create event](#create-event)
+    - [Joined events](#joined-events)
+    - [Messages Inbox](#messages-inbox)
+    - [Sent messages box](#sent-messages-box)
+    - [Deleted messages box](#deleted-messages-box)
+    - [Archived messages box](#archived-messages-box)
+    - [Write new message](#write-new-message)
+    - [Message conversation](#message-conversation)
+    - [Marketplace all products for sale](#marketplace-all-products-for-sale)
+    - [Create a new product for sale](#create-a-new-product-for-sale)
+    - [Your products for sale overview](#your-products-for-sale-overview)
+  - [Future Improvements and Features](#future-improvements-and-features)
+  - [Design](#design)
+    - [Color Scheme](#color-scheme)
+    - [Typography](#typography)
+    - [Imagery](#imagery)
+    - [Wireframes](#wireframes)
+  - [Information Architecture](#information-architecture)
+    - [Database](#database)
+    - [Data Modeling](#data-modeling)
+  - [Testing](#testing)
+  - [Deployment](#deployment)
+    - [Heroku](#heroku)
+    - [Create Database on ElephantSQL](#create-database-on-elephantsql)
+    - [Local Deployment](#local-deployment)
+  - [Credits](#credits)
+  - [Acknowledgments](#acknowledgments)
+
 ## User Experience Design
 ---
 ### Strategy
@@ -84,6 +133,7 @@ This page lists all the events you have joined/created.
 Each event lists the event title, description, host, time and date, how many participants and 3 buttons: Communicate(opens a message-board for the specific event), a gray joined "button", and if you are the creator of the event you have a delete button so you can delete the event. All events are sorted so the events that are happing soonest is displayed at the top if the list and sorted in descending order. There is also a code running in heroku everyday at midnight that deletes all events that happened during the day.
 
 **Messages Inbox**
+
 
 **Sent messages box**
 
