@@ -4,6 +4,7 @@ from .forms import ProductForm
 from mtgsdk import Card
 import requests
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 
 def create_product(request):
     if request.method == 'POST':
@@ -52,3 +53,8 @@ def product_list(request):
 def product_detail(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     return render(request, 'marketplace/product_detail.html', {'product': product})
+
+@login_required
+def your_product_list(request):
+    products = Product.objects.filter(seller=request.user)
+    return render(request, 'marketplace/your_product_list.html', {'products': products})
