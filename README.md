@@ -163,7 +163,16 @@ Each event lists the event title, description, host, time and date, how many par
 
 ### Color Scheme
 
-The colorscheme was taken from the color-design book ADDCOLORDESIGNBOOKHERE, it was chosen for its calm blue colors with the playful orange and red complimenting-colors.
+The colorscheme was taken from the color-design book Papier Tigre Color Inspiration volume 2, it was chosen for its calm blue colors with the playful orange and red complimenting-colors.
+The RGB codes are: <br>
+
+R23 G38 B65 <div style="width: 50px; height: 50px; background-color: rgb(23, 38, 65);"></div>
+
+R56 G67 B109 <div style="width: 50px; height: 50px; background-color: rgb(56, 67, 109);"></div>
+
+R237 G105 B102 <div style="width: 50px; height: 50px; background-color: rgb(237, 105, 102);"></div>
+
+R185 G24 B24 <div style="width: 50px; height: 50px; background-color: rgb(185, 24, 24);"></div>
 
 ### Typography
 From Google Fonts the 'Wellfleet' was chosen for it's playful look and easy readability, and the back up if not supported is standard 'monospace'.
