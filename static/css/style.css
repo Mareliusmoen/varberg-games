@@ -120,6 +120,65 @@ body {
     color: rgb(185, 24, 24);
 }
 
+.pm_action {
+    background-color: rgb(56, 67, 109);
+    border: 1px solid rgb(23, 38, 65);
+    color: rgb(237, 105, 102);
+    padding: 3px;
+    border-radius: 5px;
+
+}
+
+.pm_action:hover {
+    background-color: rgb(23, 38, 65);
+    border: 1px solid rgb(56, 67, 109);
+    color: rgb(185, 24, 24);
+}
+
+.pm_btn:hover {
+    background-color: rgb(23, 38, 65);
+    border: 1px solid rgb(56, 67, 109);
+    color: rgb(185, 24, 24);
+}
+
+.pm_date {
+    color : rgba(211, 211, 211, 0.6);
+}
+
+.pm_subject {
+    color : rgba(211, 211, 211, 0.6);
+}
+
+.pm_header {
+    padding-top: 5px;
+}
+
+.pm_sender {
+    border: 1px solid white;
+    border-radius: 5px;
+    padding: 2px;
+}
+
+.pm_recipient {
+    border: 1px solid white;
+    border-radius: 5px;
+    padding: 2px;
+}
+
+.pm_message {
+    background-color: rgba(23, 38, 65, 0.5);
+    border-radius: 10px;
+    border: 1px solid rgb(56, 67, 109);
+    margin-top: 5px;
+}
+
+#pm_messages thead a {
+    text-decoration: none;
+    color: white;
+    border-radius: 5px;
+    border: white 1px solid;
+    padding: 3px;
+}
 
 .delete-comment {
     color: rgb(185, 24, 24);
@@ -195,10 +254,4 @@ select.form-control:focus {
     background-color: rgba(56, 67, 109, 0.5);
 }
 
-#pm_messages thead a {
-    text-decoration: none;
-    color: white;
-    border-radius: 5px;
-    border: white 1px solid;
-    padding: 3px;
-}
+
