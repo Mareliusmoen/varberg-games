@@ -31,6 +31,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['vareberg-games-a44cb52aa87b.herokuapp.com', 'localhost', '127.0.0.1']
 
+ACCOUNT_EMAIL_VERIFICATION = "none"
 
 # Application definition
 

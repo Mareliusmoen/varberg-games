@@ -7,7 +7,7 @@ from django.shortcuts import redirect, render
 
 class CustomSignupView(SignupView):
     form_class = CustomSignupForm
-    success_url = '/'
+    success_url = '/accounts/login'
 
     def form_valid(self, form):
         response = super().form_valid(form)
