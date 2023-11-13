@@ -186,6 +186,12 @@ textarea {
     padding: 3px;
 }
 
+#delete-btn, #archive-btn, #mark-read-btn, #mark-unread-btn, .pm_btn {
+    margin-top: 15px;
+    margin-bottom: 20px;
+}
+
+
 .delete-comment {
     color: rgb(185, 24, 24);
 }
