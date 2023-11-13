@@ -13,7 +13,7 @@ body {
 /* Items background styling*/
 
 .bg-dark {
-    --bs-bg-opacity: .5;
+    --bs-bg-opacity: .7;
     background-color: rgba(var(--bs-dark-rgb), var(--bs-bg-opacity)) !important;
 }
 
@@ -195,3 +195,10 @@ select.form-control:focus {
     background-color: rgba(56, 67, 109, 0.5);
 }
 
+#pm_messages thead a {
+    text-decoration: none;
+    color: white;
+    border-radius: 5px;
+    border: white 1px solid;
+    padding: 3px;
+}
