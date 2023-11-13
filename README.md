@@ -1,7 +1,7 @@
 # Varberg MtG and boardgaming Network
 
 ## About
-You can head to the live website here -----> LINK
+You can head to the live website here -----> LINK <br>
 The VBG Games site is a Magic the Gathering and boardgaming network, connecting players in the area in and around Varberg city on the west coast of Sweden. The main goal is to give different playgroups a common site to plan events, sell or buy games, cards and accessories, communicate with eacother. Since the gameshop in Varberg closed down there is no place for people who loves games to connect and meet with likeminded people who are engaged in the same hobby.
 
 ## Table of Contents
@@ -84,6 +84,9 @@ This Django project is made for those that:
     - **Django Allauth,** 
     - **JQuery,**
     - **JQuery UI,**
+    - **JQuery UI Datepicker + timepicker from ......**
+    - **Django Autocomplete Light,** to setup atocomplete for recipient user search in messaging functionality.
+    - **Psycopg-2,**
 - ### Databases:
     - **PostgreSQL,**
 - ### Other tools:
@@ -101,55 +104,55 @@ This Django project is made for those that:
 
 ## Features
 ---
-**Landing page/Homepage**
+**Landing page/Homepage** <br>
 A straightforward landing page with a short welcome-message, links to register or sign in right next to the welcome-message. There is also a nav-bar that only contains the options login or register before you sign in.
 
-**Login**
+**Login**<br>
 The login asks the user to input their username and password, there is also a button if you forgot your passwrod to allow the user to reset it with their email address. Error/success messages pop-in to give the user feedback if the login was successful or if there was an error.
 
-**Register new user**
+**Register new user**<br>
 Allows new visitors to register as users of the site, they need to type in: Username(required), Email(required), Password and confirm password(required), First Name and Last Name.
 
-**Logged-in welcome**
+**Logged-in welcome**<br>
 Message that says 'Welcome, you're successfully signed in'. and a automatic Django message that confirms your login. Now that you're signed in as a authenticated user the nav-bar chenges and gives you access to all parts of the site: Events, Messaging, Marketplace and Logout.
 
-**Log-out**
+**Log-out**<br>
 When the logged in user clicks the logout button in the nav bar the get redirected to a confirmation page that asks if the user is sure they want to sign out and the signout button to confirm. The nav-bar is there for the user regret their logout descion and head to another part of the site.
 
-**Browse events**
+**Browse events**<br>
 This page lists all the available public events. at the top there is also a button for creating new events and a input field to type in a access-code if another user have giiven you access to one of their private events. If you type a correct code you're automatically added as a participant and you get a django message confirming, if it is not a correct access code you get a django error message explaining that.
 Each event lists the event title, description, host, time and date, how many participants and 3 buttons: Communicate(opens a message-board for the specific event), join button(if you already have joined its a gray joined "button"), and if you are the creator of the event you have a delete button so you can delete the event. All events are sorted so the events that are happing soonest is displayed at the top if the list and sorted in descending order. There is also a code running in heroku everyday at midnight that deletes all events that happened during the day.
 
-**Events communication**
+**Events communication**<br>
 When the communicate button for an event is clicked you're brought to a chat-like messaging page for the specific event, all users that have access to the event(for public-events all signed in users, for private events everyone with the access-code) can read and write messages in the communicate page. This feature makes it great for potential perticipants and particapants alike to ask questions to the creator or eachother, so that Q&A's that perhaps more than one user is wondering is answered and available in a logical place. The creator of each message has the opportunity to delete their own messages.
 The communicate page also displays the event-information at the top of the page so that it's easily accessible.
 
-**Create event**
+**Create event**<br>
 The create-event page consists of a Title input-field, Description textarea input, datetime-picker and a checkbox to make a private event.
 If you check the private event box, you as the creator of a private event will see the access-code for the specific event in the event when you head to your joined events section and this is the code you share with users you would like to join your event.
 
-**Joined events**
+**Joined events**<br>
 This page lists all the events you have joined/created.
 Each event lists the event title, description, host, time and date, how many participants and 3 buttons: Communicate(opens a message-board for the specific event), a gray joined "button", and if you are the creator of the event you have a delete button so you can delete the event. All events are sorted so the events that are happing soonest is displayed at the top if the list and sorted in descending order. There is also a code running in heroku everyday at midnight that deletes all events that happened during the day.
 
-**Messages Inbox**
+**Messages Inbox**<br>
 
 
-**Sent messages box**
+**Sent messages box**<br>
 
-**Deleted messages box**
+**Deleted messages box**<br>
 
-**Archived messages box**
+**Archived messages box**<br>
 
-**Write new message**
+**Write new message**<br>
 
-**Message conversation**
+**Message conversation**<br>
 
-**Marketplace all products for sale**
+**Marketplace all products for sale**<br>
 
-**Create a new product for sale**
+**Create a new product for sale**<br>
 
-**Your products for sale overview**
+**Your products for sale overview**<br>
 
 
 
