@@ -74,33 +74,33 @@ This Django project is made for those that:
 ## Technologies used
 ---
 - ### Languages:
-    - **Python,** used to program the server-side of the project/website.
-    - **HTML 5,** used to create the website.
-    - **CSS 3,** used to style the website.
-    - **JavaScript,** used for interactive elements of the website.
+    - **Python:** Powers the server-side logic.
+    - **HTML 5:** Structures the website content.
+    - **CSS 3:** Styles and beautifies the website.
+    - **JavaScript:** Drives website interactivity.
     
-- ### Frameworks and libraries:
-    - **Django,**
-    - **Django Allauth,** 
-    - **JQuery,**
-    - **JQuery UI,**
-    - **JQuery UI Datepicker + timepicker from ......**
-    - **Django Autocomplete Light,** to setup atocomplete for recipient user search in messaging functionality.
-    - **Psycopg-2,** database driver.
+- ### Frameworks and Libraries:
+    - **Django:** The core web framework.
+    - **Django Allauth:** Manages user authentication.
+    - **JQuery & JQuery UI:** Simplifies JavaScript operations and UI interactions.
+    - **JQuery UI Datepicker + timepicker:** Handles date and time selections.
+    - **Django Autocomplete Light:** Enables user search autocomplete functionality.
+    - **Psycopg-2:** Interfaces with the PostgreSQL database.
+    
 - ### Databases:
-    - **PostgreSQL,** database set up.
-- ### Other tools:
-    - **Adobe Illustrator,** for creating the background image.
-    - **VS Code,** the IDE used to write all the code.
-    - **Chrome DevTools,** used to debug issues and code during development.
-    - **Pip3,** used as package manager to install all dependencies.
-    - **Git,** used as version control system for all code.
-    - **GitHub,** used to host projects source code.
-    - **GitHub Projects,** used to keep track of User Stories and project progress during the development process.
-    - **FontAwesome,** used for all icons in the project.
-    - **Google Fonts,** used for the websites font.
-    - **Postman,** used as messaging service.
----
+    - **PostgreSQL:** Stores application data.
+
+- ### Tools:
+    - **Adobe Illustrator:** Creates custom graphics.
+    - **VS Code:** The chosen Integrated Development Environment (IDE).
+    - **Chrome DevTools:** Debugs and profiles code.
+    - **Pip3:** Manages Python package dependencies.
+    - **Git:** Controls version history.
+    - **GitHub:** Hosts the project's source code.
+    - **GitHub Projects:** Tracks project progress and user stories.
+    - **FontAwesome:** Supplies the website's icons.
+    - **Google Fonts:** Provides the website's typography.
+    - **Postman:** Facilitates internal messaging service.
 
 ## Features
 ---
@@ -260,9 +260,11 @@ The project was deployed to [Heroku](https://www.heroku.com) using the below pro
 ### Local Deployment
 
 ## Credits
-- Postman messeging service from: https://django-postman.readthedocs.io/en/latest/ is used to allow registered users to message eachother within the site.
+- Postman messeging service from: [link](https://django-postman.readthedocs.io/en/latest/) is used to allow registered users to message eachother within the site. Thanks for providing a almost 'out-of-the-box' experience.
+- Bootstrap 5 and it's detailed documentation made the frontend part of the programming very smooth and easy. [link](https://getbootstrap.com/docs/5.0/getting-started/introduction/)
 - 
 
 ---
 
 ## Acknowledgments
+- Thanks to my mentor Alex K. [GitHub](https://github.com/lexach91), for patiently listening to my plans and helping out when problems arose.
