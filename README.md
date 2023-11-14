@@ -136,24 +136,31 @@ This page lists all the events you have oined/created.
 Each event lists the event title, description, host, time and date, how many participants and 3 buttons: Communicate(opens a message-board for the specific event), a gray joined "button", and if you are the creator of the event you have a delete button so you can delete the event. All events are sorted so the events that are happing soonest is displayed at the top if the list and sorted in descending order. There is also a code running in heroku everyday at midnight that deletes all events that happened during the day.
 
 **Messages Inbox**<br>
-
+The inbox feature in the project provides a centralized location for users to manage and view their received messages. It allows registered users to communicate with each other within the site, facilitating efficient and convenient communication.
 
 **Sent messages box**<br>
+The sent message box feature in the project allows users to keep track of the messages they have sent to other users within the site. It provides a convenient way to view and manage sent messages, ensuring that users have a complete record of their communication history.
 
 **Deleted messages box**<br>
+The deleted messages box feature in the project provides a dedicated space for users to store and manage their deleted messages. It offers a convenient way to recover accidentally deleted messages or permanently remove unwanted messages from the system.
 
 **Archived messages box**<br>
+The archived messages box feature in the project offers users a dedicated space to store and manage their archived messages. It provides a convenient way to declutter the main inbox while still retaining access to important or historical conversations.
 
 **Write new message**<br>
+The write new message feature in the project allows users to compose and send new messages to other users within the site. It provides a convenient and intuitive interface for initiating and engaging in conversations.
 
 **Message conversation**<br>
+The message conversation feature in the project allows users to view and manage their conversations with other users in a streamlined and intuitive interface. This feature is designed to facilitate seamless and efficient communication within the site.
 
 **Marketplace all products for sale**<br>
+The marketplace feature in the project serves as a platform where users can view all available products for sale and display their own products. It provides a seamless and user-friendly interface for exploring, comparing, selling and purchasing products.
 
 **Create a new product for sale**<br>
+The create new product for sale feature in the project allows users to list their own products for sale in the Marketplace. It offers an intuitive interface for users to enter product details and create new listings.
 
 **Your products for sale overview**<br>
-
+The user's products for sale overview feature in the project provides users with a comprehensive dashboard to manage all their product listings in the marketplace.
 
 
 ---
@@ -190,10 +197,10 @@ R185 G24 B24 <div style="width: 50px; height: 50px; background-color: rgb(185, 2
 From Google Fonts the 'Wellfleet' was chosen for it's playful look and easy readability, and the back up if not supported is standard 'monospace'.
 
 ### Imagery
-Background image is created by me (Marelius Moen) in Adobe Illustrator, the design of the background is inspired by the occean which is a very important part of the coastal-city Varbergs image.
+Background image is created by me (Marelius Moen) in Adobe Illustrator, the design of the background is inspired by the occean which is a very important part of the coastal-city Varbergs image. These visuals add visual interest and enhance the user experience, making the site more engaging and visually appealing.
 
 ### Wireframes
-
+Before starting the development of the VBG Games site, wireframes were created to plan and visualize the layout and structure of the different pages. These wireframes served as a blueprint for the design process, ensuring a cohesive and user-friendly interface.
 ---
 
 ## Information Architecture
