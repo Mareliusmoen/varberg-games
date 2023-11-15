@@ -36,7 +36,8 @@
                     <p class="card-text">Category: {{ product.category.name }}</p>
                     <p class="card-text">Seller: {{ product.seller.username }}</p>
                     {% if user.is_authenticated and user == product.seller %}
-                    <a href="{% url 'delete_product' product.id %}" class="btn deletebtn">Delete product</a>
+                    <a href="{% url 'edit_product' product.id %}" class="btn signupbtn orange-btn m-1 btn-sm">Edit product</a>
+                    <a href="{% url 'delete_product' product.id %}" class="btn deletebtn product-delete-btn btn-sm">Delete product</a>
                     {% endif %}
                 </div>
             </div>

@@ -33,6 +33,13 @@
                     <p class="card-text">Price: {{ product.price }} SEK</p>
                     <p class="card-text">Category: {{ product.category.name }}</p>
                     <p class="card-text">Seller: {{ product.seller.username }}</p>
+                    <div>
+                        {% if user.is_authenticated and user == product.seller %}
+                        <a href="{% url 'edit_product' product.id %}" class="btn signupbtn orange-btn m-1 btn-sm">Edit
+                            product</a>
+                        <a href="{% url 'delete_product' product.id %}" class="btn deletebtn product-delete-btn btn-sm">Delete product</a>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>
@@ -75,6 +82,7 @@
             var created = $(this).data('created');
             var cardImage = $(this).data('card_image_url');
 
+
             // Log the cardImage URL to the console
             console.log('Card Image URL:', cardImage);
 
@@ -85,6 +93,7 @@
             $('#modalProductSeller').text('Seller: ' + seller);
             $('#modalProductCreated').text('Created at: ' + created);
             $('#modalCardImage').attr('src', cardImage);
+
 
             // Show the modal
             $('#productModal').modal('show');

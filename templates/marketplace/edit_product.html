@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% if user.is_authenticated %}
+{% block content %}
+<h1>Edit Product</h1>
+<div class="container d-flex justify-content-center align-items-center">
+    <form method="post" class="edit_product" id="edit_product" action="{% url 'edit_product' product.id %}">
+        {{ form.non_field_errors | safe }}
+        {% csrf_token %}
+        <div class="row g-2">
+            <div class="col-12">
+                <div class="form-floating form-group">
+                    {{ form.title }}
+                    {{ form.title.errors|safe }}
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="form-floating form-group">
+                    {{ form.description }}
+                    {{ form.description.errors|safe }}
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="form-floating form-group">
+                    {{ form.price }}
+                    {{ form.price.errors|safe }}
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="form-floating form-group">
+                    {{ form.category }}
+                    {{ form.category.errors|safe }}
+                </div>
+            </div>
+            <input type="text" id="card-name" name="card_name" placeholder="Search for a card...">
+            <div id="card-suggestions"></div>
+            <div class="align-items-center">
+                {% if redirect_field_value %}
+                <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+                {% endif %}
+                <button class="btn signupbtn orange-btn" type="submit"><i class="fa-solid fa-check"></i> Create
+                    product</button>
+            </div>
+        </div>
+    </form>
+</div>
+{% block page_scripts %}
+<script>
+    $(document).ready(function () {
+        $("#card-name").on("input", function () {
+            const cardName = $(this).val();
+            if (cardName.length >= 3) {
+                fetchCardNameSuggestions(cardName);
+            } else {
+                $("#card-suggestions").html("");
+            }
+        });
+
+        function fetchCardNameSuggestions(cardName) {
+            const apiUrl = "https://api.magicthegathering.io/v1/cards";
+            const params = { name: cardName };
+
+            $.get(apiUrl, params, function (data) {
+                const cards = data.cards;
+
+                const suggestionsList = $("#card-suggestions");
+                suggestionsList.empty();
+
+                cards.forEach((card) => {
+                    const cardName = card.name;
+                    const imageUrl = card.imageUrl;
+
+                    const suggestionDiv = $(`<div class="suggestion"></div>`);
+                    suggestionDiv.append($(`<img src="${imageUrl}" alt="${cardName}"/>`));
+                    suggestionDiv.append($(`<span>${cardName}</span>`));
+
+                    suggestionsList.append(suggestionDiv);
+
+                    suggestionDiv.click(function () {
+                        $("#card-name").val(cardName);
+                        suggestionsList.empty();
+                    });
+                });
+            });
+        }
+    });
+</script>
+{% endblock %}
+{% endblock %}
+{% endif %}

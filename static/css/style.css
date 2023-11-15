@@ -12,10 +12,6 @@ textarea {
     color: white;
 }
 
-.product-item {
-    height: 250px;
-}
-
 /* Items background styling*/
 
 .bg-dark {
@@ -35,6 +31,10 @@ textarea {
 .card-bg-opacity {
     background-color: rgba(23, 38, 65, 0.5);
     border: 1px solid rgb(23, 38, 65);
+}
+
+.card-bg-opacity:hover {
+    border: 1px solid rgba(237, 105, 102, 0.5);
 }
 
 .dropdown-menu {
@@ -67,6 +67,20 @@ textarea {
 }
 
 /* Buttons styling */
+
+.product-delete-btn {
+    margin-bottom: 20px;
+}
+
+.product-title {
+    border: 1px solid rgba(237, 105, 102, 0.5);
+    border-radius: 5px;
+}
+
+.product-title:hover {
+    border: 1px solid
+    rgb(185, 24, 24)
+}
 
 .logobtn {
     text-decoration: none;
@@ -267,3 +281,7 @@ select.form-control:focus {
 }
 
 
+.modal-dialog-scrollable .modal-content {
+    max-height: calc(100vh - 1rem);
+    overflow-y: auto;
+}
