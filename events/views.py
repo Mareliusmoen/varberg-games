@@ -57,10 +57,34 @@ def generate_access_code():
     return ''.join(random.choice(characters) for _ in range(length))
 
 @login_required
+def edit_event(request, event_id):
+    # Get the event by ID
+    event = get_object_or_404(Event, id=event_id)
+    
+    # Checks if the logged in user is the creator of the event
+    if request.user == event.creator:
+        if request.method == 'POST':
+            # form is filled in with the existing data
+            form = EventForm(request.POST, instance=event)
+            if form.is_valid():
+                # Save the updated event
+                form.save()
+                messages.success(request, "You have successfully edited the event.")
+                return redirect('joined_events') 
+        else:
+            # Display the form with existing data
+            form = EventForm(instance=event)
+        
+        # Pass both the form and the event to the template
+        return render(request, 'edit_event.html', {'form': form, 'event': event})
+    else:
+        messages.error(request, "You do not have permission to edit this event.")
+        return redirect('joined_events')
+@login_required
 def delete_event(request, event_id):
     # Check if the user is logged in
     if not request.user.is_authenticated:
-        return redirect('login')  # Redirect to the login page
+        return redirect('login')
 
     # Get the event by ID
     event = get_object_or_404(Event, id=event_id)

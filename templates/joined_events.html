@@ -28,6 +28,9 @@
                     <li><i class="fa-solid fa-key"></i> {{ event.access_code }}</li>
                 {% endif %}
             </ul>
+            <div>
+                <a href="{% url 'edit_event' event.id %}" class="btn signupbtn orange-btn m-1 btn-sm">Edit Event</a>
+            </div>
             {% endif %}
             <a href="{% url 'event_detail' event.id %}" class="btn signupbtn orange-btn">Communicate <i class="fa-solid fa-comments"></i></a>
             <button type="button" class="btn signupbtn orange-btn" disabled>Joined</button>

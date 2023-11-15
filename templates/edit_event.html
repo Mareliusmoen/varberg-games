@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% if user.is_authenticated %}
+{% block content %}
+<h1 class="text-center">Edit event</h1>
+
+<div class="container d-flex justify-content-center align-items-center">
+    <form method="post" class="edit_event" id="edit_event" action="{% url 'edit_event' event_id=event.id %}">
+        {{ form.non_field_errors | safe }}
+        {% csrf_token %}
+        <div class="row g-2">
+            <div class="col-12">
+                <div class="form-floating form-group">
+                    {{ form.title }}
+                    {{ form.title.errors|safe }}
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="form-floating form-group">
+                    {{ form.description }}
+                    {{ form.description.errors|safe }}
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="form-floating form-group">
+                    {{ form.date }}
+                    {{ form.date.errors|safe }}
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="form-floating form-group">
+                    <i class="fa-solid fa-lock"></i>  Is this a private event?
+                    {{ form.is_private }}
+                    {{ form.is_private.errors|safe }}
+                </div>
+            </div>
+            <div class="align-items-center">
+                {% if redirect_field_value %}
+                <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+                {% endif %}
+                <button class="btn signupbtn orange-btn" type="submit"><i class="fa-solid fa-check"></i> Save changes</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+{% block page_scripts %}
+<!-- Format the datetimepicker -->
+<script>
+    $(document).ready(function () {
+        $("#datetimepicker").datetimepicker({
+            dateFormat: 'm/d/yy',
+            timeFormat: 'HH:mm',
+            dropdown: true,
+            scrollbar: true,
+            interval: 30,
+        });
+    });
+</script>
+{% endblock %}
+{% endblock %}
+
+{% endif %}

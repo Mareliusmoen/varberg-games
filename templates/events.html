@@ -35,6 +35,11 @@
             <p class="card-text"><i class="fa-regular fa-calendar-days"></i> <i class="fa-solid fa-clock"></i> {{ event.date }}</p>
             <p class="card-text">Created by <i class="fa-solid fa-user"></i> : {{ event.creator.username }}</p>
             <p class="card-text">Participants: {{ event.participants.count }}</p>
+            <div>
+                {% if user.is_authenticated and user == event.creator %}
+                <a href="{% url 'edit_event' event.id %}" class="btn signupbtn orange-btn m-1 btn-sm">Edit Event</a>
+                {% endif %}
+            </div>
             <a href="{% url 'event_detail' event.id %}" class="btn signupbtn orange-btn">Communicate <i class="fa-solid fa-comments"></i></a>
             {% if request.user in event.participants.all %}
             <button type="button" class="btn signupbtn orange-btn" disabled>Joined</button>
