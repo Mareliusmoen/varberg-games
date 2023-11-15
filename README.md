@@ -135,6 +135,9 @@ If you check the private event box, you as the creator of a private event will s
 This page lists all the events you have oined/created.
 Each event lists the event title, description, host, time and date, how many participants and 3 buttons: Communicate(opens a message-board for the specific event), a gray joined "button", and if you are the creator of the event you have a delete button so you can delete the event. All events are sorted so the events that are happing soonest is displayed at the top if the list and sorted in descending order. There is also a code running in heroku everyday at midnight that deletes all events that happened during the day.
 
+**Edit events**<br>
+This part of the event app implements a robust and intuitive event editing functionality specifically designed for the event creators. This allows you to have full control over the event details and make adjustments as necessary.
+
 **Messages Inbox**<br>
 The inbox feature in the project provides a centralized location for users to manage and view their received messages. It allows registered users to communicate with each other within the site, facilitating efficient and convenient communication.
 
