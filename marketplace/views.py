@@ -5,6 +5,8 @@ from mtgsdk import Card
 import requests
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
 
 def create_product(request):
     if request.method == 'POST':
@@ -115,3 +117,17 @@ def delete_product(request, product_id):
         product.delete()
     messages.success(request, "You have successfully deleted the item for 	sale.")
     return redirect('your_product_list')
+
+@csrf_exempt
+def product_sold(request):
+    if request.method == 'POST':
+        product_id = request.POST.get('product_id')
+        try:
+            product = Product.objects.get(id=product_id)
+            product.sold = True
+            product.save()
+            return JsonResponse({"success": True})
+        except Product.DoesNotExist:
+            return JsonResponse({"success": False, "error": "Product does not exist"})
+    else:
+        return JsonResponse({"success": False, "error": "Invalid request"})

@@ -16,3 +16,4 @@ class Product(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     card_name = models.CharField(max_length=255, blank=True, null=True)
     card_image_url = models.URLField(null=True, blank=True)
+    sold = models.BooleanField(default=False)

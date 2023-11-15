@@ -17,7 +17,7 @@
     <div class="row">
         {% for product in products %}
         <div class="col-md-6 mb-6">
-            <div class="card-bg-opacity rounded-5 product-item m-2">
+            <div class="card-bg-opacity rounded-5 product-card m-2 {% if product.sold %}sold{% endif %}" data-id="{{ product.id }}">
                 <div class="product-item">
                     <h5 class="card-title">
                         <a href="#" class="logobtn orange-btn product-title"
@@ -37,7 +37,13 @@
                         {% if user.is_authenticated and user == product.seller %}
                         <a href="{% url 'edit_product' product.id %}" class="btn signupbtn orange-btn m-1 btn-sm">Edit
                             product</a>
+                        <button class="btn sold-button sold-btn orange-btn btn-sm">Mark as Sold</button>
                         <a href="{% url 'delete_product' product.id %}" class="btn deletebtn product-delete-btn btn-sm">Delete product</a>
+                        {% endif %}
+                        {% if product.sold %}
+                        <div class="sold-overlay active"><h1>Sold</h1></div>
+                        {% else %}
+                        <div class="sold-overlay"><h1>Sold</h1></div>
                         {% endif %}
                     </div>
                 </div>
@@ -99,6 +105,45 @@
             $('#productModal').modal('show');
         });
     });
+$(document).ready(function () {
+    // Function to get csrf token from cookies
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    
+    var csrftoken = getCookie('csrftoken');
+    
+    $('.sold-button').on('click', function() {
+        var productId = $(this).closest('.product-card').data('id');
+
+        $.ajax({
+            url: "{% url 'product_sold' %}",
+            type: 'POST',
+            beforeSend: function(xhr) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            },
+            data: {
+                'product_id': productId
+            },
+            success: function(response) {
+                if (response.success) {
+                    $('.product-card[data-id="' + productId + '"]').addClass('sold').find('.sold-overlay').addClass('active');
+                }
+            }
+        });
+    });
+});
 </script>
 {% endblock %}
 {% endblock %}

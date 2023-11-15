@@ -19,7 +19,8 @@
         {% for product in products %}
         {% if user.is_authenticated and user == product.seller %}
         <div class="col-md-6 mb-6">
-            <div class="card-bg-opacity rounded-5 product-item m-2">
+            <div class="card-bg-opacity rounded-5 product-item m-2 {% if product.sold %}sold{% endif %}"
+                data-id="{{ product.id }}">
                 <div class="product-item">
                     <h5 class="card-title">
                         <a href="#" class="logobtn orange-btn product-title"
@@ -31,15 +32,27 @@
                             {{ product.title|slice:":25" }}{% if product.title|length > 25 %}...{% endif %}
                         </a>
                     </h5>
-                    <p>{{ product.description|slice:":25" }}{% if product.description|length > 25 %}...{% endif %}</p>
+                    <p>{{ product.description|slice:":25" }}{% if product.description|length > 25 %}...{% endif %}
+                    </p>
                     <p class="card-text">Price: {{ product.price }} SEK</p>
                     <p class="card-text">Category: {{ product.category.name }}</p>
                     <p class="card-text">Seller: {{ product.seller.username }}</p>
                     {% if user.is_authenticated and user == product.seller %}
-                    <a href="{% url 'edit_product' product.id %}" class="btn signupbtn orange-btn m-1 btn-sm">Edit product</a>
-                    <a href="{% url 'delete_product' product.id %}" class="btn deletebtn product-delete-btn btn-sm">Delete product</a>
+                    <div class="col">
+                        <a href="{% url 'edit_product' product.id %}" class="btn signupbtn orange-btn m-1 btn-sm">Edit
+                            product</a>
+                        <button class="btn sold-button sold-btn orange-btn btn-sm">Mark as Sold</button>
+                        <a href="{% url 'delete_product' product.id %}"
+                            class="btn deletebtn product-delete-btn btn-sm">Delete product</a>
+                    </div>
+                    {% endif %}
+                    {% if product.sold %}
+                    <div class="sold-overlay active"><h1>Sold</h1></div>
+                    {% else %}
+                    <div class="sold-overlay"><h1>Sold</h1></div>
                     {% endif %}
                 </div>
+
             </div>
         </div>
         {% endif %}
@@ -102,6 +115,45 @@
             $('#productModal').modal('show');
         });
     });
+$(document).ready(function () {
+    // Function to get csrf token from cookies
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    
+    var csrftoken = getCookie('csrftoken');
+    
+    $('.sold-button').on('click', function() {
+        var productId = $(this).closest('.product-card').data('id');
+
+        $.ajax({
+            url: "{% url 'product_sold' %}",
+            type: 'POST',
+            beforeSend: function(xhr) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            },
+            data: {
+                'product_id': productId
+            },
+            success: function(response) {
+                if (response.success) {
+                    $('.product-card[data-id="' + productId + '"]').addClass('sold').find('.sold-overlay').addClass('active');
+                }
+            }
+        });
+    });
+});
 </script>
 {% endblock %}
 {% endblock %}
