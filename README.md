@@ -3,7 +3,7 @@
 ## About
 You can head to the live website here -----> [VGB Games](https://vareberg-games-a44cb52aa87b.herokuapp.com/) <br>
 The VBG Games site is a Magic the Gathering and boardgaming network, connecting players in the area in and around Varberg city on the west coast of Sweden. The main goal is to give different playgroups a common site to plan events, sell or buy games, cards and accessories, communicate with eacother. Since the gameshop in Varberg closed down there is no place for people who loves games to connect and meet with likeminded people who are engaged in the same hobby.
-
+![Indexpage screenshot](static/images/index-screenshot.png)
 ## Table of Contents
 
 - [Varberg MtG and Boardgaming Network](#varberg-mtg-and-boardgaming-network)
@@ -62,6 +62,10 @@ This Django project is made for those that:
 - Live in Varberg or Halland County and love Magic the Gathering and/or boardgames.
 - Don't have a playgroup and is looking for players to play with.
 - Have a playgroup that would like to grow and play with new players/playgroups.
+
+### Responsiveness
+
+![Responsiveness screenshot](static/images/responsiveness-screenshot.png)
 
 ### User Stories
 
