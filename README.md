@@ -207,6 +207,13 @@ Make a logo in Adobe Illustrator that reflects the brand identity of the site.
 
 **Make the homepage for logged in users** <br>
 Make the homepage for logged in users more appealing and attractive, and add functionality like lists of joined events, your products for sale, new messages, etc.
+
+**Sort products in the markedplace by Category** <br>
+Add a filter option in the marketplace to sort products by category.
+
+**Sort products in the markedplace by sold/available** <br>
+Add a filter option in the marketplace to sort products by sold/available.
+
 ---
 
 ## Design
@@ -456,13 +463,73 @@ The project was deployed to [Heroku](https://www.heroku.com) using the below pro
 
 ### Local Deployment
 
+1. Clone the repository.
+
+    - ```git clone https://github.com/Mareliusmoen/varberg-games.git```
+
+2. Go to the ```varberg-games``` directory.
+
+    - ```cd varberg-games``` (or your path to the project)
+
+3. Create a virtual environment.
+
+    - ```python3 -m venv venv```
+
+    - ```source venv/bin/activate```
+
+4. Install all dependencies.
+
+    - ```pip install -r requirements.txt```
+
+5. Create a ```env.py``` file.
+
+    - ```touch env.py```
+
+6. Add the following lines to ```env.py```:
+
+    - ```import os```
+    - ```os.environ["SECRET_KEY"]``` = your secret key.
+    - ```os.environ["DEBUG"]``` = "True" or "False" depending on whether you are in development or production.
+    - ```os.environ["DEVELOPMENT"]``` = "True" or "False" depending on whether you are in development or production.
+    - ```os.environ["ALLOWED_HOSTS"]``` = your domain name.
+    - ```os.environ["DATABASE_URL"]``` = your database url.
+
+7. Create and migrate the database.
+
+    - ```python manage.py makemigrations```
+    - ```python manage.py migrate```
+
+8. Create the superuser.
+
+    - ```python manage.py createsuperuser```
+
+9. Run the server.
+
+    - ```python manage.py runserver```
+
+10. Access the website by the link provided in terminal. Add ```/admin/``` at the end of the link to access the admin panel.
+
+
 ## Credits
-- Postman messeging service from: [link](https://django-postman.readthedocs.io/en/latest/) is used to allow registered users to message eachother within the site. Thanks for providing a almost 'out-of-the-box' experience.
-- Bootstrap 5 and it's detailed documentation made the frontend part of the programming very smooth and easy. [link](https://getbootstrap.com/docs/5.0/getting-started/introduction/)
-- 
+- [Postman](https://django-postman.readthedocs.io/en/latest/) is used to allow registered users to message eachother within the site. Thanks for providing a almost 'out-of-the-box' experience.
+- [Bootstrap 5](https://getbootstrap.com/docs/5.0/getting-started/introduction/) and it's detailed documentation made the frontend part of the programming very smooth and easy.
+- [Adobe Illustrator](https://www.adobe.com/products/illustrator.html) and it's detailed documentation made the creation of the background very smooth and easy.
+- This [Stackoverflow post](https://stackoverflow.com/questions/13932653/increase-displaying-time-of-django-messages) for explaining how to make the Django response messages be auto deleted after a set time.
+- [GitHub](https://github.com/) for storing the source code and make the Agile process streamlined and more efficient.
+- [Heroku](https://www.heroku.com/) for hosting the project and allowing me to add scheduled tasks to improve user experience.
+- [Papier Tigre](https://www.papiertigre.fr/en/books/1743-color-inspiration-volume-2.html) for making the smartest color inspiration books with premade color schemes for ease implementation in projects.
+- [FontAwesome](https://fontawesome.com/) for providing the website's icons for free.
+- [Django-allauth](https://django-allauth.readthedocs.io/en/latest/) for providing the authentication system for the site.
+- [ElephantSQL](https://www.elephantsql.com/) for the free hosting of the database.
+- [Jquery](https://jquery.com/) for providing the JavaScript library for the site.
+- [JQuery UI](https://jqueryui.com/) for providing the JavaScript tools to make the site more interactive.
+- [Google Fonts](https://fonts.google.com/) for providing the free fonts for the site.
+- [Microsoft](https://www.microsoft.com/en-us/windows/) for providing the best IDE I have used and making the creation of this project very enjoyable.
+
 
 ---
 
 ## Acknowledgments
-- Thanks to my mentor Alex K. [GitHub](https://github.com/lexach91), for patiently listening to my plans and helping out when problems arose.
+- Thanks to my mentor [Alex K.](https://github.com/lexach91), for patiently listening to my plans and helping out when problems arose.
+- A special thanks to David Calikes for his time, enthusiasm and support during the development of this project.
 - Thanks to my friends and family for patience and support during this project, when I was submerge in the code and needed help with everything else you stepped up.
