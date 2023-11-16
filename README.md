@@ -1,7 +1,7 @@
 # Varberg MtG and boardgaming Network
 
 ## About
-You can head to the live website here -----> LINK <br>
+You can head to the live website here -----> [VGB Games](https://vareberg-games-a44cb52aa87b.herokuapp.com/) <br>
 The VBG Games site is a Magic the Gathering and boardgaming network, connecting players in the area in and around Varberg city on the west coast of Sweden. The main goal is to give different playgroups a common site to plan events, sell or buy games, cards and accessories, communicate with eacother. Since the gameshop in Varberg closed down there is no place for people who loves games to connect and meet with likeminded people who are engaged in the same hobby.
 
 ## Table of Contents
@@ -66,8 +66,25 @@ This Django project is made for those that:
 ### User Stories
 
 #### First Time Visitor Goals
+- **Understand the Purpose**: A first-time visitor should quickly grasp the purpose of your project. We've included a clear, concise introduction on the home page to immediately communicate what the site is about.
+- **Navigate Easily**: The site should be intuitive to navigate. We've designed a straightforward navigation bar and included a site map in the footer to assist with this.
+- **Engage With Content**: Visitors should find it easy to interact with your site. Whether they're playing a game, reading about the team, or sending a message through the contact form, the user journey has been designed to be as seamless as possible.
+- **Find Help**: If visitors encounter any issues or have questions, they should be able to find help quickly. We've included a comprehensive FAQ page and easy-to-find contact information to ensure user queries are promptly addressed.
 
 #### Frequent Visitor Goals
+- **Discover Public Events**: Frequent visitors should be able to easily find and learn about public events.
+- **Join Public Events**: Once they've discovered an event they're interested in, users should be able to join these public events with ease.
+- **Get Access Codes for Private Events**: Regular users should have a clear process to get access codes for private events.
+- **Join Private Events**: With an access code, users should be able to join private events smoothly.
+- **Engage in Discussions**: Users should be able to actively participate in discussions, ask questions and communicate on event pages.
+- **Browse Products**: Visitors should be able to easily browse Magic the Gathering products, board games, and accessories listed for sale.
+- **Purchase Products**: Once a product is selected, the purchase process should be clear and straightforward.
+- **Create Product Listings**: Sellers should be able to list their products in the marketplace efficiently.
+- **Edit Product Listings**: Sellers should be able to update their product listings as needed, such as changing price or description.
+- **Mark Products as Sold**: Once a product is sold, sellers should be able to easily mark it as such in the marketplace.
+- **Use MTG Card Database**: Users should be able to connect their product listings to the card in the MTG card database in a user-friendly manner.
+- **Send Messages to Other Users**: Frequent visitors should be able to easily initiate and maintain communication with other users.
+- **Plan Events with Other Users**: The platform should facilitate users planning events with each other through the messaging system.
 
 ---
 
@@ -173,17 +190,27 @@ The user's products for sale overview feature in the project provides users with
 **Social media verification (facebook, Google...)** <br>
 In future releases I would like to add that you can sign up to the site with google, facebook or similar account.
 
+**Activate and setup email confirmation** <br>
+Add email confirmation when user signs up for the site, to make sure the user is a real person.
+
 **Add email notifications** <br>
 Add email notifications for new messeges, users joining your events, users show interest in your product for sale.
 
 **Add contact seller functionality** <br>
  Add a 'Contact Seller' button on product listings. This will redirect users to a pre-filled new message form, making communication between buyers and sellers quicker and easier.
 
+**Add on-site notification system** <br>
+Add a notification system for new messeges, users joining your events, users show interest in your product for sale.
 
+**Design and make a logo in Adobe Illustrator** <br>
+Make a logo in Adobe Illustrator that reflects the brand identity of the site.
+
+**Make the homepage for logged in users** <br>
+Make the homepage for logged in users more appealing and attractive, and add functionality like lists of joined events, your products for sale, new messages, etc.
 ---
 
 ## Design
-
+The site's design features a calming blue color scheme, accented with playful hues of orange and red. The background imagery showcases the coastal city of Varberg, enhancing the visual appeal. The layout and responsiveness of the site are based on Bootstrap framework
 ### Color Scheme
 
 The colorscheme was taken from the color-design book Papier Tigre Color Inspiration volume 2, it was chosen for its calm blue colors with the playful orange and red complimenting-colors.
@@ -210,11 +237,170 @@ Before starting the development of the VBG Games site, wireframes were created t
 ## Information Architecture
 
 ### Database
-
+Our application uses the PostgreSQL database to handle data persistence. 
 
 ### Data Modeling
 
-**Entity relationship diagram**
+**Allauth**
+We use the Django Allauth package to manage user authentication. It was migrated to PostgreSQL database.
+
+### **POSTMAN MESSAGING**
+#### Message
+
+A message between a User and another User or an AnonymousUser.
+
+##### Fields
+
+| Name                 | Database Key         | Field Type              | Validation                                              |
+| -------------------- | -------------------- | ----------------------- | ------------------------------------------------------- |
+| Sender               | sender               | ForeignKey to User      | on_delete=models.CASCADE                               |
+| Recipient            | recipient            | ForeignKey to User      | on_delete=models.CASCADE, related_name='recipient_messages'|
+| Subject              | subject              | CharField               | max_length=255                                         |
+| Body                 | body                 | TextField               | None                                                    |
+| Email                | email                | EmailField              | blank=True                                              |
+| Parent               | parent               | ForeignKey to 'self'    | on_delete=models.CASCADE, related_name='next_messages', null=True, blank=True|
+| Thread               | thread               | ForeignKey to 'self'    | on_delete=models.CASCADE, related_name='child_messages', null=True, blank=True|
+| Sent at              | sent_at              | DateTimeField           | default=now                                             |
+| Read at              | read_at              | DateTimeField           | null=True, blank=True                                   |
+| Replied at           | replied_at           | DateTimeField           | null=True, blank=True                                   |
+| Sender Archived      | sender_archived      | BooleanField            | default=False                                           |
+| Recipient Archived   | recipient_archived   | BooleanField            | default=False                                           |
+| Sender Deleted At    | sender_deleted_at    | DateTimeField           | null=True, blank=True                                   |
+| Recipient Deleted At | recipient_deleted_at | DateTimeField           | null=True, blank=True                                   |
+| Moderation Status    | moderation_status    | CharField               | max_length=1, choices=STATUS_CHOICES, default=STATUS_ACCEPTED|
+| Moderation By        | moderation_by        | ForeignKey to User      | on_delete=models.CASCADE, related_name='moderated_messages', null=True, blank=True|
+| Moderation Date      | moderation_date      | DateTimeField           | null=True, blank=True                                   |
+| Moderation Reason    | moderation_reason    | CharField               | max_length=120, blank=True                              |
+
+##### Methods
+
+- `is_pending()`: Tell if the message is in the pending state.
+- `is_rejected()`: Tell if the message is in the rejected state.
+- `is_accepted()`: Tell if the message is in the accepted state.
+- `is_new`: Tell if the recipient has not yet read the message.
+- `is_replied`: Tell if the recipient has written a reply to the message.
+- `get_absolute_url`: Deprecated. Usage is deprecated since v3.3.0.
+- `quote(format_subject, format_body=None)`: Return a dictionary of quote values to initiate a reply.
+- `get_replies_count()`: Return the number of accepted responses.
+- `clean()`: Check some validity constraints.
+- `clean_moderation(initial_status, user=None)`: Adjust automatically some fields, according to the status workflow.
+- `clean_for_visitor()`: Do some auto-read and auto-delete, because there is no one to do it (no account).
+- `update_parent(initial_status)`: Update the parent to actualize its response state.
+- `notify_users(initial_status, site, is_auto_moderated=True)`: Notify the rejection (to sender) or the acceptance (to recipient) of the message.
+- `get_dates()`: Get some dates to restore later.
+- `set_dates(sender_deleted_at, recipient_deleted_at, read_at)`: Restore some dates.
+- `get_moderation()`: Get moderation information to restore later.
+- `set_moderation(status, by_id, date, reason)`: Restore moderation information.
+- `auto_moderate(moderators)`: Run a chain of auto-moderators.
+
+#### PendingMessage (Proxy Model)
+
+A proxy to Message, focused on pending objects to accept or reject.
+
+##### Fields
+
+Same as Message
+
+##### Methods
+
+- `set_accepted()`: Set the message as accepted.
+- `set_rejected()`: Set the message as rejected.
+
+### **MARKETPLACE**
+
+#### Category
+
+Represents a product category.
+
+##### Fields
+| Name | Database Key | Field Type | Validation    |
+| ---- | ------------ | ---------- | ------------- |
+| Name | name         | CharField  | max_length=100|
+
+
+##### Methods
+
+- `__str__()`: Returns the name of the category.
+
+#### Product
+
+Represents a product in the e-commerce system.
+
+##### Fields
+| Name          | Database Key  | Field Type              | Validation                                     |
+| ------------- | ------------- | ----------------------- | ---------------------------------------------- |
+| Title         | title         | CharField               | max_length=200                                 |
+| Description   | description   | TextField               | None                                           |
+| Price         | price         | DecimalField            | max_digits=10, decimal_places=2                |
+| Category      | category      | ForeignKey to Category  | on_delete=models.CASCADE                       |
+| Seller        | seller        | ForeignKey to User      | on_delete=models.CASCADE                       |
+| Created At    | created_at    | DateTimeField           | auto_now_add=True                              |
+| Card Name     | card_name     | CharField               | max_length=255, null=True, blank=True          |
+| Card Image URL| card_image_url| URLField                | null=True, blank=True                          |
+| Sold          | sold          | BooleanField            | default=False                                  |
+
+### **EVENTS**
+
+#### Event
+
+Represents an event with details such as title, description, date, and participants.
+
+##### Fields
+| Name          | Database Key  | Field Type              | Validation                                |
+| ------------- | ------------- | ----------------------- | ----------------------------------------- |
+| Title         | title         | CharField               | max_length=100                            |
+| Description   | description   | TextField               | None                                      |
+| Date          | date          | DateTimeField           | None                                      |
+| Is Private    | is_private    | BooleanField            | default=False                             |
+| Creator       | creator       | ForeignKey to User      | on_delete=models.CASCADE                  |
+| Participants  | participants  | ManyToManyField to User | related_name='events_attending'           |
+| Access Code   | access_code   | CharField               | max_length=10, null=True, blank=True      |
+| Comments      | comments      | ManyToManyField to Comment | blank=True, related_name='event_comments' |
+
+##### Methods
+
+- `has_already_passed()`: Returns True if the event date has already passed.
+
+#### EventParticipant
+
+Links users to events they are participating in.
+
+##### Fields
+
+| Name  | Database Key | Field Type         | Validation                 |
+| ----- | ------------ | ------------------ | -------------------------- |
+| Event | event        | ForeignKey to Event | on_delete=models.CASCADE  |
+| User  | user         | ForeignKey to User  | on_delete=models.CASCADE  |
+
+
+#### Comment
+
+Represents a comment on an event.
+
+##### Fields
+
+| Name       | Database Key | Field Type              | Validation              |
+| ---------- | ------------ | ----------------------- | ----------------------- |
+| Event      | event        | ForeignKey to Event     | on_delete=models.CASCADE|
+| User       | user         | ForeignKey to User      | on_delete=models.CASCADE|
+| Text       | text         | TextField               | None                    |
+| Created At | created_at   | DateTimeField           | auto_now_add=True       |
+
+##### Methods
+
+- `__str__()`: Returns a formatted string representation of the comment.
+
+#### Utility Function
+
+##### `generate_access_code()`
+
+Generates a random access code consisting of 10 digits connected to the specific event.
+
+```
+python
+def generate_access_code():
+    return ''.join(secrets.choice(string.digits) for _ in range(10)) 
+```
 
 ---
 ## Testing
@@ -279,3 +465,4 @@ The project was deployed to [Heroku](https://www.heroku.com) using the below pro
 
 ## Acknowledgments
 - Thanks to my mentor Alex K. [GitHub](https://github.com/lexach91), for patiently listening to my plans and helping out when problems arose.
+- Thanks to my friends and family for patience and support during this project, when I was submerge in the code and needed help with everything else you stepped up.
