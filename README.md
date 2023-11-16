@@ -173,10 +173,11 @@ The user's products for sale overview feature in the project provides users with
 **Social media verification (facebook, Google...)** <br>
 In future releases I would like to add that you can sign up to the site with google, facebook or similar account.
 
-**Add email notifications**
+**Add email notifications** <br>
 Add email notifications for new messeges, users joining your events, users show interest in your product for sale.
 
-
+**Add contact seller functionality** <br>
+ Add a 'Contact Seller' button on product listings. This will redirect users to a pre-filled new message form, making communication between buyers and sellers quicker and easier.
 
 
 ---
