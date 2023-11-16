@@ -156,6 +156,7 @@ The communicate page also displays the event-information at the top of the page 
 **Create event**<br>
 The create-event page consists of a Title input-field, Description textarea input, datetime-picker and a checkbox to make a private event.
 If you check the private event box, you as the creator of a private event will see the access-code for the specific event in the event when you head to your joined events section and this is the code you share with users you would like to join your event.
+![Create event screenshot](static/images/create-event-screenshot.png)
 
 **Joined events**<br>
 This page lists all the events you have oined/created.
@@ -166,21 +167,27 @@ This part of the event app implements a robust and intuitive event editing funct
 
 **Messages Inbox**<br>
 The inbox feature in the project provides a centralized location for users to manage and view their received messages. It allows registered users to communicate with each other within the site, facilitating efficient and convenient communication.
+![Inbox screenshot](static/images/inbox-screenshot.png)
 
 **Sent messages box**<br>
 The sent message box feature in the project allows users to keep track of the messages they have sent to other users within the site. It provides a convenient way to view and manage sent messages, ensuring that users have a complete record of their communication history.
+![Sentbox screenshot](static/images/sentbox-screenshot.png)
 
 **Deleted messages box**<br>
 The deleted messages box feature in the project provides a dedicated space for users to store and manage their deleted messages. It offers a convenient way to recover accidentally deleted messages or permanently remove unwanted messages from the system.
+![Deleted box screenshot](static/images/deleted-box-screenshot.png)
 
 **Archived messages box**<br>
 The archived messages box feature in the project offers users a dedicated space to store and manage their archived messages. It provides a convenient way to declutter the main inbox while still retaining access to important or historical conversations.
+![Archived box screenshot](static/images/archived-box-screenshot.png)
 
 **Write new message**<br>
 The write new message feature in the project allows users to compose and send new messages to other users within the site. It provides a convenient and intuitive interface for initiating and engaging in conversations.
+![Write new message screenshot](static/images/write-message-screenshot.png)
 
 **Message conversation**<br>
 The message conversation feature in the project allows users to view and manage their conversations with other users in a streamlined and intuitive interface. This feature is designed to facilitate seamless and efficient communication within the site.
+![Conversation screenshot](static/images/conversation-screenshot.png)
 
 **Marketplace all products for sale**<br>
 The marketplace feature in the project serves as a platform where users can view all available products for sale and display their own products. It provides a seamless and user-friendly interface for exploring, comparing, selling and purchasing products.
