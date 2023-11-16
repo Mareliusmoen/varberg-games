@@ -175,7 +175,7 @@ The sent message box feature in the project allows users to keep track of the me
 
 **Deleted messages box**<br>
 The deleted messages box feature in the project provides a dedicated space for users to store and manage their deleted messages. It offers a convenient way to recover accidentally deleted messages or permanently remove unwanted messages from the system.
-![Deleted box screenshot](static/images/deleted-box-screenshot.png)
+![delete box screenshot](static/images/deleted-msg-screenshot.png)
 
 **Archived messages box**<br>
 The archived messages box feature in the project offers users a dedicated space to store and manage their archived messages. It provides a convenient way to declutter the main inbox while still retaining access to important or historical conversations.
