@@ -127,18 +127,23 @@ This Django project is made for those that:
 ---
 **Landing page/Homepage** <br>
 A straightforward landing page with a short welcome-message, links to register or sign in right next to the welcome-message. There is also a nav-bar that only contains the options login or register before you sign in.
+![Indexpage screenshot](static/images/index-screenshot.png)
 
 **Login**<br>
 The login asks the user to input their username and password, there is also a button if you forgot your passwrod to allow the user to reset it with their email address. Error/success messages pop-in to give the user feedback if the login was successful or if there was an error.
+![Signin page screenshot](static/images/signin-screenshot.png)
 
 **Register new user**<br>
 Allows new visitors to register as users of the site, they need to type in: Username(required), Email(required), Password and confirm password(required), First Name and Last Name.
+![Signup page screenshot](static/images/signup-screenshot.png)
 
 **Logged-in welcome**<br>
 Message that says 'Welcome, you're successfully signed in'. and a automatic Django message that confirms your login. Now that you're signed in as a authenticated user the nav-bar chenges and gives you access to all parts of the site: Events, Messaging, Marketplace and Logout.
+![Signed in page screenshot](static/images/signedin-screenshot.png)
 
 **Log-out**<br>
 When the logged in user clicks the logout button in the nav bar the get redirected to a confirmation page that asks if the user is sure they want to sign out and the signout button to confirm. The nav-bar is there for the user regret their logout descion and head to another part of the site.
+![Sign out page screenshot](static/images/sign-out-screenshot.png)
 
 **Browse events**<br>
 This page lists all the available public events. at the top there is also a button for creating new events and a input field to type in a access-code if another user have giiven you access to one of their private events. If you type a correct code you're automatically added as a participant and you get a django message confirming, if it is not a correct access code you get a django error message explaining that.
