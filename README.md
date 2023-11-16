@@ -148,10 +148,12 @@ When the logged in user clicks the logout button in the nav bar the get redirect
 **Browse events**<br>
 This page lists all the available public events. at the top there is also a button for creating new events and a input field to type in a access-code if another user have giiven you access to one of their private events. If you type a correct code you're automatically added as a participant and you get a django message confirming, if it is not a correct access code you get a django error message explaining that.
 Each event lists the event title, description, host, time and date, how many participants and 3 buttons: Communicate(opens a message-board for the specific event), join button(if you already have joined its a gray joined "button"), and if you are the creator of the event you have a delete button so you can delete the event. All events are sorted so the events that are happing soonest is displayed at the top if the list and sorted in descending order. There is also a code running in heroku everyday at midnight that deletes all events that happened during the day.
+![upcoming events screenshot](static/images/upcoming-events-screenshot.png)
 
 **Events communication**<br>
 When the communicate button for an event is clicked you're brought to a chat-like messaging page for the specific event, all users that have access to the event(for public-events all signed in users, for private events everyone with the access-code) can read and write messages in the communicate page. This feature makes it great for potential perticipants and particapants alike to ask questions to the creator or eachother, so that Q&A's that perhaps more than one user is wondering is answered and available in a logical place. The creator of each message has the opportunity to delete their own messages.
 The communicate page also displays the event-information at the top of the page so that it's easily accessible.
+![Event conversation screenshot](static/images/event-conversation-screenshot.png)
 
 **Create event**<br>
 The create-event page consists of a Title input-field, Description textarea input, datetime-picker and a checkbox to make a private event.
@@ -161,9 +163,11 @@ If you check the private event box, you as the creator of a private event will s
 **Joined events**<br>
 This page lists all the events you have oined/created.
 Each event lists the event title, description, host, time and date, how many participants and 3 buttons: Communicate(opens a message-board for the specific event), a gray joined "button", and if you are the creator of the event you have a delete button so you can delete the event. All events are sorted so the events that are happing soonest is displayed at the top if the list and sorted in descending order. There is also a code running in heroku everyday at midnight that deletes all events that happened during the day.
+![Joined events screenshot](static/images/joined-events-screenshot.png)
 
 **Edit events**<br>
 This part of the event app implements a robust and intuitive event editing functionality specifically designed for the event creators. This allows you to have full control over the event details and make adjustments as necessary.
+![Edit event screenshot](static/images/edit-event-screenshot.png)
 
 **Messages Inbox**<br>
 The inbox feature in the project provides a centralized location for users to manage and view their received messages. It allows registered users to communicate with each other within the site, facilitating efficient and convenient communication.
@@ -191,13 +195,15 @@ The message conversation feature in the project allows users to view and manage 
 
 **Marketplace all products for sale**<br>
 The marketplace feature in the project serves as a platform where users can view all available products for sale and display their own products. It provides a seamless and user-friendly interface for exploring, comparing, selling and purchasing products.
+![All product for sale screenshot](static/images/products-for-sale-screenshot.png)
 
 **Create a new product for sale**<br>
 The create new product for sale feature in the project allows users to list their own products for sale in the Marketplace. It offers an intuitive interface for users to enter product details and create new listings.
+![Create new product for sale screenshot](static/images/new-product-screenshot.png)
 
 **Your products for sale overview**<br>
 The user's products for sale overview feature in the project provides users with a comprehensive dashboard to manage all their product listings in the marketplace.
-
+![Your products for sale overview screenshot](static/images/your-products-screenshot.png)
 
 ---
 
