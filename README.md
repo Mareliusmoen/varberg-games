@@ -119,6 +119,7 @@ This Django project is made for those that:
     - **Git:** Controls version history.
     - **GitHub:** Hosts the project's source code.
     - **GitHub Projects:** Tracks project progress and user stories.
+    - **Heroku:** is used for deployment of the project.
     - **FontAwesome:** Supplies the website's icons.
     - **Google Fonts:** Provides the website's typography.
     - **Postman:** Facilitates internal messaging service.
@@ -528,6 +529,9 @@ The project was deployed to [Heroku](https://www.heroku.com) using the below pro
 ## Bugs
 
 ### Unfixed bugs
+- Recipient user autocomplete in new message form pushes all content to the left, I set display to none to hide the text but the div still pops in at the right side of the screen.
+
+- Unread message count as a integer in the messages text of the navbar button.
 
 
 ## Credits
