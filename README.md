@@ -239,19 +239,13 @@ Add a filter option in the marketplace to sort products by sold/available.
 ---
 
 ## Design
-The site's design features a calming blue color scheme, accented with playful hues of orange and red. The background imagery showcases the coastal city of Varberg, enhancing the visual appeal. The layout and responsiveness of the site are based on Bootstrap framework
+The site's design features a calming blue color scheme, accented with playful hues of orange and red. The background illustraion are ment to represent the occean which is a an important part of the coastal city of Varberg, enhancing the visual appeal and providing the "feeling" of the coast. The layout and responsiveness of the site are based on Bootstrap framework
+
 ### Color Scheme
 
 The colorscheme was taken from the color-design book Papier Tigre Color Inspiration volume 2, it was chosen for its calm blue colors with the playful orange and red complimenting-colors.
 The RGB codes are: <br>
-
-R23 G38 B65 <div style="width: 50px; height: 50px; background-color: rgb(23, 38, 65);"></div>
-
-R56 G67 B109 <div style="width: 50px; height: 50px; background-color: rgb(56, 67, 109);"></div>
-
-R237 G105 B102 <div style="width: 50px; height: 50px; background-color: rgb(237, 105, 102);"></div>
-
-R185 G24 B24 <div style="width: 50px; height: 50px; background-color: rgb(185, 24, 24);"></div>
+![Colorscheme](static/images/colorscheme.png)
 
 ### Typography
 From Google Fonts the 'Wellfleet' was chosen for it's playful look and easy readability, and the back up if not supported is standard 'monospace'.
@@ -546,7 +540,10 @@ The project was deployed to [Heroku](https://www.heroku.com) using the below pro
 - [Jquery](https://jquery.com/) for providing the JavaScript library for the site.
 - [JQuery UI](https://jqueryui.com/) for providing the JavaScript tools to make the site more interactive.
 - [Google Fonts](https://fonts.google.com/) for providing the free fonts for the site.
-- [Microsoft](https://www.microsoft.com/en-us/windows/) for providing the best IDE I have used and making the creation of this project very enjoyable.
+- [Microsoft VSCode](https://code.visualstudio.com/) for providing the best IDE I have used and making the creation of this project very enjoyable.
+- [Real Favicon Generator](https://realfavicongenerator.net/) for providing the favicon for the site for free in a effortless way.
+- [Code Institute](https://codeinstitute.net/) for providing the guidence through different walkthrough projects for setting up a Django project. Some of the base setup for this project is from their walkthroughs.
+- [Trent Richardson](https://trentrichardson.com/examples/timepicker/) for providing the timepicker for the site, and giving me the solution to my biggest hurdle of the event application, integrating time to the date picker.
 
 
 ---
