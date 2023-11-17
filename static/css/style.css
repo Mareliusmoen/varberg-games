@@ -1,3 +1,5 @@
+/* BASE STYLING  */
+
 body {
     font-family: 'Wellfleet', monospace;
     background-image: url("../images/pp4-background.gif");
@@ -12,8 +14,20 @@ textarea {
     color: white;
 }
 
-/* Items background styling*/
+/* django response messages styling */
+.success {
+    background-color: rgba(75, 181, 67, 0.5);
+    color: white;
+    border-radius: 10px;
+}
 
+.error {
+    background-color: rgba(255, 51, 51, 0.5);
+    color: white;
+    border-radius: 10px;
+}
+
+/* Items background styling*/
 .bg-dark {
     --bs-bg-opacity: .7;
     background-color: rgba(var(--bs-dark-rgb), var(--bs-bg-opacity)) !important;
@@ -67,7 +81,6 @@ textarea {
 }
 
 /* Buttons styling */
-
 .product-delete-btn {
     margin-bottom: 20px;
 }
@@ -133,6 +146,82 @@ textarea {
     border: 1px solid rgb(56, 67, 109);
     color: rgb(185, 24, 24);
 }
+
+
+.delete-comment {
+    color: rgb(185, 24, 24);
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+select.form-control {
+    background: transparent;
+    color: white;
+    border: none;
+    border-bottom: 1px solid #000000;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    border-radius: 0;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+select.form-control:focus {
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+::placeholder {
+    color: white;
+    opacity: 0.8;
+    /* Needed for Firefox browsers */
+}
+
+::-ms-input-placeholder {
+    /* Needed for Edge 12 -18 browsers */
+    color: white;
+}
+
+
+/* Customize the calendar table */
+.ui-datepicker {
+    font-size: 14px;
+    background-color: rgb(23, 38, 65);
+    border: 1px solid #ccc;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+#datetimepicker {
+    background-color: rgba(23, 38, 65, 0.5);
+    color: white;
+}
+
+
+/* comments font styling */
+.author-time-comment-font {
+    font-size: smaller;
+    opacity: 0.8;
+}
+
+
+
+
+
+
+/* POSTMAN APP STYLING */
+
+.ui-helper-hidden-accessible {
+    display: none;
+}
+
+.ui-widget-content {
+    background-color: rgba(23, 38, 65, 0.5);
+    height: auto;
+    padding: 10px 0;
+}
+
 
 .postman-nav-btn {
     background-color: rgb(56, 67, 109);
@@ -217,86 +306,18 @@ textarea {
 }
 
 
-.delete-comment {
-    color: rgb(185, 24, 24);
-}
-
-input[type="text"],
-input[type="email"],
-input[type="password"],
-select.form-control {
-    background: transparent;
-    color: white;
-    border: none;
-    border-bottom: 1px solid #000000;
-    -webkit-box-shadow: none;
-    box-shadow: none;
-    border-radius: 0;
-}
-
-input[type="text"]:focus,
-input[type="email"]:focus,
-input[type="password"]:focus,
-select.form-control:focus {
-    -webkit-box-shadow: none;
-    box-shadow: none;
-}
-
-::placeholder {
-    color: white;
-    opacity: 0.8;
-    /* Needed for Firefox browsers */
-}
-
-::-ms-input-placeholder {
-    /* Needed for Edge 12 -18 browsers */
-    color: white;
-}
-
-
-/* Customize the calendar table */
-.ui-datepicker {
-    font-size: 14px;
-    background-color: rgb(23, 38, 65);
-    border: 1px solid #ccc;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
-}
-
-#datetimepicker {
-    background-color: rgba(23, 38, 65, 0.5);
-    color: white;
-}
-
-/* django messages styling */
-.success {
-    background-color: rgba(75, 181, 67, 0.5);
-    color: white;
-    border-radius: 10px;
-}
-
-.error {
-    background-color: rgba(255, 51, 51, 0.5);
-    color: white;
-    border-radius: 10px;
-}
-
-/* comments font styling */
-.author-time-comment-font {
-    font-size: smaller;
-    opacity: 0.8;
-}
-
-/* Markedplace modal styling */
+/* MARKETPLACE APP STYLING */
+/* modal styling */
 .modal-product-background {
     background-color: rgba(56, 67, 109, 0.5);
 }
-
 
 .modal-dialog-scrollable .modal-content {
     max-height: calc(100vh - 1rem);
     overflow-y: auto;
 }
 
+/* genral marketplace styling */
 .sold-overlay {
     position: absolute;
     top: 0;
@@ -326,14 +347,4 @@ select.form-control:focus {
 .card-text {
     margin-bottom: 0;
     padding-bottom: 20px; /* or whatever your margin was */
-}
-
-.ui-helper-hidden-accessible {
-    display: none;
-}
-
-.ui-widget-content {
-    background-color: rgba(23, 38, 65, 0.5);
-    height: auto;
-    padding: 10px 0;
 }
