@@ -327,3 +327,13 @@ select.form-control:focus {
     margin-bottom: 0;
     padding-bottom: 20px; /* or whatever your margin was */
 }
+
+.ui-helper-hidden-accessible {
+    display: none;
+}
+
+.ui-widget-content {
+    background-color: rgba(23, 38, 65, 0.5);
+    height: auto;
+    padding: 10px 0;
+}

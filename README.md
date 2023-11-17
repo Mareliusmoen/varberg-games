@@ -525,6 +525,10 @@ The project was deployed to [Heroku](https://www.heroku.com) using the below pro
 
 10. Access the website by the link provided in terminal. Add ```/admin/``` at the end of the link to access the admin panel.
 
+## Bugs
+
+### Unfixed bugs
+
 
 ## Credits
 - [Postman](https://django-postman.readthedocs.io/en/latest/) is used to allow registered users to message eachother within the site. Thanks for providing a almost 'out-of-the-box' experience.
