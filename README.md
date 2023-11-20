@@ -428,6 +428,29 @@ def generate_access_code():
 
 ---
 ## Testing
+### Manual testing
+Manual tests where done to make sure all user experience features work as intended.
+
+| Test Case                        | Description | Expected Outcome | Successful |
+| -------------------------------- | ----------- | ---------------- | ---------- |
+| See Public Events                | User is able to view all the public events. | A list of public events is displayed. | ✅ |
+| Join Public Events               | User can join a public event. | User is added to the event's participants. | ✅ |
+| Create Public Events             | User can create a new public event. | A new public event is created and visible to all users. | ✅ |
+| Create Private Events            | User can create a new private event. | A new private event is created and visible only to invited users. | ✅ |
+| Join Private Events with Access Code | User can join a private event with a valid access code. | User is added to the event's participants upon entering a valid access code. | ✅ |
+| See Messages Received            | User can view all received messages. | A list of received messages is displayed. | ✅ |
+| See Messages Sent                | User can view all sent messages. | A list of sent messages is displayed. | ✅ |
+| See Messages Archived            | User can view all archived messages. | A list of archived messages is displayed. | ✅ |
+| See Messages Deleted             | User can view all deleted messages. | A list of deleted messages is displayed. | ✅ |
+| Send New Messages                | User can send new messages to other users. | The message is successfully sent and appears in the recipient's received messages. | ✅ |
+| Reply to Message in Conversation | User can reply to a message within a conversation thread. | The reply is successfully sent and appears in the conversation thread. | ✅ |
+| See Products for Sale            | User can view all products for sale. | A list of products for sale is displayed. | ✅ |
+| See Which Products Are Sold      | User can view all sold products. | A list of sold products is displayed. | ✅ |
+| See the Products You Have Put Up for Sale | User can view all the products they have put up for sale. | A list of the user's products for sale is displayed. | ✅ |
+| Create New Product Listing for Sale | User can create a new product listing for sale. | A new product listing is created and visible to all users. | ✅ |
+| Register as New User             | User can register a new account. | A new account is successfully created for the user. | ✅ |
+| Sign In with Registered User     | User can sign in with their registered account. | User is successfully signed in to their account. | ✅ |
+| Sign Out with Registered User    | User can sign out from their registered account. | User is successfully signed out from their account. | ✅ |
 
 ### PEP8
 To ensure the quality and readability of the Python code in this project, all Python files were checked with the PEP8 linter provided by Code Institute. This tool helps enforce the PEP8 style guide, which is widely accepted in the Python community for coding standards. 
