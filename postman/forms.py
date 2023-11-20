@@ -31,9 +31,13 @@ class BaseWriteForm(forms.ModelForm):
         widgets = {
             # for better confort, ensure a 'cols' of at least
             # the 'width' of the body quote formatter.
-            'body': forms.Textarea(attrs={'cols': WRAP_WIDTH, 'rows': 12,
-                                          'class': 'custom-textarea', 'placeholder':
-                                          'Write your message here...'}),
+            'body': forms.Textarea(attrs={
+                'cols': '',
+                'rows': '',
+                'class': 'custom-textarea',
+                'style': 'max-width: 90%',
+                'placeholder': 'Write your message here...'
+            }),
         }
 
     error_css_class = 'error'
@@ -181,9 +185,10 @@ class WriteForm(BaseWriteForm):
     subject = forms.CharField(label=_("Subject"), widget=forms.TextInput(
         attrs={'placeholder': 'Subject'}))
     body = forms.CharField(label=_("Message"), widget=forms.Textarea(attrs={
-        'cols': WRAP_WIDTH,
-        'rows': 12,
+        'cols': '',
+        'rows': '',
         'class': 'custom-textarea',
+        'style': 'max-width: 90%',
         'placeholder': 'Write your message here...'}))
 
     class Meta(BaseWriteForm.Meta):
@@ -262,7 +267,8 @@ class FullReplyForm(BaseReplyForm):
         label=_("Additional recipients"), help_text='', required=False)
     subject = forms.CharField(label=_("Subject"))
     body = forms.CharField(label=_("Message"), widget=forms.Textarea(
-        attrs={'cols': WRAP_WIDTH, 'rows': 12}))
+        attrs={'cols': '', 'rows': '', 'class': 'custom-textarea',
+                'style': 'max-width: 90%'}))
 
     class Meta(BaseReplyForm.Meta):
         fields = ['recipients', 'subject',
