@@ -459,6 +459,15 @@ The PEP8 linter checks for issues like line lengths, whitespace usage, variable 
 
 You can check the PEP8 linter here: [PEP8 linter](https://pep8ci.herokuapp.com/)
 
+### Deployed vs Local
+The final version of the Full-Stack application was deployed to Heroku, while the database was deployed to ElephantSQL. This deployed version was thoroughly tested to ensure its functionality matches the version in the development environment.
+
+Both the deployed and local versions were tested across various scenarios and functionalities as documented in this 'Testing' section. The tests confirmed that the deployed version of the application behaves as expected and mirrors the development version.
+
+It's important to note that consistent code quality was maintained throughout the project. This was ensured by adhering to the PEP8 style guide, facilitated by the PEP8 linter provided by Code Institute. 
+
+For further details on the deployment process, refer to the 'Deployment' section below.
+
 
 ## Deployment
 You find the deployed app here: LINK

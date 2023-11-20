@@ -20,19 +20,25 @@ class EventForm(forms.ModelForm):
         """
         super().__init__(*args, **kwargs)
         self.fields['title'].widget = forms.TextInput(
-            attrs={'placeholder': 'The title of your event'}
+            attrs={
+                'style': 'max-width: 80%',
+                'placeholder': 'The title of your event'}
         )
         self.fields['description'].widget = forms.Textarea(
             attrs={
+                'rows': '', 
+                'cols': '', 
                 'placeholder': (
                     'Describe the game/format, power-level, bring drinks, '
                     'or whatever describes the event'
                 ),
-                'class': 'custom-textarea'
+                'class': 'custom-textarea',
+                'style': 'max-width: 90%'
             }
         )
         self.fields['date'].widget = forms.DateTimeInput(
             attrs={
+                'style': 'max-width: 80%',
                 'placeholder': 'Select date and time', 
                 'class': 'datetimepicker-input', 
                 'id': 'datetimepicker'

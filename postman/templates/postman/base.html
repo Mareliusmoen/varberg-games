@@ -5,8 +5,8 @@
 <link type="text/css" media="all" rel="stylesheet" href="{% static 'postman/css/postman.css' %}">
 {% endblock %}
 {% block postman_menu %}
-<div class="dropdown">
-    <button class="btn dropdown-toggle signupbtn orange-btn" type="button" data-bs-toggle="dropdown"
+<div class="dropdown menu-button-z-index">
+    <button class="btn dropdown-toggle signupbtn orange-btn position-relative menu-button-z-index" type="button" data-bs-toggle="dropdown"
         aria-expanded="false">
         Menu <i class="fa-solid fa-bars"></i></button>
 <ul id="postman_menu" class="dropdown-menu">{% postman_unread as unread_count %}

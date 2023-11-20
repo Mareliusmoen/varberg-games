@@ -29,7 +29,12 @@ textarea {
 
 /* Items background styling*/
 .bg-dark {
-    --bs-bg-opacity: .8;
+    --bs-bg-opacity: .95;
+    background-color: rgba(var(--bs-dark-rgb), var(--bs-bg-opacity)) !important;
+}
+
+.nav-bg-dark {
+    --bs-bg-opacity: 1;
     background-color: rgba(var(--bs-dark-rgb), var(--bs-bg-opacity)) !important;
 }
 
@@ -38,8 +43,8 @@ textarea {
 }
 
 .card-bg {
-    background-color: rgb(23, 38, 65);
-    border: 1px solid rgb(56, 67, 109);
+    background-color: rgb(23, 38, 65) !important;
+    border: 1px solid rgb(56, 67, 109) !important;
 }
 
 .card-bg-opacity {
@@ -51,9 +56,12 @@ textarea {
     border: 1px solid rgba(237, 105, 102, 0.5);
 }
 
-.dropdown-menu {
-    background-color: rgba(23, 38, 65, 0.8);
+.dropdown-menu,
+.navbar {
+    position: relative;
+    background-color: rgba(23, 38, 65, 0.9) !important;
     border-radius: 10px;
+    z-index: 999999 !important;
 }
 
 .dropdown-item:hover {
@@ -66,6 +74,7 @@ textarea {
     background-color: rgba(23, 38, 65, 0.5);
     border-radius: 10px;
     color: white;
+    max-width: 70vw !important;
 }
 
 .custom-select {
@@ -97,6 +106,9 @@ textarea {
 
 .logobtn {
     text-decoration: none;
+    display: flex;
+    align-items: start;
+    justify-content: start;
 }
 
 .logobtn,
@@ -106,6 +118,11 @@ textarea {
 
 .orange-btn:hover {
     color: rgb(185, 24, 24);
+}
+
+.nav-btn-dropdown {
+    background-color: rgb(23, 38, 65) !important;
+    border: 1px solid rgb(56, 67, 109) !important;
 }
 
 .deletebtn {
@@ -206,10 +223,6 @@ select.form-control:focus {
 }
 
 
-
-
-
-
 /* POSTMAN APP STYLING */
 
 .ui-helper-hidden-accessible {
@@ -305,6 +318,9 @@ select.form-control:focus {
     margin-bottom: 20px;
 }
 
+.menu-button-z-index {
+    z-index: 1 !important;
+}
 
 /* MARKETPLACE APP STYLING */
 /* modal styling */
@@ -347,4 +363,16 @@ select.form-control:focus {
 .card-text {
     margin-bottom: 0;
     padding-bottom: 20px; /* or whatever your margin was */
+}
+
+
+
+@media (max-width: 768px) {
+    .create_event {
+        width: 100% !important;
+    }
+    .form-width-small-screen {
+        max-width: 70vw !important;
+        height: auto;
+    }
 }

@@ -4,7 +4,7 @@
 <h1 class="text-center">Create event</h1>
 
 <div class="container d-flex justify-content-center align-items-center">
-    <form method="post" class="create_event" id="create_event" action="{% url 'create_event' %}">
+    <form method="post" class="create_event form-width-small-screen" id="create_event" action="{% url 'create_event' %}">
         {{ form.non_field_errors | safe }}
         {% csrf_token %}
         <div class="row g-2">
@@ -15,7 +15,7 @@
                 </div>
             </div>
             <div class="col-12">
-                <div class="form-floating form-group">
+                <div class="form-floating form-group form-width-small-screen">
                     {{ form.description }}
                     {{ form.description.errors|safe }}
                 </div>
