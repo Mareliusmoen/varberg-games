@@ -28,7 +28,8 @@ from django.http import JsonResponse
 login_required_m = method_decorator(login_required)
 csrf_protect_m = method_decorator(csrf_protect)
 never_cache_m = method_decorator(never_cache)
-sensitive_post_parameters_m = method_decorator(sensitive_post_parameters('subject', 'body'))
+sensitive_post_parameters_m = method_decorator(
+    sensitive_post_parameters('subject', 'body'))
 
 
 ##########
@@ -45,6 +46,8 @@ def autocomplete_recipients(request):
 
     data = list(users)
     return JsonResponse(data, safe=False)
+
+
 def _get_referer(request):
     """Return the HTTP_REFERER, if existing."""
     if 'HTTP_REFERER' in request.META:
@@ -53,7 +56,8 @@ def _get_referer(request):
 
 
 def _get_safe_internal_url(urlstring):
-    """Return the URL without the scheme part and the domain part, if present."""
+    """Return the URL without the scheme part and the domain part,
+    if present."""
     if urlstring:
         sr = urlsplit(urlstring)
         return urlunsplit(('', '', sr.path, sr.query, sr.fragment))
@@ -64,7 +68,8 @@ def _get_safe_internal_url(urlstring):
 ########
 class IndexView(RedirectView):
     """
-    Redirect to the inbox folder view, taking care to stay sticked to the targeted application instance
+    Redirect to the inbox folder view, taking care to stay sticked to the
+    targeted application instance
     when there is more than one instance.
 
     """
@@ -73,8 +78,8 @@ class IndexView(RedirectView):
 
     def get_redirect_url(self, *args, **kwargs):
         return reverse(self.pattern_name,
-            args=args, kwargs=kwargs,
-            current_app=self.request.resolver_match.namespace)
+                       args=args, kwargs=kwargs,
+                       current_app=self.request.resolver_match.namespace)
 
 
 class NamespaceMixin(object):
@@ -103,14 +108,16 @@ class FolderMixin(NamespaceMixin, object):
         order_by = get_order_by(self.request.GET)
         if order_by:
             params['order_by'] = order_by
-        msgs = getattr(Message.objects, self.folder_name)(self.request.user, **params)
+        msgs = getattr(Message.objects, self.folder_name)(
+            self.request.user, **params)
         viewname = 'postman:' + self.view_name
         current_instance = self.request.resolver_match.namespace
         context.update({
-            'pm_messages': msgs,  # avoid 'messages', already used by contrib.messages
+            'pm_messages': msgs,
             'by_conversation': option is None,
             'by_message': option == OPTION_MESSAGES,
-            'by_conversation_url': reverse(viewname, current_app=current_instance),
+            'by_conversation_url':
+                reverse(viewname, current_app=current_instance),
             'by_message_url': reverse(viewname, args=[OPTION_MESSAGES], current_app=current_instance),
             'current_url': self.request.get_full_path(),
             'gets': self.request.GET,  # useful to postman_order_by template tag
@@ -186,7 +193,8 @@ class ComposeMixin(NamespaceMixin, object):
     Optional attributes:
         ``success_url``: where to redirect to after a successful POST
         ``user_filter``: a filter for recipients
-        ``exchange_filter``: a filter for exchanges between a sender and a recipient
+        ``exchange_filter``: a filter for exchanges between a sender and a
+        recipient
         ``max``: an upper limit for the recipients number
         ``auto_moderators``: a list of auto-moderation functions
 
@@ -211,7 +219,12 @@ class ComposeMixin(NamespaceMixin, object):
         return kwargs
 
     def get_success_url(self):
-        return _get_safe_internal_url(self.request.GET.get('next')) or self.success_url or _get_referer(self.request) or 'postman:inbox'
+        return (
+            _get_safe_internal_url(self.request.GET.get('next')) 
+            or self.success_url 
+            or _get_referer(self.request) 
+            or 'postman:inbox'
+        )
 
     def form_valid(self, form):
         params = {'auto_moderators': self.auto_moderators}
@@ -219,16 +232,20 @@ class ComposeMixin(NamespaceMixin, object):
             params['parent'] = self.parent
         is_successful = form.save(**params)
         if is_successful:
-            messages.success(self.request, _("Message successfully sent."), fail_silently=True)
+            messages.success(self.request, _(
+                "Message successfully sent."), fail_silently=True)
         else:
-            messages.warning(self.request, _("Message rejected for at least one recipient."), fail_silently=True)
+            messages.warning(self.request, _(
+                "Message rejected for at least one recipient."),
+                fail_silently=True)
         return redirect(self.get_success_url())
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update({
             'autocompleter_app': autocompleter_app,
-            'next_url': self.request.GET.get('next') or _get_referer(self.request),
+            'next_url': (self.request.GET.get('next') or
+                         _get_referer(self.request)),
         })
         return context
 
@@ -266,17 +283,24 @@ class WriteView(ComposeMixin, FormView):
     def get_initial(self):
         initial = super().get_initial()
         if self.request.method == 'GET':
-            initial.update(self.request.GET.items())  # allow optional initializations by query string
+            # allow optional initializations by query string
+            initial.update(self.request.GET.items())
             recipients = self.kwargs.get('recipients')
             if recipients:
-                # order_by() is not mandatory, but: a) it doesn't hurt; b) it eases the test suite
+                # order_by() is not mandatory, but: a) it doesn't hurt; b) it 
+                # eases the test suite
                 # and anyway the original ordering cannot be respected.
                 user_model = get_user_model()
-                name_user_as = getattr(settings, 'POSTMAN_NAME_USER_AS', user_model.USERNAME_FIELD)
-                usernames = list(user_model.objects.values_list(name_user_as, flat=True).filter(
-                    is_active=True,
-                    **{'{0}__in'.format(name_user_as): [r.strip() for r in recipients.split(':') if r and not r.isspace()]}
-                ).order_by(name_user_as))
+                name_user_as = getattr(
+                    settings, 'POSTMAN_NAME_USER_AS', user_model.USERNAME_FIELD)
+                usernames = list(
+                    user_model.objects.values_list(name_user_as, flat=True)
+                    .filter(is_active=True,
+                            **{'{0}__in'.format(name_user_as): [
+                                r.strip() for r in recipients.split(':') if r and not r.isspace()
+                            ]})
+                    .order_by(name_user_as)
+                )
                 if usernames:
                     initial['recipients'] = usernames[0]
         return initial
@@ -301,13 +325,15 @@ class WriteView(ComposeMixin, FormView):
 
         return super().form_valid(form)
 
+
 class ReplyView(ComposeMixin, FormView):
     """
     Display a form to compose a reply.
 
     Optional attributes:
         ``form_class``: the form class to use
-        ``formatters``: a 2-tuple of functions to prefill the subject and body fields
+        ``formatters``: a 2-tuple of functions to prefill the subject and body
+        fields
         ``autocomplete_channel``: a channel name
         ``template_name``: the name of the template to use
         + those of ComposeMixin
@@ -328,9 +354,11 @@ class ReplyView(ComposeMixin, FormView):
         return super().dispatch(request, *args, **kwargs)
 
     def get_initial(self):
-        self.initial = self.parent.quote(*self.formatters)  # will also be partially used in get_form_kwargs()
+        # will also be partially used in get_form_kwargs()
+        self.initial = self.parent.quote(*self.formatters)
         if self.request.method == 'GET':
-            self.initial.update(self.request.GET.items())  # allow overwriting of the defaults by query string
+            # allow overwriting of the defaults by query string
+            self.initial.update(self.request.GET.items())
         return self.initial
 
     def get_form_kwargs(self):
@@ -356,13 +384,15 @@ class DisplayMixin(NamespaceMixin, object):
 
     Optional attributes:
         ``form_class``: the form class to use
-        ``formatters``: a 2-tuple of functions to prefill the subject and body fields
+        ``formatters``: a 2-tuple of functions to prefill the subject and body
+        fields
         ``template_name``: the name of the template to use
 
     """
     http_method_names = ['get']
     form_class = QuickReplyForm
-    formatters = (format_subject, format_body if getattr(settings, 'POSTMAN_QUICKREPLY_QUOTE_BODY', False) else None)
+    formatters = (format_subject, format_body if getattr(
+        settings, 'POSTMAN_QUICKREPLY_QUOTE_BODY', False) else None)
     template_name = 'postman/view.html'
 
     @never_cache_m
@@ -456,20 +486,21 @@ class UpdateMessageMixin(object):
             messages.success(request, self.success_msg, fail_silently=True)
             return redirect(_get_safe_internal_url(request.GET.get('next')) or self.success_url or next_url)
         else:
-            messages.warning(request, _("Select at least one object."), fail_silently=True)
+            messages.warning(request, _(
+                "Select at least one object."), fail_silently=True)
             return redirect(next_url)
 
 
 class UpdateDualMixin(UpdateMessageMixin):
     def _action(self, user, filter):
-        (criteria_key, criteria_val) = ('', not(self.field_value)) if isinstance(self.field_value, bool)\
-                else ('__isnull', bool(self.field_value))
+        (criteria_key, criteria_val) = ('', not (self.field_value)) if isinstance(self.field_value, bool)\
+            else ('__isnull', bool(self.field_value))
         recipient_rows = Message.objects.as_recipient(user, filter)\
-                .filter(**{'recipient_{0}{1}'.format(self.field_bit, criteria_key): criteria_val})\
-                .update(**{'recipient_{0}'.format(self.field_bit): self.field_value})
+            .filter(**{'recipient_{0}{1}'.format(self.field_bit, criteria_key): criteria_val})\
+            .update(**{'recipient_{0}'.format(self.field_bit): self.field_value})
         sender_rows = Message.objects.as_sender(user, filter)\
-                .filter(**{'sender_{0}{1}'.format(self.field_bit, criteria_key): criteria_val})\
-                .update(**{'sender_{0}'.format(self.field_bit): self.field_value})
+            .filter(**{'sender_{0}{1}'.format(self.field_bit, criteria_key): criteria_val})\
+            .update(**{'sender_{0}'.format(self.field_bit): self.field_value})
         if not (recipient_rows or sender_rows):
             raise Http404  # abnormal enough, like forged ids
 
@@ -477,39 +508,44 @@ class UpdateDualMixin(UpdateMessageMixin):
 class ArchiveView(UpdateDualMixin, View):
     """Mark messages/conversations as archived."""
     field_bit = 'archived'
-    success_msg = gettext_lazy("Messages or conversations successfully archived.")
+    success_msg = gettext_lazy(
+        "Messages or conversations successfully archived.")
     field_value = True
 
 
 class DeleteView(UpdateDualMixin, View):
     """Mark messages/conversations as deleted."""
     field_bit = 'deleted_at'
-    success_msg = gettext_lazy("Messages or conversations successfully deleted.")
+    success_msg = gettext_lazy(
+        "Messages or conversations successfully deleted.")
     field_value = now()
 
 
 class UndeleteView(UpdateDualMixin, View):
     """Revert messages/conversations from marked as deleted."""
     field_bit = 'deleted_at'
-    success_msg = gettext_lazy("Messages or conversations successfully recovered.")
+    success_msg = gettext_lazy(
+        "Messages or conversations successfully recovered.")
 
 
 class UpdateRecipientMixin(UpdateMessageMixin):
     def _action(self, user, filter):
         recipient_rows = Message.objects.as_recipient(user, filter)\
-                .filter(**{'{0}__isnull'.format(self.field_bit): bool(self.field_value)})\
-                .update(**{self.field_bit: self.field_value})
+            .filter(**{'{0}__isnull'.format(self.field_bit): bool(self.field_value)})\
+            .update(**{self.field_bit: self.field_value})
         # an empty set cannot be estimated as an error, it may be just a badly chosen selection
 
 
 class MarkReadView(UpdateRecipientMixin, View):
     """Mark messages/conversations as read."""
     field_bit = 'read_at'
-    success_msg = gettext_lazy("Messages or conversations successfully marked as read.")
+    success_msg = gettext_lazy(
+        "Messages or conversations successfully marked as read.")
     field_value = now()
 
 
 class MarkUnreadView(UpdateRecipientMixin, View):
     """Revert messages/conversations from marked as read."""
     field_bit = 'read_at'
-    success_msg = gettext_lazy("Messages or conversations successfully marked as unread.")
+    success_msg = gettext_lazy(
+        "Messages or conversations successfully marked as unread.")

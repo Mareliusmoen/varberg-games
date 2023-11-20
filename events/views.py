@@ -11,6 +11,7 @@ import random
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect
 
+
 @login_required
 def event_list(request):
     if request.method == "POST":
@@ -18,19 +19,26 @@ def event_list(request):
         form = AccessCodeForm(request.POST)
         if form.is_valid():
             access_code = form.cleaned_data["access_code"]
-            # Iterate over all events to find the one with the matching access code
+            # Iterate over all events to find the matching access code
             for event in Event.objects.filter(is_private=True):
                 if event.access_code == access_code:
                     # Add the user as a participant to the event
                     event.participants.add(request.user)
-                    messages.success(request, "You have successfully joined the private event.")
+                    messages.success(
+                        request,
+                            "You have successfully joined the private event.")
                     return redirect('joined_events')
 
             # If no event matched the access code, display an error message
             messages.error(request, "Invalid access code. Please try again.")
 
     public_events = Event.objects.filter(is_private=False).order_by('date')
-    return render(request, 'events.html', {'public_events': public_events, 'form': AccessCodeForm()})
+    return render(
+    request,
+    'events.html',
+    {'public_events': public_events, 'form': AccessCodeForm()}
+)
+
 
 @login_required
 def create_event(request):
@@ -42,7 +50,7 @@ def create_event(request):
             event.save()
             event.participants.add(request.user)
             if event.is_private:
-                event.access_code = generate_access_code()  # Generate and assign access code
+                event.access_code = generate_access_code()
                 event.save()
             messages.success(request, 'Event created successfully.')
             return redirect('event_list')
@@ -51,16 +59,19 @@ def create_event(request):
     return render(request, 'create_event.html', {'form': form})
 
 # Function to generate a random access code
+
+
 def generate_access_code():
     length = 10
     characters = string.ascii_letters + string.digits
     return ''.join(random.choice(characters) for _ in range(length))
 
+
 @login_required
 def edit_event(request, event_id):
     # Get the event by ID
     event = get_object_or_404(Event, id=event_id)
-    
+
     # Checks if the logged in user is the creator of the event
     if request.user == event.creator:
         if request.method == 'POST':
@@ -69,17 +80,22 @@ def edit_event(request, event_id):
             if form.is_valid():
                 # Save the updated event
                 form.save()
-                messages.success(request, "You have successfully edited the event.")
-                return redirect('joined_events') 
+                messages.success(
+                    request, "You have successfully edited the event.")
+                return redirect('joined_events')
         else:
             # Display the form with existing data
             form = EventForm(instance=event)
-        
+
         # Pass both the form and the event to the template
-        return render(request, 'edit_event.html', {'form': form, 'event': event})
+        return render(
+            request, 'edit_event.html', {'form': form, 'event': event})
     else:
-        messages.error(request, "You do not have permission to edit this event.")
+        messages.error(
+            request, "You do not have permission to edit this event.")
         return redirect('joined_events')
+
+
 @login_required
 def delete_event(request, event_id):
     # Check if the user is logged in
@@ -95,6 +111,7 @@ def delete_event(request, event_id):
         event.delete()
     messages.success(request, "You have successfully deleted the event.")
     return redirect('joined_events')  # Redirect to the joined events page
+
 
 @login_required
 def join_event(request, event_id):
@@ -112,10 +129,12 @@ def join_event(request, event_id):
 
     return redirect('event_list')
 
+
 def joined_events(request):
     if request.user.is_authenticated:
         # Filter events where the logged-in user is a participant
-        user_participating_events = Event.objects.filter(participants=request.user)
+        user_participating_events = Event.objects.filter(
+            participants=request.user)
         context = {'user_participating_events': user_participating_events}
         return render(request, 'joined_events.html', context)
     else:
@@ -129,12 +148,15 @@ def enter_access_code(request):
         form = AccessCodeForm(request.POST)
         if form.is_valid():
             access_code = form.cleaned_data["access_code"]
-            # Iterate over all events to find the one with the matching access code
+        # Iterate over all events to find the one with the matching access code
             for event in Event.objects.filter(is_private=True):
                 if event.access_code == access_code:
                     # Add the user as a participant to the event
                     event.participants.add(request.user)
-                    messages.success(request, "You have successfully joined the private event.")
+                    messages.success(
+                        request,
+                        "You have successfully joined the private event."
+                    )
                     return HttpResponseRedirect(reverse('joined_events'))
             # If no event matched the access code, display an error message
             messages.error(request, "Invalid access code. Please try again.")
@@ -142,6 +164,7 @@ def enter_access_code(request):
         form = AccessCodeForm()
 
     return render(request, "events.html", {"form": form})
+
 
 @login_required
 def event_detail(request, event_id):
@@ -158,11 +181,14 @@ def event_detail(request, event_id):
             user = request.user
             comment = Comment(event=event, user=user, text=text)
             comment.save()
-            messages.success(request, "You have successfully commented on this event.")
+            messages.success(
+                request, "You have successfully commented on this event.")
             return redirect('event_detail', event_id=event_id)
-    
-    context = {'event': event, 'comments': comments, 'comment_form': comment_form}
+
+    context = {'event': event, 'comments': comments,
+               'comment_form': comment_form}
     return render(request, 'event_detail.html', context)
+
 
 @login_required
 def add_comment(request, event_id):
@@ -174,13 +200,20 @@ def add_comment(request, event_id):
             user = request.user
             comment = Comment(event=event, user=user, text=text)
             comment.save()
-            messages.success(request, "You have successfully commented on this event.")
+            messages.success(
+                request, "You have successfully commented on this event.")
             return redirect('event_detail', event_id=event_id)
     else:
         form = CommentForm()
 
-    return render(request, 'event_detail.html', {'event': event, 'comment_form': form})
-
+    return render(
+    request, 
+    'event_detail.html', 
+    {
+        'event': event, 
+        'comment_form': form
+    }
+)
 
 @login_required
 def delete_comment(request, comment_id):
@@ -197,6 +230,7 @@ def delete_comment(request, comment_id):
         comment.delete()
         messages.success(request, "You have successfully deleted the comment.")
     else:
-        messages.error(request, "You are not authorized to delete this comment.")
+        messages.error(
+            request, "You are not authorized to delete this comment.")
 
     return redirect('event_detail', event_id=comment.event.id)

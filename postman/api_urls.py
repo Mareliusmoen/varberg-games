@@ -13,5 +13,6 @@ from .api_views import AjaxUnreadCountView
 
 app_name = 'api'
 urlpatterns = [
-    re_path(pgettext_lazy('postman_url', r'^unread-count/$'), AjaxUnreadCountView.as_view(), name='unread-count'),
+    re_path(pgettext_lazy('postman_url', r'^unread-count/$'),
+            AjaxUnreadCountView.as_view(), name='unread-count'),
 ]

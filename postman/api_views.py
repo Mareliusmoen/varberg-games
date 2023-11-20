@@ -22,6 +22,8 @@ def auth_required(func):
             return func(request, *args, **kwargs)
         return HttpResponseUnauthorized()
     return wrapper
+
+
 auth_required_m = method_decorator(auth_required)
 
 
@@ -39,4 +41,5 @@ class AjaxUnreadCountView(AjaxMixin, View):
     http_method_names = ['get']
 
     def get(self, request, *args, **kwargs):
-        return JsonResponse({'unread_count': Message.objects.inbox_unread_count(request.user)})
+        return JsonResponse(
+            {'unread_count': Message.objects.inbox_unread_count(request.user)})

@@ -47,7 +47,8 @@ class CompilerProxy(Proxy, SQLCompiler):
         # mimics compiler.py/SQLCompiler/get_from_clause() and as_sql()
         qn = self.quote_name_unless_alias
         qn2 = self.connection.ops.quote_name
-        alias = self.query.tables[0] if VERSION < (2, 0) else self.query.base_table
+        alias = self.query.tables[0] if VERSION < (
+            2, 0) else self.query.base_table
         # if VERSION >= (1, 8):
         from_clause = self.query.alias_map[alias]
         alias = from_clause.table_alias
@@ -57,7 +58,8 @@ class CompilerProxy(Proxy, SQLCompiler):
         index = sql.index(clause) + len(clause)
         extra_table, extra_params = self.union(self.query.pm_get_extra())
         opts = self.query.get_meta()
-        qn2_pk_col = qn2(opts.pk.column)  # usually 'id' but not in case of model inheritance
+        # usually 'id' but not in case of model inheritance
+        qn2_pk_col = qn2(opts.pk.column)
         new_sql = [
             sql[:index],
             ' {0} ({1}) {2} ON ({3}.{4} = {2}.{5})'.format(

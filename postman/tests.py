@@ -55,9 +55,9 @@ from django.utils.translation import activate
 from .api import pm_broadcast, pm_write
 # because of reload()'s, do "from postman.fields import CommaSeparatedUserField" just before needs
 # because of reload()'s, do "from postman.forms import xxForm" just before needs
-from .models import OPTION_MESSAGES, ORDER_BY_KEY, ORDER_BY_MAPPER, Message, PendingMessage,\
-        STATUS_PENDING, STATUS_ACCEPTED, STATUS_REJECTED,\
-        get_order_by, get_user_representation, get_user_name
+from .models import OPTION_MESSAGES, ORDER_BY_KEY, ORDER_BY_MAPPER, Message, PendingMessage, \
+    STATUS_PENDING, STATUS_ACCEPTED, STATUS_REJECTED, \
+    get_order_by, get_user_representation, get_user_name
 # because of reload()'s, do "from postman.utils import notification" just before needs
 from .utils import format_body, format_subject, email, email_visitor, notify_user
 
@@ -70,6 +70,7 @@ class GenericTest(TestCase):
     """
     Usual generic tests.
     """
+
     def test_version(self):
         self.assertEqual(sys.modules['postman'].__version__, "4.3.2")
 
@@ -79,8 +80,10 @@ class TransactionViewTest(TransactionTestCase):
     Test some transactional behavior.
     Can't use Django TestCase class, because it has a special treament for commit/rollback to speed up the database resetting.
     """
+
     def setUp(self):
-        settings.LANGUAGE_CODE = 'en'  # do not bother about translation ; needed for the server side
+        # do not bother about translation ; needed for the server side
+        settings.LANGUAGE_CODE = 'en'
         self.user1 = get_user_model().objects.create_user('foo', 'foo@domain.com', 'pass')
         self.user2 = get_user_model().objects.create_user('bar', 'bar@domain.com', 'pass')
         for a in (
@@ -96,7 +99,10 @@ class TransactionViewTest(TransactionTestCase):
         self.assertTrue(self.client.login(username='foo', password='pass'))
         response = self.client.post(url, data)
         self.assertTrue(Message.objects.get())
-TransactionViewTest = override_settings(ROOT_URLCONF='postman.urls_for_tests')(TransactionViewTest)
+
+
+TransactionViewTest = override_settings(
+    ROOT_URLCONF='postman.urls_for_tests')(TransactionViewTest)
 
 
 class BaseTest(TestCase):
@@ -107,10 +113,12 @@ class BaseTest(TestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        settings.LANGUAGE_CODE = 'en'  # do not bother about translation ; needed for the server side
+        # do not bother about translation ; needed for the server side
+        settings.LANGUAGE_CODE = 'en'
         settings.POSTMAN_MAILER_APP = None
         settings.POSTMAN_AUTOCOMPLETER_APP = {
-            'arg_default': 'postman_single_as1-1',  # no default, mandatory to enable the feature
+            # no default, mandatory to enable the feature
+            'arg_default': 'postman_single_as1-1',
         }
         cls.user1 = get_user_model().objects.create_user('foo', 'foo@domain.com', 'pass')
         cls.user2 = get_user_model().objects.create_user('bar', 'bar@domain.com', 'pass')
@@ -166,14 +174,14 @@ class BaseTest(TestCase):
         self.assertTrue(-2 <= seconds <= 1)  # -1 is not enough for Mysql
 
     def check_status(self, m, status=STATUS_PENDING, is_new=True, is_replied=False, parent=None, thread=None,
-        moderation_date=False, moderation_by=None, moderation_reason='',
-        sender_archived=False, recipient_archived=False,
-        sender_deleted_at=False, recipient_deleted_at=False):
+                     moderation_date=False, moderation_by=None, moderation_reason='',
+                     sender_archived=False, recipient_archived=False,
+                     sender_deleted_at=False, recipient_deleted_at=False):
         "Check a bunch of properties of a message."
 
-        self.assertEqual(m.is_pending(), status==STATUS_PENDING)
-        self.assertEqual(m.is_rejected(), status==STATUS_REJECTED)
-        self.assertEqual(m.is_accepted(), status==STATUS_ACCEPTED)
+        self.assertEqual(m.is_pending(), status == STATUS_PENDING)
+        self.assertEqual(m.is_rejected(), status == STATUS_REJECTED)
+        self.assertEqual(m.is_accepted(), status == STATUS_ACCEPTED)
         self.assertEqual(m.is_new, is_new)
         self.assertEqual(m.is_replied, is_replied)
         self.check_now(m.sent_at)
@@ -222,22 +230,28 @@ class BaseTest(TestCase):
     def c12(cls, *args, **kwargs):
         kwargs.update(sender=cls.user1, recipient=cls.user2)
         return cls.create_accepted(*args, **kwargs)
+
     @classmethod
     def c13(cls, *args, **kwargs):
         kwargs.update(sender=cls.user1, recipient=cls.user3)
         return cls.create_accepted(*args, **kwargs)
+
     @classmethod
     def c21(cls, *args, **kwargs):
         kwargs.update(sender=cls.user2, recipient=cls.user1)
         return cls.create_accepted(*args, **kwargs)
+
     @classmethod
     def c23(cls, *args, **kwargs):
         kwargs.update(sender=cls.user2, recipient=cls.user3)
         return cls.create_accepted(*args, **kwargs)
+
     @classmethod
     def c32(cls, *args, **kwargs):
         kwargs.update(sender=cls.user3, recipient=cls.user2)
         return cls.create_accepted(*args, **kwargs)
+
+
 BaseTest = override_settings(ROOT_URLCONF='postman.urls_for_tests')(BaseTest)
 
 
@@ -248,7 +262,8 @@ class ViewTest(BaseTest):
 
     def _assertFormError(self, response, form_name, *args):
         if VERSION < (4, 1):
-            self.assertFormError(response, form_name, *args)  # "deprecated and will be removed in Django 5.0"
+            # "deprecated and will be removed in Django 5.0"
+            self.assertFormError(response, form_name, *args)
         else:
             self.assertFormError(response.context[form_name], *args)
 
@@ -265,7 +280,8 @@ class ViewTest(BaseTest):
 
     def test_home(self):
         response = self.client.get('/messages/')
-        self.assertRedirects(response, reverse('postman:inbox'), status_code=301, target_status_code=302)
+        self.assertRedirects(response, reverse(
+            'postman:inbox'), status_code=301, target_status_code=302)
 
     def check_folder(self, folder):
         url = reverse('postman:' + folder, args=[OPTION_MESSAGES])
@@ -302,19 +318,23 @@ class ViewTest(BaseTest):
     def test_query_string_options(self):
         m1 = self.c21()
         m2 = self.c21()
-        m3 = self.c21(); m3.read_at = now(); m3.save()
+        m3 = self.c21()
+        m3.read_at = now()
+        m3.save()
         # 'unread' parameter ; only suitable to inbox
         self.assertTrue(self.client.login(username='foo', password='pass'))
         url = reverse('postman:inbox', args=[OPTION_MESSAGES])
         self.check_retrieved_msgs(url, [m3.pk, m2.pk, m1.pk])  # all msgs
-        self.check_retrieved_msgs(url + '?unread', [m2.pk, m1.pk])  # only unread msgs
+        self.check_retrieved_msgs(
+            url + '?unread', [m2.pk, m1.pk])  # only unread msgs
         # 'limit' parameter ; mainly designed for inbox ...
         self.check_retrieved_msgs(url + '?limit=1', [m3.pk])
         self.check_retrieved_msgs(url + '?unread&limit=1', [m2.pk])
         # ... but available to all folders ; testing one is enough
         self.assertTrue(self.client.login(username='bar', password='pass'))
         url = reverse('postman:sent', args=[OPTION_MESSAGES])
-        self.check_retrieved_msgs(url + '?limit=not_an_int', [m3.pk, m2.pk, m1.pk])
+        self.check_retrieved_msgs(
+            url + '?limit=not_an_int', [m3.pk, m2.pk, m1.pk])
         self.check_retrieved_msgs(url + '?limit=2', [m3.pk, m2.pk])
         self.check_retrieved_msgs(url + '?limit=1', [m3.pk])
         self.check_retrieved_msgs(url + '?limit=0', [])
@@ -325,7 +345,8 @@ class ViewTest(BaseTest):
         self.reload_modules()
         activate('fr')
 
-        url = reverse('postman:inbox')  # do not test all urls, one is enough for proof
+        # do not test all urls, one is enough for proof
+        url = reverse('postman:inbox')
         self.assertEqual(url, '/messages/re%C3%A7us/')
 
         # reset, otherwise 'postman:inbox' keeps its lazy translation and the following test_inbox will fail
@@ -342,7 +363,8 @@ class ViewTest(BaseTest):
         m1 = self.c12()
         m1.read_at, m1.thread = now(), m1
         m2 = self.c21(parent=m1, thread=m1.thread)
-        m1.replied_at = m2.sent_at; m1.save()
+        m1.replied_at = m2.sent_at
+        m1.save()
         self.assertTrue(self.client.login(username='foo', password='pass'))
         for actions, args in [
             (('inbox', 'sent', 'archives', 'trash', 'write'), []),
@@ -360,7 +382,8 @@ class ViewTest(BaseTest):
         response = self.client.get(url)
         self.assertTemplateUsed(response, template)
         from postman.forms import AnonymousWriteForm
-        self.assertTrue(isinstance(response.context['form'], AnonymousWriteForm))
+        self.assertTrue(isinstance(
+            response.context['form'], AnonymousWriteForm))
         # anonymous is not allowed
         settings.POSTMAN_DISALLOW_ANONYMOUS = True
         self.reload_modules()
@@ -385,17 +408,21 @@ class ViewTest(BaseTest):
         response = self.client.get(url)
         self.assertContains(response, 'value="bar, foo"')
 
-        url = reverse('postman:write', args=[':foo::intruder:bar:a-b+c@d.com:foo:'])
+        url = reverse('postman:write', args=[
+                      ':foo::intruder:bar:a-b+c@d.com:foo:'])
         response = self.client.get(url)
         self.assertContains(response, 'value="bar, foo"')
 
         # because of Custom User Model, do allow almost any character, not only '^[\w.@+-]+$' of the legacy django.contrib.auth.User model
-        get_user_model().objects.create_user("Le Créac'h", 'foobar@domain.com', 'pass')  # even: space, accentued, quotes
+        get_user_model().objects.create_user("Le Créac'h", 'foobar@domain.com',
+                                             'pass')  # even: space, accentued, quotes
         url = reverse('postman:write', args=["Le Créac'h"])
         response = self.client.get(url)
-        self.assertContains(response, 'value="Le Créac{0}h"'.format('&#39;' if VERSION < (3, 0) else '&#x27;'))
+        self.assertContains(response, 'value="Le Créac{0}h"'.format(
+            '&#39;' if VERSION < (3, 0) else '&#x27;'))
 
-        settings.POSTMAN_NAME_USER_AS = 'id'  # test int values compliance with processings using str.join()
+        # test int values compliance with processings using str.join()
+        settings.POSTMAN_NAME_USER_AS = 'id'
         url = reverse('postman:write', args=['1:2'])
         response = self.client.get(url)
         self.assertContains(response, 'value="1, 2"')
@@ -449,35 +476,44 @@ class ViewTest(BaseTest):
     def check_write_post(self, extra={}, is_anonymous=False):
         "Check message generation, redirection, and mandatory fields."
         url = reverse('postman:write')
-        url_with_success_url = reverse('postman:write_with_success_url_to_sent')
-        data = {'recipients': self.user2.get_username(), 'subject': 's', 'body': 'b'}
+        url_with_success_url = reverse(
+            'postman:write_with_success_url_to_sent')
+        data = {'recipients': self.user2.get_username(), 'subject': 's',
+                'body': 'b'}
         data.update(extra)
         # default redirect is to the requestor page
         response = self.client.post(url, data, HTTP_REFERER=url, follow=True)
         self.assertRedirects(response, url)
-        self.check_contrib_messages(response, 'Message successfully sent.')  # no such check for the following posts, one is enough
+        # no such check for the following posts, one is enough
+        self.check_contrib_messages(response, 'Message successfully sent.')
         m = Message.objects.get()
         pk = m.pk
         self.check_message(m, is_anonymous)
         # fallback redirect is to inbox. So redirect again when login is required
         response = self.client.post(url, data)
-        self.assertRedirects(response, reverse('postman:inbox'), target_status_code=302 if is_anonymous else 200)
+        self.assertRedirects(response, reverse(
+            'postman:inbox'), target_status_code=302 if is_anonymous else 200)
         self.check_message(Message.objects.get(pk=pk+1), is_anonymous)
         # redirect url may be superseded
-        response = self.client.post(url_with_success_url, data, HTTP_REFERER=url)
-        self.assertRedirects(response, reverse('postman:sent'), target_status_code=302 if is_anonymous else 200)
+        response = self.client.post(
+            url_with_success_url, data, HTTP_REFERER=url)
+        self.assertRedirects(response, reverse(
+            'postman:sent'), target_status_code=302 if is_anonymous else 200)
         self.check_message(Message.objects.get(pk=pk+2), is_anonymous)
         # query string has highest precedence ; scheme and domain are silently ignored
-        response = self.client.post(url_with_success_url + '?next=any://any.tld' + url, data, HTTP_REFERER='does not matter')
+        response = self.client.post(
+            url_with_success_url + '?next=any://any.tld' + url, data, HTTP_REFERER='does not matter')
         self.assertRedirects(response, url)
         self.check_message(Message.objects.get(pk=pk+3), is_anonymous)
 
         for f in data.keys():
-            if f in ('body',): continue
+            if f in ('body',):
+                continue
             d = data.copy()
             del d[f]
             response = self.client.post(url, d, HTTP_REFERER=url)
-            self._assertFormError(response, 'form', f, 'This field is required.')
+            self._assertFormError(response, 'form', f,
+                                  'This field is required.')
 
     def test_write_post_anonymous(self):
         self.check_write_post({'email': 'a@b.com'}, is_anonymous=True)
@@ -495,7 +531,8 @@ class ViewTest(BaseTest):
             'recipients': '{0}, {1}'.format(self.user2.get_username(), self.user3.get_username())}
         # anonymous
         response = self.client.post(url, data, HTTP_REFERER=url)
-        self._assertFormError(response, 'form', 'recipients', CommaSeparatedUserField.default_error_messages['max'].format(limit_value=1, show_value=2))
+        self._assertFormError(response, 'form', 'recipients',
+                              CommaSeparatedUserField.default_error_messages['max'].format(limit_value=1, show_value=2))
         # authenticated
         self.assertTrue(self.client.login(username='foo', password='pass'))
         del data['email']
@@ -507,11 +544,13 @@ class ViewTest(BaseTest):
 
         url_with_max = reverse('postman:write_with_max')
         response = self.client.post(url_with_max, data, HTTP_REFERER=url)
-        self._assertFormError(response, 'form', 'recipients', CommaSeparatedUserField.default_error_messages['max'].format(limit_value=1, show_value=2))
+        self._assertFormError(response, 'form', 'recipients',
+                              CommaSeparatedUserField.default_error_messages['max'].format(limit_value=1, show_value=2))
 
         settings.POSTMAN_DISALLOW_MULTIRECIPIENTS = True
         response = self.client.post(url, data, HTTP_REFERER=url)
-        self._assertFormError(response, 'form', 'recipients', CommaSeparatedUserField.default_error_messages['max'].format(limit_value=1, show_value=2))
+        self._assertFormError(response, 'form', 'recipients',
+                              CommaSeparatedUserField.default_error_messages['max'].format(limit_value=1, show_value=2))
 
     def test_write_post_filters(self):
         "Test user- and exchange- filters."
@@ -521,54 +560,77 @@ class ViewTest(BaseTest):
             'recipients': '{0}, {1}'.format(self.user2.get_username(), self.user3.get_username())}
         self.assertTrue(self.client.login(username='foo', password='pass'))
 
-        response = self.client.post(reverse('postman:write_with_user_filter_reason'), data, HTTP_REFERER=url)
-        self._assertFormError(response, 'form', 'recipients', "Some usernames are rejected: bar (some reason).")
+        response = self.client.post(
+            reverse('postman:write_with_user_filter_reason'), data, HTTP_REFERER=url)
+        self._assertFormError(response, 'form', 'recipients',
+                              "Some usernames are rejected: bar (some reason).")
 
-        response = self.client.post(reverse('postman:write_with_user_filter_no_reason'), data, HTTP_REFERER=url)
-        self._assertFormError(response, 'form', 'recipients', "Some usernames are rejected: bar, baz.")
+        response = self.client.post(
+            reverse('postman:write_with_user_filter_no_reason'), data, HTTP_REFERER=url)
+        self._assertFormError(response, 'form', 'recipients',
+                              "Some usernames are rejected: bar, baz.")
 
-        response = self.client.post(reverse('postman:write_with_user_filter_false'), data, HTTP_REFERER=url)
-        self._assertFormError(response, 'form', 'recipients', "Some usernames are rejected: bar, baz.")
+        response = self.client.post(
+            reverse('postman:write_with_user_filter_false'), data, HTTP_REFERER=url)
+        self._assertFormError(response, 'form', 'recipients',
+                              "Some usernames are rejected: bar, baz.")
 
-        response = self.client.post(reverse('postman:write_with_user_filter_exception'), data, HTTP_REFERER=url)
-        self._assertFormError(response, 'form', 'recipients', ['first good reason',"anyway, I don't like bar"])
+        response = self.client.post(
+            reverse('postman:write_with_user_filter_exception'), data, HTTP_REFERER=url)
+        self._assertFormError(response, 'form', 'recipients', [
+                              'first good reason', "anyway, I don't like bar"])
 
-        response = self.client.post(reverse('postman:write_with_exch_filter_reason'), data, HTTP_REFERER=url)
-        self._assertFormError(response, 'form', 'recipients', "Writing to some users is not possible: bar (some reason).")
+        response = self.client.post(
+            reverse('postman:write_with_exch_filter_reason'), data, HTTP_REFERER=url)
+        self._assertFormError(response, 'form', 'recipients',
+                              "Writing to some users is not possible: bar (some reason).")
 
-        response = self.client.post(reverse('postman:write_with_exch_filter_no_reason'), data, HTTP_REFERER=url)
-        self._assertFormError(response, 'form', 'recipients', "Writing to some users is not possible: bar, baz.")
+        response = self.client.post(
+            reverse('postman:write_with_exch_filter_no_reason'), data, HTTP_REFERER=url)
+        self._assertFormError(response, 'form', 'recipients',
+                              "Writing to some users is not possible: bar, baz.")
 
-        response = self.client.post(reverse('postman:write_with_exch_filter_false'), data, HTTP_REFERER=url)
-        self._assertFormError(response, 'form', 'recipients', "Writing to some users is not possible: bar, baz.")
+        response = self.client.post(
+            reverse('postman:write_with_exch_filter_false'), data, HTTP_REFERER=url)
+        self._assertFormError(response, 'form', 'recipients',
+                              "Writing to some users is not possible: bar, baz.")
 
-        response = self.client.post(reverse('postman:write_with_exch_filter_exception'), data, HTTP_REFERER=url)
-        self._assertFormError(response, 'form', 'recipients', ['first good reason',"anyway, I don't like bar"])
+        response = self.client.post(
+            reverse('postman:write_with_exch_filter_exception'), data, HTTP_REFERER=url)
+        self._assertFormError(response, 'form', 'recipients', [
+                              'first good reason', "anyway, I don't like bar"])
 
     def test_write_post_moderate(self):
         "Test 'auto_moderators' parameter."
         url = reverse('postman:write')
-        data = {'subject': 's', 'body': 'b', 'recipients': self.user2.get_username()}
+        data = {'subject': 's', 'body': 'b',
+                'recipients': self.user2.get_username()}
         self.assertTrue(self.client.login(username='foo', password='pass'))
-        response = self.client.post(reverse('postman:write_moderate'), data, HTTP_REFERER=url, follow=True)
+        response = self.client.post(
+            reverse('postman:write_moderate'), data, HTTP_REFERER=url, follow=True)
         self.assertRedirects(response, url)
-        self.check_contrib_messages(response, 'Message rejected for at least one recipient.')
+        self.check_contrib_messages(
+            response, 'Message rejected for at least one recipient.')
         self.check_status(Message.objects.get(), status=STATUS_REJECTED, recipient_deleted_at=True,
-            moderation_date=True, moderation_reason="some reason")
+                          moderation_date=True, moderation_reason="some reason")
 
     def test_write_notification(self):
         "Test the fallback for the site name in the generation of a notification, when the django.contrib.sites app is not installed."
-        settings.POSTMAN_AUTO_MODERATE_AS = True  # will generate an acceptance notification
+        # will generate an acceptance notification
+        settings.POSTMAN_AUTO_MODERATE_AS = True
         url = reverse('postman:write')
-        data = {'subject': 's', 'body': 'b', 'recipients': self.user2.get_username()}
+        data = {'subject': 's', 'body': 'b',
+                'recipients': self.user2.get_username()}
         self.assertTrue(self.client.login(username='foo', password='pass'))
         response = self.client.post(url, data, HTTP_REFERER=url)
         self.assertRedirects(response, url)
-        self.check_status(Message.objects.get(), status=STATUS_ACCEPTED, moderation_date=True)
+        self.check_status(Message.objects.get(),
+                          status=STATUS_ACCEPTED, moderation_date=True)
         self.assertEqual(len(mail.outbox), 1)
         # can't use get_current_site(response.request) because response.request is not an HttpRequest and doesn't have a get_host attribute
         site = self.get_site()
-        sitename = site.name if site else "testserver"  # the SERVER_NAME environment variable is not accessible here
+        # the SERVER_NAME environment variable is not accessible here
+        sitename = site.name if site else "testserver"
         self.assertTrue(sitename in mail.outbox[0].subject)
 
     def test_reply_authentication(self):
@@ -586,14 +648,17 @@ class ViewTest(BaseTest):
         from postman.forms import FullReplyForm
         self.assertTrue(isinstance(response.context['form'], FullReplyForm))
         self.assertContains(response, 'value="Re: s"')
-        self.assertContains(response, '\n\nbar wrote:\n&gt; this is my body\n</textarea>')
+        self.assertContains(
+            response, '\n\nbar wrote:\n&gt; this is my body\n</textarea>')
         self.assertEqual(response.context['recipient'], 'bar')
 
-        settings.POSTMAN_QUICKREPLY_QUOTE_BODY = True  # no influence here, acts only for Quick Reply
+        # no influence here, acts only for Quick Reply
+        settings.POSTMAN_QUICKREPLY_QUOTE_BODY = True
         self.reload_modules()
         response = self.client.get(url)
         self.assertContains(response, 'value="Re: s"')
-        self.assertContains(response, '\n\nbar wrote:\n&gt; this is my body\n</textarea>')
+        self.assertContains(
+            response, '\n\nbar wrote:\n&gt; this is my body\n</textarea>')
 
     def test_reply_formatters(self):
         "Test the 'formatters' parameter."
@@ -604,7 +669,8 @@ class ViewTest(BaseTest):
         response = self.client.get(url)
         self.assertTemplateUsed(response, template)
         self.assertContains(response, 'value="Re_ s"')
-        self.assertContains(response, 'bar _ this is my body</textarea>')  # POSTMAN_QUICKREPLY_QUOTE_BODY setting is not involved
+        # POSTMAN_QUICKREPLY_QUOTE_BODY setting is not involved
+        self.assertContains(response, 'bar _ this is my body</textarea>')
 
     def test_reply_auto_complete(self):
         "Test the 'autocomplete_channel' parameter."
@@ -631,13 +697,16 @@ class ViewTest(BaseTest):
         # invalid message id
         self.check_reply_404(1000)
         # existent message but you are the sender, not the recipient
-        self.check_reply_404(Message.objects.get(pk=self.c12().pk).pk) # create & verify really there
+        # create & verify really there
+        self.check_reply_404(Message.objects.get(pk=self.c12().pk).pk)
         # existent message but not yours at all
         self.check_reply_404(Message.objects.get(pk=self.c23().pk).pk)
         # existent message but not yet visible to you
-        self.check_reply_404(Message.objects.get(pk=self.create(sender=self.user2, recipient=self.user1).pk).pk)
+        self.check_reply_404(Message.objects.get(pk=self.create(
+            sender=self.user2, recipient=self.user1).pk).pk)
         # cannot reply to a deleted message
-        self.check_reply_404(Message.objects.get(pk=self.c21(recipient_deleted_at=now()).pk).pk)
+        self.check_reply_404(Message.objects.get(
+            pk=self.c21(recipient_deleted_at=now()).pk).pk)
 
     def test_reply_querystring(self):
         "Test the prefilling by query string."
@@ -648,7 +717,8 @@ class ViewTest(BaseTest):
         "Test message generation and redirection."
         pk = self.c21().pk
         url = reverse('postman:reply', args=[pk])
-        url_with_success_url = reverse('postman:reply_with_success_url_to_sent', args=[pk])
+        url_with_success_url = reverse(
+            'postman:reply_with_success_url_to_sent', args=[pk])
         data = {'subject': 's', 'body': 'b'}
         self.assertTrue(self.client.login(username='foo', password='pass'))
         # default redirect is to the requestor page
@@ -661,34 +731,41 @@ class ViewTest(BaseTest):
         self.assertRedirects(response, reverse('postman:inbox'))
         self.check_message(Message.objects.get(pk=pk+2))
         # redirect url may be superseded
-        response = self.client.post(url_with_success_url, data, HTTP_REFERER=url)
+        response = self.client.post(
+            url_with_success_url, data, HTTP_REFERER=url)
         self.assertRedirects(response, reverse('postman:sent'))
         self.check_message(Message.objects.get(pk=pk+3))
         # query string has highest precedence ; scheme and domain are silently ignored
-        response = self.client.post(url_with_success_url + '?next=any://any.tld' + url, data, HTTP_REFERER='does not matter')
+        response = self.client.post(
+            url_with_success_url + '?next=any://any.tld' + url, data, HTTP_REFERER='does not matter')
         self.assertRedirects(response, url)
         self.check_message(Message.objects.get(pk=pk+4))
         # missing subject is valid, as in quick reply
         response = self.client.post(url, {}, HTTP_REFERER=url)
         self.assertRedirects(response, url)
-        self.check_message(Message.objects.get(pk=pk+5), subject='Re: s', body='')
+        self.check_message(Message.objects.get(
+            pk=pk+5), subject='Re: s', body='')
 
     def test_reply_post_copies(self):
         "Test number of recipients constraint."
         from postman.fields import CommaSeparatedUserField
         pk = self.c21().pk
         url = reverse('postman:reply', args=[pk])
-        data = {'subject': 's', 'body': 'b', 'recipients': self.user3.get_username()}
+        data = {'subject': 's', 'body': 'b',
+                'recipients': self.user3.get_username()}
         self.assertTrue(self.client.login(username='foo', password='pass'))
         response = self.client.post(url, data, HTTP_REFERER=url)
         self.assertRedirects(response, url)
         self.check_message(Message.objects.get(pk=pk+1))
-        self.check_message(Message.objects.get(pk=pk+2), recipient_username='baz')
+        self.check_message(Message.objects.get(
+            pk=pk+2), recipient_username='baz')
 
         url_with_max = reverse('postman:reply_with_max', args=[pk])
-        data.update(recipients='{0}, {1}'.format(self.user2.get_username(), self.user3.get_username()))
+        data.update(recipients='{0}, {1}'.format(
+            self.user2.get_username(), self.user3.get_username()))
         response = self.client.post(url_with_max, data, HTTP_REFERER=url)
-        self._assertFormError(response, 'form', 'recipients', CommaSeparatedUserField.default_error_messages['max'].format(limit_value=1, show_value=2))
+        self._assertFormError(response, 'form', 'recipients',
+                              CommaSeparatedUserField.default_error_messages['max'].format(limit_value=1, show_value=2))
 
         settings.POSTMAN_DISALLOW_COPIES_ON_REPLY = True
         self.reload_modules()
@@ -701,37 +778,58 @@ class ViewTest(BaseTest):
         "Test user- and exchange- filters."
         pk = self.c21().pk
         url = reverse('postman:reply', args=[pk])
-        data = {'subject': 's', 'body': 'b', 'recipients': '{0}, {1}'.format(self.user2.get_username(), self.user3.get_username())}
+        data = {'subject': 's', 'body': 'b', 'recipients': '{0}, {1}'.format(
+            self.user2.get_username(), self.user3.get_username())}
         self.assertTrue(self.client.login(username='foo', password='pass'))
 
-        response = self.client.post(reverse('postman:reply_with_user_filter_reason', args=[pk]), data, HTTP_REFERER=url)
-        self._assertFormError(response, 'form', 'recipients', "Some usernames are rejected: bar (some reason).")
+        response = self.client.post(reverse(
+            'postman:reply_with_user_filter_reason', args=[pk]), data, HTTP_REFERER=url)
+        self._assertFormError(response, 'form', 'recipients',
+                              "Some usernames are rejected: bar (some reason).")
 
-        response = self.client.post(reverse('postman:reply_with_user_filter_no_reason', args=[pk]), data, HTTP_REFERER=url)
-        self._assertFormError(response, 'form', 'recipients', "Some usernames are rejected: bar, baz.")
+        response = self.client.post(reverse(
+            'postman:reply_with_user_filter_no_reason', args=[pk]), data, HTTP_REFERER=url)
+        self._assertFormError(response, 'form', 'recipients',
+                              "Some usernames are rejected: bar, baz.")
 
-        response = self.client.post(reverse('postman:reply_with_user_filter_false', args=[pk]), data, HTTP_REFERER=url)
-        self._assertFormError(response, 'form', 'recipients', "Some usernames are rejected: bar, baz.")
+        response = self.client.post(reverse(
+            'postman:reply_with_user_filter_false', args=[pk]), data, HTTP_REFERER=url)
+        self._assertFormError(response, 'form', 'recipients',
+                              "Some usernames are rejected: bar, baz.")
 
-        response = self.client.post(reverse('postman:reply_with_user_filter_exception', args=[pk]), data, HTTP_REFERER=url)
-        self._assertFormError(response, 'form', 'recipients', ['first good reason',"anyway, I don't like bar"])
+        response = self.client.post(reverse(
+            'postman:reply_with_user_filter_exception', args=[pk]), data, HTTP_REFERER=url)
+        self._assertFormError(response, 'form', 'recipients', [
+                              'first good reason', "anyway, I don't like bar"])
 
         # filter is also applied to the implicit recipient
-        response = self.client.post(reverse('postman:reply_with_exch_filter_reason', args=[pk]), data, HTTP_REFERER=url)
-        self._assertFormError(response, 'form', 'recipients', "Writing to some users is not possible: bar (some reason).")
-        self._assertFormError(response, 'form', None, "Writing to some users is not possible: bar (some reason).")
+        response = self.client.post(reverse(
+            'postman:reply_with_exch_filter_reason', args=[pk]), data, HTTP_REFERER=url)
+        self._assertFormError(response, 'form', 'recipients',
+                              "Writing to some users is not possible: bar (some reason).")
+        self._assertFormError(
+            response, 'form', None, "Writing to some users is not possible: bar (some reason).")
 
-        response = self.client.post(reverse('postman:reply_with_exch_filter_no_reason', args=[pk]), data, HTTP_REFERER=url)
-        self._assertFormError(response, 'form', 'recipients', "Writing to some users is not possible: bar, baz.")
-        self._assertFormError(response, 'form', None, "Writing to some users is not possible: bar.")
+        response = self.client.post(reverse(
+            'postman:reply_with_exch_filter_no_reason', args=[pk]), data, HTTP_REFERER=url)
+        self._assertFormError(response, 'form', 'recipients',
+                              "Writing to some users is not possible: bar, baz.")
+        self._assertFormError(response, 'form', None,
+                              "Writing to some users is not possible: bar.")
 
-        response = self.client.post(reverse('postman:reply_with_exch_filter_false', args=[pk]), data, HTTP_REFERER=url)
-        self._assertFormError(response, 'form', 'recipients', "Writing to some users is not possible: bar, baz.")
-        self._assertFormError(response, 'form', None, "Writing to some users is not possible: bar.")
+        response = self.client.post(reverse(
+            'postman:reply_with_exch_filter_false', args=[pk]), data, HTTP_REFERER=url)
+        self._assertFormError(response, 'form', 'recipients',
+                              "Writing to some users is not possible: bar, baz.")
+        self._assertFormError(response, 'form', None,
+                              "Writing to some users is not possible: bar.")
 
-        response = self.client.post(reverse('postman:reply_with_exch_filter_exception', args=[pk]), data, HTTP_REFERER=url)
-        self._assertFormError(response, 'form', 'recipients', ['first good reason',"anyway, I don't like bar"])
-        self._assertFormError(response, 'form', None, ['first good reason',"anyway, I don't like bar"])
+        response = self.client.post(reverse(
+            'postman:reply_with_exch_filter_exception', args=[pk]), data, HTTP_REFERER=url)
+        self._assertFormError(response, 'form', 'recipients', [
+                              'first good reason', "anyway, I don't like bar"])
+        self._assertFormError(response, 'form', None, [
+                              'first good reason', "anyway, I don't like bar"])
 
     def test_reply_post_moderate(self):
         "Test 'auto_moderators' parameter."
@@ -741,12 +839,13 @@ class ViewTest(BaseTest):
         data = {'subject': 's', 'body': 'b'}
         self.assertTrue(self.client.login(username='foo', password='pass'))
 
-        response = self.client.post(reverse('postman:reply_moderate', args=[pk]), data, HTTP_REFERER=url)
+        response = self.client.post(
+            reverse('postman:reply_moderate', args=[pk]), data, HTTP_REFERER=url)
         self.assertRedirects(response, url)
         # the check_contrib_messages() in test_write_post_moderate() is enough
         self.check_status(Message.objects.get(pk=pk+1), status=STATUS_REJECTED, recipient_deleted_at=True,
-            parent=m, thread=m,
-            moderation_date=True, moderation_reason="some reason")
+                          parent=m, thread=m,
+                          moderation_date=True, moderation_reason="some reason")
 
     def test_view_authentication(self):
         "Test permission, what template and form are used, set-as-read."
@@ -775,12 +874,14 @@ class ViewTest(BaseTest):
         self.assertNotContains(response, 'value="Re: s"')
         # in django\forms\templates\django\forms\widgets\textarea.html : '>\n</textarea>'
         self.assertContains(response, '\n</textarea>')
-        self.check_status(Message.objects.get(pk=pk2), status=STATUS_ACCEPTED, is_new=False)
+        self.check_status(Message.objects.get(pk=pk2),
+                          status=STATUS_ACCEPTED, is_new=False)
 
         settings.POSTMAN_QUICKREPLY_QUOTE_BODY = True
         self.reload_modules()
         response = self.client.get(url)
-        self.assertContains(response, '\n\nbar wrote:\n&gt; this is my body\n</textarea>')
+        self.assertContains(
+            response, '\n\nbar wrote:\n&gt; this is my body\n</textarea>')
 
     def test_view_formatters(self):
         "Test the 'formatters' parameter."
@@ -791,7 +892,8 @@ class ViewTest(BaseTest):
         response = self.client.get(url)
         self.assertTemplateUsed(response, template)
         self.assertNotContains(response, 'value="Re_ s"')
-        self.assertContains(response, 'bar _ this is my body</textarea>')  # POSTMAN_QUICKREPLY_QUOTE_BODY setting is not involved
+        # POSTMAN_QUICKREPLY_QUOTE_BODY setting is not involved
+        self.assertContains(response, 'bar _ this is my body</textarea>')
 
     def check_view_404(self, pk):
         self.check_404('postman:view', pk)
@@ -802,9 +904,11 @@ class ViewTest(BaseTest):
         # invalid message id
         self.check_view_404(1000)
         # existent message but not yours
-        self.check_view_404(Message.objects.get(pk=self.c23().pk).pk)  # create & verify really there
+        # create & verify really there
+        self.check_view_404(Message.objects.get(pk=self.c23().pk).pk)
         # existent message but not yet visible to you
-        self.check_view_404(Message.objects.get(pk=self.create(sender=self.user2, recipient=self.user1).pk).pk)
+        self.check_view_404(Message.objects.get(pk=self.create(
+            sender=self.user2, recipient=self.user1).pk).pk)
 
     def test_view_conversation_authentication(self):
         "Test permission, what template and form are used, number of messages in the conversation, set-as-read."
@@ -812,9 +916,11 @@ class ViewTest(BaseTest):
         m1 = self.c12()
         m1.read_at, m1.thread = now(), m1
         m2 = self.c21(parent=m1, thread=m1.thread, body="this is my body")
-        m1.replied_at = m2.sent_at; m1.save()
+        m1.replied_at = m2.sent_at
+        m1.save()
         url = reverse('postman:view_conversation', args=[m1.pk])
-        self.check_status(Message.objects.get(pk=m1.pk), status=STATUS_ACCEPTED, is_new=False, is_replied=True, thread=m1)
+        self.check_status(Message.objects.get(
+            pk=m1.pk), status=STATUS_ACCEPTED, is_new=False, is_replied=True, thread=m1)
         # anonymous
         response = self.client.get(url)
         self.check_redirection_to_login(response, url)
@@ -827,14 +933,17 @@ class ViewTest(BaseTest):
         from postman.forms import QuickReplyForm
         self.assertTrue(isinstance(response.context['form'], QuickReplyForm))
         self.assertNotContains(response, 'value="Re: s"')
-        self.assertContains(response, '\n</textarea>')  # same comment as in test_view_authentication
+        # same comment as in test_view_authentication
+        self.assertContains(response, '\n</textarea>')
         self.assertEqual(len(response.context['pm_messages']), 2)
-        self.check_status(Message.objects.get(pk=m2.pk), status=STATUS_ACCEPTED, is_new=False, parent=m1, thread=m1)
+        self.check_status(Message.objects.get(
+            pk=m2.pk), status=STATUS_ACCEPTED, is_new=False, parent=m1, thread=m1)
 
         settings.POSTMAN_QUICKREPLY_QUOTE_BODY = True
         self.reload_modules()
         response = self.client.get(url)
-        self.assertContains(response, '\n\nbar wrote:\n&gt; this is my body\n</textarea>')
+        self.assertContains(
+            response, '\n\nbar wrote:\n&gt; this is my body\n</textarea>')
 
     def check_view_conversation_404(self, thread_id):
         self.check_404('postman:view_conversation', thread_id)
@@ -848,7 +957,8 @@ class ViewTest(BaseTest):
         m1 = self.c23()
         m1.read_at, m1.thread = now(), m1
         m2 = self.c32(parent=m1, thread=m1.thread)
-        m1.replied_at = m2.sent_at; m1.save()
+        m1.replied_at = m2.sent_at
+        m1.save()
         self.check_view_conversation_404(m1.thread_id)
 
     def test_view_conversation(self):
@@ -856,9 +966,11 @@ class ViewTest(BaseTest):
         m1 = self.c12()
         m1.read_at, m1.thread = now(), m1
         m1.save()
-        m2 = self.create(sender=self.user2, recipient=self.user1, parent=m1, thread=m1.thread)
+        m2 = self.create(sender=self.user2, recipient=self.user1,
+                         parent=m1, thread=m1.thread)
         url = reverse('postman:view_conversation', args=[m1.pk])
-        self.check_status(Message.objects.get(pk=m1.pk), status=STATUS_ACCEPTED, is_new=False, thread=m1)
+        self.check_status(Message.objects.get(pk=m1.pk),
+                          status=STATUS_ACCEPTED, is_new=False, thread=m1)
         # existent response but not yet visible to you
         self.assertTrue(self.client.login(username='foo', password='pass'))
         response = self.client.get(url)
@@ -880,7 +992,8 @@ class ViewTest(BaseTest):
         #            -------------------->
         # 1: initially set for the undelete test
         url = reverse(view_name)
-        url_with_success_url = reverse(view_name + '_with_success_url_to_archives')
+        url_with_success_url = reverse(
+            view_name + '_with_success_url_to_archives')
         data = {'pks': (str(pk), str(pk+1), str(pk+2))}
         m1 = Message.objects.get(pk=pk)  # keep an original copy
         # anonymous
@@ -890,14 +1003,19 @@ class ViewTest(BaseTest):
         self.assertTrue(self.client.login(username='foo', password='pass'))
         # default redirect is to the requestor page
         redirect_url = reverse('postman:sent')
-        response = self.client.post(url, data, HTTP_REFERER=redirect_url, follow=True)  # 'follow' to access contrib messages
+        # 'follow' to access contrib messages
+        response = self.client.post(
+            url, data, HTTP_REFERER=redirect_url, follow=True)
         self.assertRedirects(response, redirect_url)
         self.check_contrib_messages(response, success_msg)
         sender_kw = 'sender_{0}'.format(field_bit)
         recipient_kw = 'recipient_{0}'.format(field_bit)
-        self.check_status(Message.objects.get(pk=pk),   status=STATUS_ACCEPTED, **{sender_kw: field_value})
-        self.check_status(Message.objects.get(pk=pk+1), status=STATUS_ACCEPTED, **{recipient_kw: field_value})
-        self.check_status(Message.objects.get(pk=pk+2), status=STATUS_ACCEPTED, **{sender_kw: field_value})
+        self.check_status(Message.objects.get(pk=pk),
+                          status=STATUS_ACCEPTED, **{sender_kw: field_value})
+        self.check_status(Message.objects.get(pk=pk+1),
+                          status=STATUS_ACCEPTED, **{recipient_kw: field_value})
+        self.check_status(Message.objects.get(pk=pk+2),
+                          status=STATUS_ACCEPTED, **{sender_kw: field_value})
         self.check_status(Message.objects.get(pk=pk+3), status=STATUS_ACCEPTED)
         # fallback redirect is to inbox
         m1.save()  # restoring one message is enough to avoid the error when all are archived|deleted|undeleted
@@ -905,11 +1023,13 @@ class ViewTest(BaseTest):
         self.assertRedirects(response, reverse('postman:inbox'))
         # redirect url may be superseded
         m1.save()
-        response = self.client.post(url_with_success_url, data, HTTP_REFERER=redirect_url)
+        response = self.client.post(
+            url_with_success_url, data, HTTP_REFERER=redirect_url)
         self.assertRedirects(response, reverse('postman:archives'))
         # query string has highest precedence ; scheme and domain are silently ignored
         m1.save()
-        response = self.client.post(url_with_success_url + '?next=any://any.tld' + redirect_url, data, HTTP_REFERER='does not matter')
+        response = self.client.post(
+            url_with_success_url + '?next=any://any.tld' + redirect_url, data, HTTP_REFERER='does not matter')
         self.assertRedirects(response, redirect_url)
         # missing payload
         response = self.client.post(url, follow=True)
@@ -941,8 +1061,10 @@ class ViewTest(BaseTest):
         # contrib.messages are already tested with check_update()
         sender_kw = 'sender_{0}'.format(field_bit)
         recipient_kw = 'recipient_{0}'.format(field_bit)
-        self.check_status(Message.objects.get(pk=pk), status=STATUS_ACCEPTED, is_new=False, is_replied=True, thread=root_msg, **{sender_kw: field_value})
-        self.check_status(Message.objects.get(pk=pk+1), status=STATUS_ACCEPTED, parent=root_msg, thread=root_msg, **{recipient_kw: field_value})
+        self.check_status(Message.objects.get(pk=pk), status=STATUS_ACCEPTED,
+                          is_new=False, is_replied=True, thread=root_msg, **{sender_kw: field_value})
+        self.check_status(Message.objects.get(pk=pk+1), status=STATUS_ACCEPTED,
+                          parent=root_msg, thread=root_msg, **{recipient_kw: field_value})
         # missing payload
         response = self.client.post(url)
         self.assertRedirects(response, reverse('postman:inbox'))
@@ -961,14 +1083,16 @@ class ViewTest(BaseTest):
         self.c21()
         self.c12()
         self.c13()
-        self.check_update('postman:archive', 'Messages or conversations successfully archived.', 'archived', pk, True)
+        self.check_update(
+            'postman:archive', 'Messages or conversations successfully archived.', 'archived', pk, True)
 
     def test_archive_conversation(self):
         "Test archive action on conversations."
         m1 = self.c12()
         m1.read_at, m1.thread = now(), m1
         m2 = self.c21(parent=m1, thread=m1.thread)
-        m1.replied_at = m2.sent_at; m1.save()
+        m1.replied_at = m2.sent_at
+        m1.save()
         self.check_update_conversation('postman:archive', m1, 'archived', True)
 
     def test_delete(self):
@@ -977,15 +1101,18 @@ class ViewTest(BaseTest):
         self.c21()
         self.c12()
         self.c13()
-        self.check_update('postman:delete', 'Messages or conversations successfully deleted.', 'deleted_at', pk, True)
+        self.check_update(
+            'postman:delete', 'Messages or conversations successfully deleted.', 'deleted_at', pk, True)
 
     def test_delete_conversation(self):
         "Test delete action on conversations."
         m1 = self.c12()
         m1.read_at, m1.thread = now(), m1
         m2 = self.c21(parent=m1, thread=m1.thread)
-        m1.replied_at = m2.sent_at; m1.save()
-        self.check_update_conversation('postman:delete', m1, 'deleted_at', True)
+        m1.replied_at = m2.sent_at
+        m1.save()
+        self.check_update_conversation(
+            'postman:delete', m1, 'deleted_at', True)
 
     def test_undelete(self):
         "Test undelete action on messages."
@@ -993,14 +1120,16 @@ class ViewTest(BaseTest):
         self.c21(recipient_deleted_at=now())
         self.c12(sender_deleted_at=now())
         self.c13()
-        self.check_update('postman:undelete', 'Messages or conversations successfully recovered.', 'deleted_at', pk)
+        self.check_update(
+            'postman:undelete', 'Messages or conversations successfully recovered.', 'deleted_at', pk)
 
     def test_undelete_conversation(self):
         "Test undelete action on conversations."
         m1 = self.c12(sender_deleted_at=now())
         m1.read_at, m1.thread = now(), m1
         m2 = self.c21(parent=m1, thread=m1.thread, recipient_deleted_at=now())
-        m1.replied_at = m2.sent_at; m1.save()
+        m1.replied_at = m2.sent_at
+        m1.save()
         self.check_update_conversation('postman:undelete', m1, 'deleted_at')
 
     def check_read(self, view_name, success_msg, pk, field_value=True):
@@ -1020,19 +1149,25 @@ class ViewTest(BaseTest):
         response = self.client.post(url, data, follow=True)
         self.assertRedirects(response, reverse('postman:inbox'))
         self.check_contrib_messages(response, success_msg)
-        self.check_status(Message.objects.get(pk=pk),   status=STATUS_ACCEPTED, is_new=not field_value)
+        self.check_status(Message.objects.get(pk=pk),
+                          status=STATUS_ACCEPTED, is_new=not field_value)
         self.check_status(Message.objects.get(pk=pk+1), status=STATUS_ACCEPTED)
-        self.check_status(Message.objects.get(pk=pk+2), status=STATUS_ACCEPTED, is_new=not field_value)
+        self.check_status(Message.objects.get(pk=pk+2),
+                          status=STATUS_ACCEPTED, is_new=not field_value)
         self.check_status(Message.objects.get(pk=pk+3), status=STATUS_ACCEPTED)
 
         self.assertTrue(self.client.login(username='foo', password='pass'))
         response = self.client.post(url, data, follow=True)
         self.assertRedirects(response, reverse('postman:inbox'))
         self.check_contrib_messages(response, success_msg)
-        self.check_status(Message.objects.get(pk=pk),   status=STATUS_ACCEPTED, is_new=field_value)
-        self.check_status(Message.objects.get(pk=pk+1), status=STATUS_ACCEPTED)  # unchanged
-        self.check_status(Message.objects.get(pk=pk+2), status=STATUS_ACCEPTED, is_new=field_value)
-        self.check_status(Message.objects.get(pk=pk+3), status=STATUS_ACCEPTED)  # unchanged
+        self.check_status(Message.objects.get(pk=pk),
+                          status=STATUS_ACCEPTED, is_new=field_value)
+        self.check_status(Message.objects.get(pk=pk+1),
+                          status=STATUS_ACCEPTED)  # unchanged
+        self.check_status(Message.objects.get(pk=pk+2),
+                          status=STATUS_ACCEPTED, is_new=field_value)
+        self.check_status(Message.objects.get(pk=pk+3),
+                          status=STATUS_ACCEPTED)  # unchanged
         # missing payload
         response = self.client.post(url, follow=True)
         self.assertRedirects(response, reverse('postman:inbox'))
@@ -1057,20 +1192,26 @@ class ViewTest(BaseTest):
         response = self.client.post(url, data)
         self.assertRedirects(response, reverse('postman:inbox'))
         m1 = Message.objects.get(pk=pk)
-        self.check_status(m1, status=STATUS_ACCEPTED, is_new=not field_value, is_replied=True, thread=m1)
+        self.check_status(m1, status=STATUS_ACCEPTED,
+                          is_new=not field_value, is_replied=True, thread=m1)
         m2 = Message.objects.get(pk=pk+1)
-        self.check_status(m2, status=STATUS_ACCEPTED, parent=m1, is_replied=True, thread=m1)
-        self.check_status(Message.objects.get(pk=pk+2), status=STATUS_ACCEPTED, is_new=not field_value, parent=m2, thread=m1)
+        self.check_status(m2, status=STATUS_ACCEPTED,
+                          parent=m1, is_replied=True, thread=m1)
+        self.check_status(Message.objects.get(
+            pk=pk+2), status=STATUS_ACCEPTED, is_new=not field_value, parent=m2, thread=m1)
 
         self.assertTrue(self.client.login(username='foo', password='pass'))
         response = self.client.post(url, data)
         self.assertRedirects(response, reverse('postman:inbox'))
         # contrib.messages are already tested with check_read()
         m1 = Message.objects.get(pk=pk)
-        self.check_status(m1, status=STATUS_ACCEPTED, is_new=field_value, is_replied=True, thread=m1)
+        self.check_status(m1, status=STATUS_ACCEPTED,
+                          is_new=field_value, is_replied=True, thread=m1)
         m2 = Message.objects.get(pk=pk+1)
-        self.check_status(m2, status=STATUS_ACCEPTED, parent=m1, is_replied=True, thread=m1)
-        self.check_status(Message.objects.get(pk=pk+2), status=STATUS_ACCEPTED, is_new=field_value, parent=m2, thread=m1)
+        self.check_status(m2, status=STATUS_ACCEPTED,
+                          parent=m1, is_replied=True, thread=m1)
+        self.check_status(Message.objects.get(
+            pk=pk+2), status=STATUS_ACCEPTED, is_new=field_value, parent=m2, thread=m1)
         # missing payload
         response = self.client.post(url)
         self.assertRedirects(response, reverse('postman:inbox'))
@@ -1085,37 +1226,47 @@ class ViewTest(BaseTest):
         self.c12()
         self.c21()
         self.c21()
-        self.check_read('postman:mark-read', 'Messages or conversations successfully marked as read.', pk, False)
+        self.check_read(
+            'postman:mark-read', 'Messages or conversations successfully marked as read.', pk, False)
 
     def test_read_conversation(self):
         "Test mark-as-read action on conversations."
         m1 = self.c21()
         m1.thread = m1
         m2 = self.c12(parent=m1, thread=m1.thread)
-        m1.replied_at = m2.sent_at; m1.save()
+        m1.replied_at = m2.sent_at
+        m1.save()
         m3 = self.c21(parent=m2, thread=m2.thread)
-        m2.replied_at = m3.sent_at; m2.save()
+        m2.replied_at = m3.sent_at
+        m2.save()
         self.check_read_conversation('postman:mark-read', m1.pk, False)
 
     def test_unread(self):
         "Test mark-as-unread action on messages."
         m1 = self.c21()
-        m1.read_at = now(); m1.save()
+        m1.read_at = now()
+        m1.save()
         self.c12()
         m3 = self.c21()
-        m3.read_at = now(); m3.save()
+        m3.read_at = now()
+        m3.save()
         self.c21()
-        self.check_read('postman:mark-unread', 'Messages or conversations successfully marked as unread.', m1.pk, True)
+        self.check_read('postman:mark-unread',
+                        'Messages or conversations successfully marked as unread.', m1.pk, True)
 
     def test_unread_conversation(self):
         "Test mark-as-unread action on conversations."
         m1 = self.c21()
-        m1.read_at = now(); m1.thread = m1
+        m1.read_at = now()
+        m1.thread = m1
         m2 = self.c12(parent=m1, thread=m1.thread)
-        m1.replied_at = m2.sent_at; m1.save()
+        m1.replied_at = m2.sent_at
+        m1.save()
         m3 = self.c21(parent=m2, thread=m2.thread)
-        m2.replied_at = m3.sent_at; m2.save()
-        m3.read_at = now(); m3.save()
+        m2.replied_at = m3.sent_at
+        m2.save()
+        m3.read_at = now()
+        m3.save()
         self.check_read_conversation('postman:mark-unread', m1.pk, True)
 
 
@@ -1132,7 +1283,9 @@ class ApiViewTest(BaseTest):
         # authenticated
         self.assertTrue(self.client.login(username='foo', password='pass'))
         m1 = self.c21()
-        m2 = self.c21(); m2.read_at = now(); m2.save()
+        m2 = self.c21()
+        m2.read_at = now()
+        m2.save()
         response = self.client.get(url)
         self.assertEqual(response.content, '{"unread_count": 1}'.encode())
 
@@ -1141,20 +1294,21 @@ class FieldTest(BaseTest):
     """
     Test the CommaSeparatedUserField.
     """
+
     def test_label(self):
         "Test the plural/singular of the label."
         from postman.fields import CommaSeparatedUserField
-        f = CommaSeparatedUserField(label=('plural','singular'))
+        f = CommaSeparatedUserField(label=('plural', 'singular'))
         self.assertEqual(f.label, 'plural')
         f.set_max(1)
         self.assertEqual(f.label, 'singular')
 
-        f = CommaSeparatedUserField(label=('plural','singular'), max=1)
+        f = CommaSeparatedUserField(label=('plural', 'singular'), max=1)
         self.assertEqual(f.label, 'singular')
         f.set_max(2)
         self.assertEqual(f.label, 'plural')
 
-        f = CommaSeparatedUserField(label=('plural','singular'), max=2)
+        f = CommaSeparatedUserField(label=('plural', 'singular'), max=2)
         self.assertEqual(f.label, 'plural')
         f.set_max(1)
         self.assertEqual(f.label, 'singular')
@@ -1165,11 +1319,15 @@ class FieldTest(BaseTest):
         f = CommaSeparatedUserField()
         self.assertEqual(f.to_python(''), [])
         self.assertEqual(f.to_python('foo'), ['foo'])
-        self.assertEqual(frozenset(f.to_python('foo, bar')), frozenset(['foo', 'bar']))
-        self.assertEqual(frozenset(f.to_python('foo, bar,baz')), frozenset(['foo', 'bar', 'baz']))
+        self.assertEqual(frozenset(f.to_python('foo, bar')),
+                         frozenset(['foo', 'bar']))
+        self.assertEqual(frozenset(f.to_python('foo, bar,baz')),
+                         frozenset(['foo', 'bar', 'baz']))
         self.assertEqual(f.to_python(' foo , foo '), ['foo'])
-        self.assertEqual(frozenset(f.to_python('foo,, bar,')), frozenset(['foo', 'bar']))
-        self.assertEqual(frozenset(f.to_python(',foo, \t , bar')), frozenset(['foo', 'bar']))
+        self.assertEqual(frozenset(f.to_python('foo,, bar,')),
+                         frozenset(['foo', 'bar']))
+        self.assertEqual(frozenset(f.to_python(
+            ',foo, \t , bar')), frozenset(['foo', 'bar']))
 
     def test_clean(self):
         "Test the 'clean' validation."
@@ -1177,7 +1335,8 @@ class FieldTest(BaseTest):
         f = CommaSeparatedUserField(required=False)
         self.assertEqual(f.clean(''), [])
         self.assertEqual(f.clean('foo'), [self.user1])
-        self.assertEqual(frozenset(f.clean('foo, bar')), frozenset([self.user1, self.user2]))
+        self.assertEqual(frozenset(f.clean('foo, bar')),
+                         frozenset([self.user1, self.user2]))
         # 'intruder' is not a username
         self.assertRaises(ValidationError, f.clean, 'foo, intruder, bar')
         # only active users are considered
@@ -1192,12 +1351,15 @@ class FieldTest(BaseTest):
         "Test the 'user_filter' argument."
         from postman.fields import CommaSeparatedUserField
         f = CommaSeparatedUserField(user_filter=lambda u: None)
-        self.assertEqual(frozenset(f.clean('foo, bar')), frozenset([self.user1, self.user2]))
+        self.assertEqual(frozenset(f.clean('foo, bar')),
+                         frozenset([self.user1, self.user2]))
         # no reason
-        f = CommaSeparatedUserField(user_filter=lambda u: '' if u == self.user1 else None)
+        f = CommaSeparatedUserField(
+            user_filter=lambda u: '' if u == self.user1 else None)
         self.assertRaises(ValidationError, f.clean, 'foo, bar')
         # with reason
-        f = CommaSeparatedUserField(user_filter=lambda u: 'some reason' if u == self.user1 else None)
+        f = CommaSeparatedUserField(
+            user_filter=lambda u: 'some reason' if u == self.user1 else None)
         self.assertRaises(ValidationError, f.clean, 'foo, bar')
 
     def test_min(self):
@@ -1210,7 +1372,8 @@ class FieldTest(BaseTest):
         self.assertEqual(f.clean('foo'), [self.user1])
 
         f = CommaSeparatedUserField(min=2)
-        self.assertEqual(frozenset(f.clean('foo, bar')), frozenset([self.user1, self.user2]))
+        self.assertEqual(frozenset(f.clean('foo, bar')),
+                         frozenset([self.user1, self.user2]))
         self.assertRaises(ValidationError, f.clean, 'foo')
 
     def test_max(self):
@@ -1225,6 +1388,7 @@ class MessageManagerTest(BaseTest):
     """
     Test the Message manager.
     """
+
     def test_num_queries(self):
         "Test the number of queries."
         pk = self.c12().pk
@@ -1239,7 +1403,8 @@ class MessageManagerTest(BaseTest):
                 msgs = list(Message.objects.inbox(u, option=OPTION_MESSAGES))
                 user = msgs[0].sender
             with self.assertNumQueries(1):
-                msgs = list(Message.objects.archives(u, option=OPTION_MESSAGES))
+                msgs = list(Message.objects.archives(
+                    u, option=OPTION_MESSAGES))
                 user = msgs[0].sender
                 user = msgs[0].recipient
             with self.assertNumQueries(1):
@@ -1254,9 +1419,12 @@ class MessageManagerTest(BaseTest):
     def test_query_compiler(self):
         "Test our custom query compiler, in particular the right sequence of the sql parameters."
         m = self.c12()
-        qs = Message.objects.inbox(self.user2)  # important: do not use OPTION_MESSAGES
-        self.assertEqual(qs.count(), 1)  # param '*', must stay at the beginning
-        self.assertListEqual(list(qs.filter(recipient_id=2)), [m])  # param 2, must stay at the end
+        # important: do not use OPTION_MESSAGES
+        qs = Message.objects.inbox(self.user2)
+        # param '*', must stay at the beginning
+        self.assertEqual(qs.count(), 1)
+        self.assertListEqual(list(qs.filter(recipient_id=2)), [
+                             m])  # param 2, must stay at the end
 
     def test(self):
         "Test the manager."
@@ -1274,20 +1442,25 @@ class MessageManagerTest(BaseTest):
         #             ...---
         #       x       X---
         m1 = self.c12(moderation_status=STATUS_PENDING)
-        m2 = self.c12(moderation_status=STATUS_REJECTED, recipient_deleted_at=now())
+        m2 = self.c12(moderation_status=STATUS_REJECTED,
+                      recipient_deleted_at=now())
         m3 = self.c12()
         m3.read_at, m3.thread = now(), m3
         m4 = self.c21(parent=m3, thread=m3.thread)
-        m3.replied_at = m4.sent_at; m3.save()
+        m3.replied_at = m4.sent_at
+        m3.save()
         m4.read_at = now()
         m5 = self.c12(parent=m4, thread=m4.thread)
-        m4.replied_at = m5.sent_at; m4.save()
+        m4.replied_at = m5.sent_at
+        m4.save()
         m6 = self.c12()
         m7 = self.c12()
-        m7.read_at = now(); m7.save()
+        m7.read_at = now()
+        m7.save()
         m8 = self.c21()
         m9 = self.c21(moderation_status=STATUS_PENDING)
-        m10 = self.c21(moderation_status=STATUS_REJECTED, recipient_deleted_at=now())
+        m10 = self.c21(moderation_status=STATUS_REJECTED,
+                       recipient_deleted_at=now())
 
         def pk(x): return x.pk
         def pk_cnt(x): return (x.pk, x.count)
@@ -1298,31 +1471,47 @@ class MessageManagerTest(BaseTest):
         self.assertEqual(self.user1.received_messages.count(), 4)
         self.assertEqual(self.user2.sent_messages.count(), 4)
         self.assertEqual(self.user2.received_messages.count(), 6)
-        self.assertEqual(set(m3.child_messages.all()), set([m3,m4,m5]))
+        self.assertEqual(set(m3.child_messages.all()), set([m3, m4, m5]))
         self.assertEqual(list(m3.next_messages.all()), [m4])
         self.assertEqual(m3.get_replies_count(), 1)
         self.assertEqual(list(m4.next_messages.all()), [m5])
         self.assertEqual(m4.get_replies_count(), 1)
         self.assertEqual(m5.get_replies_count(), 0)
         # by messages
-        self._assertQuerySetEqual(Message.objects.sent(self.user1, option=OPTION_MESSAGES), [m7.pk,m6.pk,m5.pk,m3.pk,m2.pk,m1.pk], transform=pk)
-        self._assertQuerySetEqual(Message.objects.sent(self.user2, option=OPTION_MESSAGES), [m10.pk,m9.pk,m8.pk,m4.pk], transform=pk)
-        self._assertQuerySetEqual(Message.objects.inbox(self.user1, option=OPTION_MESSAGES), [m8.pk,m4.pk], transform=pk)
-        self._assertQuerySetEqual(Message.objects.inbox(self.user2, option=OPTION_MESSAGES), [m7.pk,m6.pk,m5.pk,m3.pk], transform=pk)
-        self._assertQuerySetEqual(Message.objects.archives(self.user1, option=OPTION_MESSAGES), [], transform=pk)
-        self._assertQuerySetEqual(Message.objects.archives(self.user2, option=OPTION_MESSAGES), [], transform=pk)
-        self._assertQuerySetEqual(Message.objects.trash(self.user1, option=OPTION_MESSAGES), [], transform=pk)
-        self._assertQuerySetEqual(Message.objects.trash(self.user2, option=OPTION_MESSAGES), [], transform=pk)
+        self._assertQuerySetEqual(Message.objects.sent(self.user1, option=OPTION_MESSAGES), [
+                                  m7.pk, m6.pk, m5.pk, m3.pk, m2.pk, m1.pk], transform=pk)
+        self._assertQuerySetEqual(Message.objects.sent(self.user2, option=OPTION_MESSAGES), [
+                                  m10.pk, m9.pk, m8.pk, m4.pk], transform=pk)
+        self._assertQuerySetEqual(Message.objects.inbox(
+            self.user1, option=OPTION_MESSAGES), [m8.pk, m4.pk], transform=pk)
+        self._assertQuerySetEqual(Message.objects.inbox(
+            self.user2, option=OPTION_MESSAGES), [m7.pk, m6.pk, m5.pk, m3.pk], transform=pk)
+        self._assertQuerySetEqual(Message.objects.archives(
+            self.user1, option=OPTION_MESSAGES), [], transform=pk)
+        self._assertQuerySetEqual(Message.objects.archives(
+            self.user2, option=OPTION_MESSAGES), [], transform=pk)
+        self._assertQuerySetEqual(Message.objects.trash(
+            self.user1, option=OPTION_MESSAGES), [], transform=pk)
+        self._assertQuerySetEqual(Message.objects.trash(
+            self.user2, option=OPTION_MESSAGES), [], transform=pk)
         # by conversations
-        self._assertQuerySetEqual(Message.objects.sent(self.user1), [(m7.pk,0),(m6.pk,0),(m5.pk,2),(m2.pk,0),(m1.pk,0)], transform=pk_cnt)
-        self._assertQuerySetEqual(Message.objects.sent(self.user2), [(m10.pk,0),(m9.pk,0),(m8.pk,0),(m4.pk,1)], transform=pk_cnt)
-        self._assertQuerySetEqual(Message.objects.inbox(self.user1), [(m8.pk,0),(m4.pk,1)], transform=pk_cnt)
-        self._assertQuerySetEqual(Message.objects.inbox(self.user2), [(m7.pk,0),(m6.pk,0),(m5.pk,2)], transform=pk_cnt)
+        self._assertQuerySetEqual(Message.objects.sent(self.user1), [(
+            m7.pk, 0), (m6.pk, 0), (m5.pk, 2), (m2.pk, 0), (m1.pk, 0)], transform=pk_cnt)
+        self._assertQuerySetEqual(Message.objects.sent(self.user2), [(
+            m10.pk, 0), (m9.pk, 0), (m8.pk, 0), (m4.pk, 1)], transform=pk_cnt)
+        self._assertQuerySetEqual(Message.objects.inbox(self.user1), [
+                                  (m8.pk, 0), (m4.pk, 1)], transform=pk_cnt)
+        self._assertQuerySetEqual(Message.objects.inbox(self.user2), [
+                                  (m7.pk, 0), (m6.pk, 0), (m5.pk, 2)], transform=pk_cnt)
 
-        self._assertQuerySetEqual(Message.objects.thread(self.user1, Q(thread=m3.pk)), [m3.pk,m4.pk,m5.pk], transform=pk)
-        self._assertQuerySetEqual(Message.objects.thread(self.user1, Q(pk=m4.pk)), [m4.pk], transform=pk)
-        self._assertQuerySetEqual(Message.objects.thread(self.user2, Q(thread=m3.pk)), [m3.pk,m4.pk,m5.pk], transform=pk)
-        self._assertQuerySetEqual(Message.objects.thread(self.user2, Q(pk=m4.pk)), [m4.pk], transform=pk)
+        self._assertQuerySetEqual(Message.objects.thread(
+            self.user1, Q(thread=m3.pk)), [m3.pk, m4.pk, m5.pk], transform=pk)
+        self._assertQuerySetEqual(Message.objects.thread(
+            self.user1, Q(pk=m4.pk)), [m4.pk], transform=pk)
+        self._assertQuerySetEqual(Message.objects.thread(
+            self.user2, Q(thread=m3.pk)), [m3.pk, m4.pk, m5.pk], transform=pk)
+        self._assertQuerySetEqual(Message.objects.thread(
+            self.user2, Q(pk=m4.pk)), [m4.pk], transform=pk)
         # mark as archived and deleted
         #       user1       user2
         # -----------       -----------  read repl
@@ -1337,48 +1526,77 @@ class MessageManagerTest(BaseTest):
         #       X    <------
         #             ...---         X
         #       x       X---    X
-        m1.sender_archived = True; m1.save()
-        m2.sender_deleted_at = now(); m2.save()
-        m3.sender_archived, m3.sender_deleted_at = True, now(); m3.save()
-        m4.sender_archived, m4.sender_deleted_at = True, now(); m4.save()
-        m6.sender_archived, m6.recipient_archived = True, True; m6.save()
-        m7.recipient_deleted_at = now(); m7.save()
-        m8.recipient_deleted_at = now(); m8.save()
-        m9.sender_deleted_at = now(); m9.save()
-        m10.sender_archived = True; m10.save()
+        m1.sender_archived = True
+        m1.save()
+        m2.sender_deleted_at = now()
+        m2.save()
+        m3.sender_archived, m3.sender_deleted_at = True, now()
+        m3.save()
+        m4.sender_archived, m4.sender_deleted_at = True, now()
+        m4.save()
+        m6.sender_archived, m6.recipient_archived = True, True
+        m6.save()
+        m7.recipient_deleted_at = now()
+        m7.save()
+        m8.recipient_deleted_at = now()
+        m8.save()
+        m9.sender_deleted_at = now()
+        m9.save()
+        m10.sender_archived = True
+        m10.save()
         self.assertEqual(Message.objects.inbox_unread_count(self.user1), 0)
         self.assertEqual(Message.objects.inbox_unread_count(self.user2), 1)
         # by messages
-        self._assertQuerySetEqual(Message.objects.archives(self.user1, option=OPTION_MESSAGES), [m6.pk,m1.pk], transform=pk)
-        self._assertQuerySetEqual(Message.objects.archives(self.user2, option=OPTION_MESSAGES), [m10.pk,m6.pk], transform=pk)
-        self._assertQuerySetEqual(Message.objects.trash(self.user1, option=OPTION_MESSAGES), [m8.pk,m3.pk,m2.pk], transform=pk)
-        self._assertQuerySetEqual(Message.objects.trash(self.user2, option=OPTION_MESSAGES), [m9.pk,m7.pk,m4.pk], transform=pk)
-        self._assertQuerySetEqual(Message.objects.sent(self.user1, option=OPTION_MESSAGES), [m7.pk,m5.pk], transform=pk)
-        self._assertQuerySetEqual(Message.objects.sent(self.user2, option=OPTION_MESSAGES), [m8.pk], transform=pk)
-        self._assertQuerySetEqual(Message.objects.inbox(self.user1, option=OPTION_MESSAGES), [m4.pk], transform=pk)
-        self._assertQuerySetEqual(Message.objects.inbox(self.user2, option=OPTION_MESSAGES), [m5.pk,m3.pk], transform=pk)
+        self._assertQuerySetEqual(Message.objects.archives(
+            self.user1, option=OPTION_MESSAGES), [m6.pk, m1.pk], transform=pk)
+        self._assertQuerySetEqual(Message.objects.archives(
+            self.user2, option=OPTION_MESSAGES), [m10.pk, m6.pk], transform=pk)
+        self._assertQuerySetEqual(Message.objects.trash(
+            self.user1, option=OPTION_MESSAGES), [m8.pk, m3.pk, m2.pk], transform=pk)
+        self._assertQuerySetEqual(Message.objects.trash(
+            self.user2, option=OPTION_MESSAGES), [m9.pk, m7.pk, m4.pk], transform=pk)
+        self._assertQuerySetEqual(Message.objects.sent(
+            self.user1, option=OPTION_MESSAGES), [m7.pk, m5.pk], transform=pk)
+        self._assertQuerySetEqual(Message.objects.sent(
+            self.user2, option=OPTION_MESSAGES), [m8.pk], transform=pk)
+        self._assertQuerySetEqual(Message.objects.inbox(
+            self.user1, option=OPTION_MESSAGES), [m4.pk], transform=pk)
+        self._assertQuerySetEqual(Message.objects.inbox(
+            self.user2, option=OPTION_MESSAGES), [m5.pk, m3.pk], transform=pk)
         # by conversations
-        self._assertQuerySetEqual(Message.objects.sent(self.user1), [(m7.pk,0),(m5.pk,1)], transform=pk_cnt)
-        self._assertQuerySetEqual(Message.objects.sent(self.user2), [(m8.pk,0)], transform=pk_cnt)
-        self._assertQuerySetEqual(Message.objects.inbox(self.user1), [(m4.pk,1)], transform=pk_cnt)
-        self._assertQuerySetEqual(Message.objects.inbox(self.user2), [(m5.pk,2)], transform=pk_cnt)
+        self._assertQuerySetEqual(Message.objects.sent(self.user1), [
+                                  (m7.pk, 0), (m5.pk, 1)], transform=pk_cnt)
+        self._assertQuerySetEqual(Message.objects.sent(
+            self.user2), [(m8.pk, 0)], transform=pk_cnt)
+        self._assertQuerySetEqual(Message.objects.inbox(
+            self.user1), [(m4.pk, 1)], transform=pk_cnt)
+        self._assertQuerySetEqual(Message.objects.inbox(
+            self.user2), [(m5.pk, 2)], transform=pk_cnt)
 
-        self._assertQuerySetEqual(Message.objects.thread(self.user1, Q(thread=m3.pk)), [m3.pk,m4.pk,m5.pk], transform=pk)
-        self._assertQuerySetEqual(Message.objects.thread(self.user1, Q(pk=m4.pk)), [m4.pk], transform=pk)
-        self._assertQuerySetEqual(Message.objects.thread(self.user2, Q(thread=m3.pk)), [m3.pk,m4.pk,m5.pk], transform=pk)
-        self._assertQuerySetEqual(Message.objects.thread(self.user2, Q(pk=m4.pk)), [m4.pk], transform=pk)
+        self._assertQuerySetEqual(Message.objects.thread(
+            self.user1, Q(thread=m3.pk)), [m3.pk, m4.pk, m5.pk], transform=pk)
+        self._assertQuerySetEqual(Message.objects.thread(
+            self.user1, Q(pk=m4.pk)), [m4.pk], transform=pk)
+        self._assertQuerySetEqual(Message.objects.thread(
+            self.user2, Q(thread=m3.pk)), [m3.pk, m4.pk, m5.pk], transform=pk)
+        self._assertQuerySetEqual(Message.objects.thread(
+            self.user2, Q(pk=m4.pk)), [m4.pk], transform=pk)
         # mark as read
-        self.assertEqual(Message.objects.set_read(self.user2, Q(thread=m3.pk)), 1)
+        self.assertEqual(Message.objects.set_read(
+            self.user2, Q(thread=m3.pk)), 1)
         m = Message.objects.get(pk=m5.pk)
-        self.check_status(m, status=STATUS_ACCEPTED, is_new=False, parent=m4, thread=m3)
+        self.check_status(m, status=STATUS_ACCEPTED,
+                          is_new=False, parent=m4, thread=m3)
         self.check_now(m.read_at)
         self.assertEqual(Message.objects.set_read(self.user2, Q(pk=m6.pk)), 1)
         m = Message.objects.get(pk=m6.pk)
-        self.check_status(m, status=STATUS_ACCEPTED, is_new=False, sender_archived=True, recipient_archived=True)
+        self.check_status(m, status=STATUS_ACCEPTED, is_new=False,
+                          sender_archived=True, recipient_archived=True)
         self.check_now(m.read_at)
         self.assertEqual(Message.objects.set_read(self.user1, Q(pk=m8.pk)), 1)
         m = Message.objects.get(pk=m8.pk)
-        self.check_status(m, status=STATUS_ACCEPTED, is_new=False, recipient_deleted_at=True)
+        self.check_status(m, status=STATUS_ACCEPTED,
+                          is_new=False, recipient_deleted_at=True)
         self.check_now(m.read_at)
 
 
@@ -1386,6 +1604,7 @@ class MessageTest(BaseTest):
     """
     Test the Message model.
     """
+
     def check_parties(self, m, s=None, r=None, email=''):
         "Check party related properties."
         obfuscated_email_re = re.compile('^[0-9a-f]{4}..[0-9a-f]{4}@domain$')
@@ -1394,7 +1613,8 @@ class MessageTest(BaseTest):
             m.clean()
         else:
             self.assertRaises(ValidationError, m.clean)
-        self.assertEqual(m.admin_sender(), s.get_username() if s else '<'+email+'>')
+        self.assertEqual(m.admin_sender(), s.get_username()
+                         if s else '<'+email+'>')
         self.assertEqual(m.clear_sender, m.admin_sender())
         if s:
             self.assertEqual(m.obfuscated_sender, s.get_username())
@@ -1402,7 +1622,8 @@ class MessageTest(BaseTest):
             self.assertTrue(obfuscated_email_re.match(m.obfuscated_sender))
         else:
             self.assertEqual(m.obfuscated_sender, '')
-        self.assertEqual(m.admin_recipient(), r.get_username() if r else '<'+email+'>')
+        self.assertEqual(m.admin_recipient(), r.get_username()
+                         if r else '<'+email+'>')
         self.assertEqual(m.clear_recipient, m.admin_recipient())
         if r:
             self.assertEqual(m.obfuscated_recipient, r.get_username())
@@ -1418,7 +1639,7 @@ class MessageTest(BaseTest):
         self.check_parties(m, s=self.user1)
         self.check_parties(m, r=self.user2)
         self.check_parties(m, s=self.user1,                   r=self.user2)
-        self.check_parties(m, s=self.user1, email=self.email              )
+        self.check_parties(m, s=self.user1, email=self.email)
         self.check_parties(m,               email=self.email, r=self.user2)
 
     def test_representation(self):
@@ -1434,9 +1655,11 @@ class MessageTest(BaseTest):
         "Test status."
         m = Message.objects.create(subject='s')
         self.check_status(m)
-        m = Message.objects.create(subject='s', moderation_status=STATUS_REJECTED)
+        m = Message.objects.create(
+            subject='s', moderation_status=STATUS_REJECTED)
         self.check_status(m, status=STATUS_REJECTED)
-        m = Message.objects.create(subject='s', moderation_status=STATUS_ACCEPTED)
+        m = Message.objects.create(
+            subject='s', moderation_status=STATUS_ACCEPTED)
         self.check_status(m, status=STATUS_ACCEPTED)
         m = Message.objects.create(subject='s', read_at=now())
         self.check_status(m, is_new=False)
@@ -1446,7 +1669,7 @@ class MessageTest(BaseTest):
     def test_moderated_count(self):
         "Test 'moderated_messages' count."
         msg = Message.objects.create(subject='s', moderation_status=STATUS_ACCEPTED,
-            moderation_date=now(), moderation_by=self.user1)
+                                     moderation_date=now(), moderation_by=self.user1)
         msg.save()
         self.assertEqual(list(self.user1.moderated_messages.all()), [msg])
 
@@ -1460,9 +1683,10 @@ class MessageTest(BaseTest):
         # pending -> rejected
         m = copy.copy(msg)
         m.moderation_status = STATUS_REJECTED
-        m.clean_moderation(STATUS_PENDING, self.user1)  # one try with moderator
+        # one try with moderator
+        m.clean_moderation(STATUS_PENDING, self.user1)
         self.check_status(m, status=STATUS_REJECTED,
-            moderation_date=True, moderation_by=self.user1, recipient_deleted_at=True)
+                          moderation_date=True, moderation_by=self.user1, recipient_deleted_at=True)
         self.check_now(m.moderation_date)
         self.check_now(m.recipient_deleted_at)
         # pending -> accepted
@@ -1477,52 +1701,55 @@ class MessageTest(BaseTest):
         date_in_past = now() - timedelta(days=2)  # any value, just to avoid now()
         reason = 'some good reason'
         msg = Message.objects.create(subject='s', moderation_status=STATUS_REJECTED,
-            moderation_date=date_in_past, moderation_by=self.user1, moderation_reason=reason,
-            recipient_deleted_at=date_in_past)
+                                     moderation_date=date_in_past, moderation_by=self.user1, moderation_reason=reason,
+                                     recipient_deleted_at=date_in_past)
         # rejected -> rejected: nothing changes
         m = copy.copy(msg)
         m.clean_moderation(STATUS_REJECTED, self.user2)
         self.check_status(m, status=STATUS_REJECTED,
-            moderation_date=date_in_past, moderation_by=self.user1, moderation_reason=reason,
-            recipient_deleted_at=date_in_past)
+                          moderation_date=date_in_past, moderation_by=self.user1, moderation_reason=reason,
+                          recipient_deleted_at=date_in_past)
         # rejected -> pending
         m = copy.copy(msg)
         m.moderation_status = STATUS_PENDING
         m.clean_moderation(STATUS_REJECTED)  # one try without moderator
         self.check_status(m, status=STATUS_PENDING,
-            moderation_date=True, moderation_reason=reason, recipient_deleted_at=False)
+                          moderation_date=True, moderation_reason=reason, recipient_deleted_at=False)
         self.check_now(m.moderation_date)
         # rejected -> accepted
         m = copy.copy(msg)
         m.moderation_status = STATUS_ACCEPTED
-        m.clean_moderation(STATUS_REJECTED, self.user2)  # one try with moderator
+        # one try with moderator
+        m.clean_moderation(STATUS_REJECTED, self.user2)
         self.check_status(m, status=STATUS_ACCEPTED,
-            moderation_date=True, moderation_by=self.user2, moderation_reason=reason,
-            recipient_deleted_at=False)
+                          moderation_date=True, moderation_by=self.user2, moderation_reason=reason,
+                          recipient_deleted_at=False)
         self.check_now(m.moderation_date)
 
     def test_moderation_from_accepted(self):
         "Test moderation management when leaving 'accepted' status."
         date_in_past = now() - timedelta(days=2)  # any value, just to avoid now()
         msg = Message.objects.create(subject='s', moderation_status=STATUS_ACCEPTED,
-            moderation_date=date_in_past, moderation_by=self.user1, recipient_deleted_at=date_in_past)
+                                     moderation_date=date_in_past, moderation_by=self.user1, recipient_deleted_at=date_in_past)
         # accepted -> accepted: nothing changes
         m = copy.copy(msg)
         m.clean_moderation(STATUS_ACCEPTED, self.user2)
         self.check_status(m, status=STATUS_ACCEPTED,
-            moderation_date=date_in_past, moderation_by=self.user1, recipient_deleted_at=date_in_past)
+                          moderation_date=date_in_past, moderation_by=self.user1, recipient_deleted_at=date_in_past)
         # accepted -> pending
         m = copy.copy(msg)
         m.moderation_status = STATUS_PENDING
-        m.clean_moderation(STATUS_ACCEPTED, self.user2)  # one try with moderator
+        # one try with moderator
+        m.clean_moderation(STATUS_ACCEPTED, self.user2)
         self.check_status(m, status=STATUS_PENDING,
-            moderation_date=True, moderation_by=self.user2, recipient_deleted_at=date_in_past)
+                          moderation_date=True, moderation_by=self.user2, recipient_deleted_at=date_in_past)
         self.check_now(m.moderation_date)
         # accepted -> rejected
         m = copy.copy(msg)
         m.moderation_status = STATUS_REJECTED
         m.clean_moderation(STATUS_ACCEPTED)  # one try without moderator
-        self.check_status(m, status=STATUS_REJECTED, moderation_date=True, recipient_deleted_at=True)
+        self.check_status(m, status=STATUS_REJECTED,
+                          moderation_date=True, recipient_deleted_at=True)
         self.check_now(m.moderation_date)
         self.check_now(m.recipient_deleted_at)
 
@@ -1538,39 +1765,41 @@ class MessageTest(BaseTest):
         msg = Message.objects.create(subject='s', sender=self.user1)
         # pending
         m = copy.copy(msg)
-        m.read_at=date_in_past
-        m.recipient_deleted_at=date_in_past
+        m.read_at = date_in_past
+        m.recipient_deleted_at = date_in_past
         m.clean_for_visitor()
         self.check_status(m, recipient_deleted_at=False)
         # rejected
         m = copy.copy(msg)
         m.moderation_status = STATUS_REJECTED
-        m.read_at=date_in_past
-        m.recipient_deleted_at=date_in_past
+        m.read_at = date_in_past
+        m.recipient_deleted_at = date_in_past
         m.clean_for_visitor()
-        self.check_status(m, status=STATUS_REJECTED, recipient_deleted_at=date_in_past)
+        self.check_status(m, status=STATUS_REJECTED,
+                          recipient_deleted_at=date_in_past)
         # accepted
         m = copy.copy(msg)
         m.moderation_status = STATUS_ACCEPTED
         m.clean_for_visitor()
-        self.check_status(m, status=STATUS_ACCEPTED, is_new=False, recipient_deleted_at=True)
+        self.check_status(m, status=STATUS_ACCEPTED,
+                          is_new=False, recipient_deleted_at=True)
         self.check_now(m.read_at)
         self.check_now(m.recipient_deleted_at)
 
     def test_update_parent(self):
         "Test update_parent()."
         parent = Message.objects.create(subject='s', sender=self.user1, recipient=self.user2,
-            moderation_status=STATUS_ACCEPTED)
+                                        moderation_status=STATUS_ACCEPTED)
         parent.thread = parent
         parent.save()
         # any previous rejected reply should not interfere
         rejected_reply = Message.objects.create(subject='s', sender=self.user2, recipient=self.user1,
-            parent=parent, thread=parent.thread, moderation_status=STATUS_REJECTED)
+                                                parent=parent, thread=parent.thread, moderation_status=STATUS_REJECTED)
         # any previous pending reply should not interfere
         pending_reply = Message.objects.create(subject='s', sender=self.user2, recipient=self.user1,
-            parent=parent, thread=parent.thread, moderation_status=STATUS_PENDING)
+                                               parent=parent, thread=parent.thread, moderation_status=STATUS_PENDING)
         reply = Message.objects.create(subject='s', sender=self.user2, recipient=self.user1,
-            parent=parent, thread=parent.thread)
+                                       parent=parent, thread=parent.thread)
 
         # the reply is accepted
         r = copy.deepcopy(reply)
@@ -1580,16 +1809,20 @@ class MessageTest(BaseTest):
         self.check_status(r.parent, status=STATUS_ACCEPTED, thread=parent)
         # pending -> accepted: parent is replied
         r.update_parent(STATUS_PENDING)
-        p = Message.objects.get(pk=parent.pk)  # better to ask the DB to check the save()
-        self.check_status(p, status=STATUS_ACCEPTED, thread=parent, is_replied=True)
-        self.assertEqual(p.replied_at.timetuple(), r.sent_at.timetuple())  # mysql doesn't store microseconds
+        # better to ask the DB to check the save()
+        p = Message.objects.get(pk=parent.pk)
+        self.check_status(p, status=STATUS_ACCEPTED,
+                          thread=parent, is_replied=True)
+        # mysql doesn't store microseconds
+        self.assertEqual(p.replied_at.timetuple(), r.sent_at.timetuple())
         # rejected -> accepted: same as pending -> accepted
         # so check here the acceptance of an anterior date
         # note: use again the some object for convenience but another reply is more realistic
         r.sent_at = r.sent_at - timedelta(days=1)
         r.update_parent(STATUS_REJECTED)
         p = Message.objects.get(pk=parent.pk)
-        self.check_status(p, status=STATUS_ACCEPTED, thread=parent, is_replied=True)
+        self.check_status(p, status=STATUS_ACCEPTED,
+                          thread=parent, is_replied=True)
         self.assertEqual(p.replied_at.timetuple(), r.sent_at.timetuple())
 
         # a reply is withdrawn and no other reply
@@ -1598,10 +1831,12 @@ class MessageTest(BaseTest):
         r.moderation_status = STATUS_REJECTED  # could be STATUS_PENDING
         # rejected -> rejected: no change. In real case, parent.replied_at would be already empty
         r.update_parent(STATUS_REJECTED)
-        self.check_status(r.parent, status=STATUS_ACCEPTED, thread=parent, is_replied=True)
+        self.check_status(r.parent, status=STATUS_ACCEPTED,
+                          thread=parent, is_replied=True)
         # pending -> rejected: no change. In real case, parent.replied_at would be already empty
         r.update_parent(STATUS_PENDING)
-        self.check_status(r.parent, status=STATUS_ACCEPTED, thread=parent, is_replied=True)
+        self.check_status(r.parent, status=STATUS_ACCEPTED,
+                          thread=parent, is_replied=True)
         # accepted -> rejected: parent is no more replied
         r.update_parent(STATUS_ACCEPTED)
         p = Message.objects.get(pk=parent.pk)
@@ -1611,21 +1846,25 @@ class MessageTest(BaseTest):
 
         # a reply is withdrawn but there is another suitable reply
         other_reply = Message.objects.create(subject='s', sender=self.user2, recipient=self.user1,
-            parent=parent, thread=parent.thread, moderation_status=STATUS_ACCEPTED)
+                                             parent=parent, thread=parent.thread, moderation_status=STATUS_ACCEPTED)
         r = copy.deepcopy(reply)
         r.parent.replied_at = r.sent_at
         r.moderation_status = STATUS_PENDING  # could be STATUS_REJECTED
         # pending -> pending: no change. In real case, parent.replied_at would be from another reply object
         r.update_parent(STATUS_PENDING)
-        self.check_status(r.parent, status=STATUS_ACCEPTED, thread=parent, is_replied=True)
+        self.check_status(r.parent, status=STATUS_ACCEPTED,
+                          thread=parent, is_replied=True)
         # rejected -> pending: no change. In real case, parent.replied_at would be from another reply object
         r.update_parent(STATUS_REJECTED)
-        self.check_status(r.parent, status=STATUS_ACCEPTED, thread=parent, is_replied=True)
+        self.check_status(r.parent, status=STATUS_ACCEPTED,
+                          thread=parent, is_replied=True)
         # accepted -> pending: parent is still replied but by another object
         r.update_parent(STATUS_ACCEPTED)
         p = Message.objects.get(pk=parent.pk)
-        self.check_status(p, status=STATUS_ACCEPTED, thread=parent, is_replied=True)
-        self.assertEqual(p.replied_at.timetuple(), other_reply.sent_at.timetuple())
+        self.check_status(p, status=STATUS_ACCEPTED,
+                          thread=parent, is_replied=True)
+        self.assertEqual(p.replied_at.timetuple(),
+                         other_reply.sent_at.timetuple())
         # note: accepted -> pending, with no other suitable reply
         # is covered in the accepted -> rejected case
 
@@ -1643,37 +1882,47 @@ class MessageTest(BaseTest):
 
     def test_notification_rejection_visitor(self):
         "Test notify_users() for rejection, sender is a visitor."
-        m = Message.objects.create(subject='s', moderation_status=STATUS_REJECTED, email=self.email, recipient=self.user2)
+        m = Message.objects.create(
+            subject='s', moderation_status=STATUS_REJECTED, email=self.email, recipient=self.user2)
         self.check_notification(m, 1, self.email)
 
     def test_notification_rejection_user(self):
         "Test notify_users() for rejection, sender is a User."
-        m = Message.objects.create(subject='s', moderation_status=STATUS_REJECTED, sender=self.user1, recipient=self.user2)
-        self.check_notification(m, 1, self.user1.email, is_auto_moderated=False, notice_label='postman_rejection')
+        m = Message.objects.create(
+            subject='s', moderation_status=STATUS_REJECTED, sender=self.user1, recipient=self.user2)
+        self.check_notification(
+            m, 1, self.user1.email, is_auto_moderated=False, notice_label='postman_rejection')
 
     def test_notification_rejection_user_auto_moderated(self):
         "Test notify_users() for rejection, sender is a User, and is alerted online."
-        m = Message.objects.create(subject='s', moderation_status=STATUS_REJECTED, sender=self.user1, recipient=self.user2)
+        m = Message.objects.create(
+            subject='s', moderation_status=STATUS_REJECTED, sender=self.user1, recipient=self.user2)
         self.check_notification(m, 0, is_auto_moderated=True)
 
     def test_notification_rejection_user_inactive(self):
         "Test notify_users() for rejection, sender is a User, but must be active."
-        m = Message.objects.create(subject='s', moderation_status=STATUS_REJECTED, sender=self.user1, recipient=self.user2)
+        m = Message.objects.create(
+            subject='s', moderation_status=STATUS_REJECTED, sender=self.user1, recipient=self.user2)
         self.user1.is_active = False
         from postman.utils import notification
-        args = (1, self.user1.email) if notification else (0, )  # pinax.notifications (v5.0.3) doesn't filter on is_active
-        self.check_notification(m, *args, is_auto_moderated=False, notice_label='postman_rejection')
+        # pinax.notifications (v5.0.3) doesn't filter on is_active
+        args = (1, self.user1.email) if notification else (0, )
+        self.check_notification(
+            m, *args, is_auto_moderated=False, notice_label='postman_rejection')
 
     def test_notification_rejection_user_notif_app(self):
         "Test notify_users() for rejection, sender is a User, use of a custom notifier module."
-        m = Message.objects.create(subject='s', moderation_status=STATUS_REJECTED, sender=self.user1, recipient=self.user2)
+        m = Message.objects.create(
+            subject='s', moderation_status=STATUS_REJECTED, sender=self.user1, recipient=self.user2)
         settings.POSTMAN_NOTIFIER_APP = 'postman.module_for_tests'
         self.reload_modules()
-        self.check_notification(m, 1, self.user1.email, is_auto_moderated=False)
+        self.check_notification(m, 1, self.user1.email,
+                                is_auto_moderated=False)
 
     def test_notification_rejection_user_disable(self):
         "Test notify_users() for rejection, sender is a User, but emailing is disabled."
-        m = Message.objects.create(subject='s', moderation_status=STATUS_REJECTED, sender=self.user1, recipient=self.user2)
+        m = Message.objects.create(
+            subject='s', moderation_status=STATUS_REJECTED, sender=self.user1, recipient=self.user2)
         settings.POSTMAN_DISABLE_USER_EMAILING = True
         settings.POSTMAN_NOTIFIER_APP = None
         self.reload_modules()
@@ -1681,32 +1930,39 @@ class MessageTest(BaseTest):
 
     def test_notification_acceptance_visitor(self):
         "Test notify_users() for acceptance, recipient is a visitor."
-        m = Message.objects.create(subject='s', moderation_status=STATUS_ACCEPTED, sender=self.user1, email=self.email)
+        m = Message.objects.create(
+            subject='s', moderation_status=STATUS_ACCEPTED, sender=self.user1, email=self.email)
         self.check_notification(m, 1, self.email)
 
     def test_notification_acceptance_user(self):
         "Test notify_users() for acceptance, recipient is a User."
-        m = Message.objects.create(subject='s', moderation_status=STATUS_ACCEPTED, sender=self.user1, recipient=self.user2)
-        self.check_notification(m, 1, self.user2.email, notice_label='postman_message')
+        m = Message.objects.create(
+            subject='s', moderation_status=STATUS_ACCEPTED, sender=self.user1, recipient=self.user2)
+        self.check_notification(m, 1, self.user2.email,
+                                notice_label='postman_message')
 
     def test_notification_acceptance_user_inactive(self):
         "Test notify_users() for acceptance, recipient is a User, but must be active."
-        m = Message.objects.create(subject='s', moderation_status=STATUS_ACCEPTED, sender=self.user1, recipient=self.user2)
+        m = Message.objects.create(
+            subject='s', moderation_status=STATUS_ACCEPTED, sender=self.user1, recipient=self.user2)
         self.user2.is_active = False
         from postman.utils import notification
-        args = (1, self.user2.email) if notification else (0, )  # same as test_notification_rejection_user_inactive
+        # same as test_notification_rejection_user_inactive
+        args = (1, self.user2.email) if notification else (0, )
         self.check_notification(m, *args, notice_label='postman_message')
 
     def test_notification_acceptance_user_notif_app(self):
         "Test notify_users() for acceptance, recipient is a User, use of a custom notifier module."
-        m = Message.objects.create(subject='s', moderation_status=STATUS_ACCEPTED, sender=self.user1, recipient=self.user2)
+        m = Message.objects.create(
+            subject='s', moderation_status=STATUS_ACCEPTED, sender=self.user1, recipient=self.user2)
         settings.POSTMAN_NOTIFIER_APP = 'postman.module_for_tests'
         self.reload_modules()
         self.check_notification(m, 1, self.user2.email)
 
     def test_notification_acceptance_user_disable(self):
         "Test notify_users() for acceptance, recipient is a User, but emailing is disabled."
-        m = Message.objects.create(subject='s', moderation_status=STATUS_ACCEPTED, sender=self.user1, recipient=self.user2)
+        m = Message.objects.create(
+            subject='s', moderation_status=STATUS_ACCEPTED, sender=self.user1, recipient=self.user2)
         settings.POSTMAN_DISABLE_USER_EMAILING = True
         settings.POSTMAN_NOTIFIER_APP = None
         self.reload_modules()
@@ -1714,10 +1970,12 @@ class MessageTest(BaseTest):
 
     def test_notification_acceptance_reply(self):
         "Test notify_users() for acceptance, for a reply, recipient is a User."
-        p = Message.objects.create(subject='s', moderation_status=STATUS_ACCEPTED, sender=self.user2, recipient=self.user1)
+        p = Message.objects.create(
+            subject='s', moderation_status=STATUS_ACCEPTED, sender=self.user2, recipient=self.user1)
         m = Message.objects.create(subject='s', moderation_status=STATUS_ACCEPTED, sender=self.user1, recipient=self.user2,
-            parent=p, thread=p)
-        self.check_notification(m, 1, self.user2.email, notice_label='postman_reply')
+                                   parent=p, thread=p)
+        self.check_notification(m, 1, self.user2.email,
+                                notice_label='postman_reply')
 
     def test_dates(self):
         "Test set_dates(), get_dates()."
@@ -1755,26 +2013,29 @@ class MessageTest(BaseTest):
         "Test auto-moderation function combination."
         msg = Message.objects.create(subject='s')
 
-        def moderate_as_none(m):              return None
-        def moderate_as_true(m):              return True
-        def moderate_as_false(m):             return False
-        def moderate_as_0(m):                 return 0
-        def moderate_as_100(m):               return 100
-        def moderate_as_50(m):                return 50
+        def moderate_as_none(m): return None
+        def moderate_as_true(m): return True
+        def moderate_as_false(m): return False
+        def moderate_as_0(m): return 0
+        def moderate_as_100(m): return 100
+        def moderate_as_50(m): return 50
         def moderate_as_49_default_reason(m): return 49
         moderate_as_49_default_reason.default_reason = 'moderate_as_49 default_reason'
-        def moderate_as_49_with_reason(m):    return (49, 'moderate_as_49 with_reason')
+        def moderate_as_49_with_reason(m): return (
+            49, 'moderate_as_49 with_reason')
         moderate_as_49_with_reason.default_reason = 'is not used'
-        def moderate_as_1(m):                 return (1, 'moderate_as_1')
-        def moderate_as_1_no_reason(m):       return (1, ' ')
-        def moderate_as_2(m):                 return (2, 'moderate_as_2')
-        def moderate_as_98(m):                return 98
+        def moderate_as_1(m): return (1, 'moderate_as_1')
+        def moderate_as_1_no_reason(m): return (1, ' ')
+        def moderate_as_2(m): return (2, 'moderate_as_2')
+        def moderate_as_98(m): return 98
         moderate_as_98.default_reason = 'useless; never used'
-        def moderate_badly_as_negative(m):    return -1
-        def moderate_badly_as_too_high(m):    return 101
-        def moderate_as_0_with_reason(m):     return (0, 'moderate_as_0 with_reason')
-        def invalid_moderator_1(m):           return (0, )
-        def invalid_moderator_2(m):           return (0, 'reason', 'extra')
+        def moderate_badly_as_negative(m): return -1
+        def moderate_badly_as_too_high(m): return 101
+        def moderate_as_0_with_reason(m): return (
+            0, 'moderate_as_0 with_reason')
+
+        def invalid_moderator_1(m): return (0, )
+        def invalid_moderator_2(m): return (0, 'reason', 'extra')
 
         for mod in [invalid_moderator_1, invalid_moderator_2]:
             m = copy.copy(msg)
@@ -1792,19 +2053,24 @@ class MessageTest(BaseTest):
             # round to up
             (moderate_as_50, True),
             # reasons
-            (moderate_as_49_default_reason, moderate_as_49_default_reason.default_reason),
+            (moderate_as_49_default_reason,
+             moderate_as_49_default_reason.default_reason),
             (moderate_as_49_with_reason, 'moderate_as_49 with_reason'),
             # priority is left to right
             ([moderate_as_none, moderate_as_false, moderate_as_true], ''),
             ([moderate_as_none, moderate_as_true, moderate_as_false], True),
             # keep only reasons for ratings below 50, non empty or whitespace
             ([moderate_as_1, moderate_as_98], 'moderate_as_1'),
-            ([moderate_as_1, moderate_as_2, moderate_as_50], 'moderate_as_1, moderate_as_2'),
-            ([moderate_as_1, moderate_as_1_no_reason, moderate_as_2], 'moderate_as_1, moderate_as_2'),
+            ([moderate_as_1, moderate_as_2, moderate_as_50],
+             'moderate_as_1, moderate_as_2'),
+            ([moderate_as_1, moderate_as_1_no_reason, moderate_as_2],
+             'moderate_as_1, moderate_as_2'),
             # a firm reject imposes its reason
-            ([moderate_as_1, moderate_as_2, moderate_as_50, moderate_as_0_with_reason], 'moderate_as_0 with_reason'),
+            ([moderate_as_1, moderate_as_2, moderate_as_50,
+             moderate_as_0_with_reason], 'moderate_as_0 with_reason'),
             # neutral or invalid moderators do not count in the average
-            ([moderate_as_50, moderate_as_none, moderate_badly_as_negative, moderate_badly_as_too_high], True),
+            ([moderate_as_50, moderate_as_none, moderate_badly_as_negative,
+             moderate_badly_as_too_high], True),
         )
         # no default auto moderation
         # settings.POSTMAN_AUTO_MODERATE_AS = None
@@ -1821,18 +2087,21 @@ class PendingMessageManagerTest(BaseTest):
     """
     Test the PendingMessage manager.
     """
+
     def test(self):
         msg1 = self.create()
         msg2 = self.create(moderation_status=STATUS_REJECTED)
         msg3 = self.create(moderation_status=STATUS_ACCEPTED)
         msg4 = self.create()
-        self._assertQuerySetEqual(PendingMessage.objects.all(), [msg4.pk, msg1.pk], transform=lambda x: x.pk)
+        self._assertQuerySetEqual(PendingMessage.objects.all(), [
+                                  msg4.pk, msg1.pk], transform=lambda x: x.pk)
 
 
 class PendingMessageTest(BaseTest):
     """
     Test the PendingMessage model.
     """
+
     def test(self):
         m = PendingMessage()
         self.assertTrue(m.is_pending())
@@ -1846,8 +2115,10 @@ class FiltersTest(BaseTest):
     """
     Test the filters.
     """
+
     def check_sub(self, x, y, value):
-        t = Template("{% load postman_tags %}{% with "+x+"|sub:"+y+" as var %}{{ var }}{% endwith %}")
+        t = Template("{% load postman_tags %}{% with "+x +
+                     "|sub:"+y+" as var %}{{ var }}{% endwith %}")
         self.assertEqual(t.render(Context({})), value)
 
     def test_sub(self):
@@ -1857,8 +2128,10 @@ class FiltersTest(BaseTest):
         self.check_sub("'X'", '2', 'X')
 
     def check_or_me(self, x, value, user=None, m=None):
-        t = Template("{% load postman_tags %}{{ "+x+"|or_me:user }}")  # do not load i18n to be able to check the untranslated pattern
-        self.assertEqual(t.render(Context({'user': user or AnonymousUser(), 'message': m})), value)
+        # do not load i18n to be able to check the untranslated pattern
+        t = Template("{% load postman_tags %}{{ "+x+"|or_me:user }}")
+        self.assertEqual(
+            t.render(Context({'user': user or AnonymousUser(), 'message': m})), value)
 
     def test_or_me(self):
         "Test '|or_me'."
@@ -1867,15 +2140,20 @@ class FiltersTest(BaseTest):
         self.check_or_me("'bar'", 'bar', self.user1)
         self.check_or_me("user", '&lt;me&gt;', self.user1)
         m = self.c12()
-        self.check_or_me("message.obfuscated_sender", '&lt;me&gt;', self.user1, m=m)
-        self.check_or_me("message.obfuscated_recipient", 'bar', self.user1, m=m)
+        self.check_or_me("message.obfuscated_sender",
+                         '&lt;me&gt;', self.user1, m=m)
+        self.check_or_me("message.obfuscated_recipient",
+                         'bar', self.user1, m=m)
         settings.POSTMAN_SHOW_USER_AS = 'email'
-        self.check_or_me("message.obfuscated_sender", '&lt;me&gt;', self.user1, m=m)
-        self.check_or_me("message.obfuscated_recipient", 'bar@domain.com', self.user1, m=m)
+        self.check_or_me("message.obfuscated_sender",
+                         '&lt;me&gt;', self.user1, m=m)
+        self.check_or_me("message.obfuscated_recipient",
+                         'bar@domain.com', self.user1, m=m)
 
     def check_compact_date(self, date, value, format='H:i,d b,d/m/y'):
         # use 'H', 'd', 'm' instead of 'G', 'j', 'n' because no strftime equivalents
-        t = Template('{% load postman_tags %}{{ date|compact_date:"'+format+'" }}')
+        t = Template(
+            '{% load postman_tags %}{{ date|compact_date:"'+format+'" }}')
         self.assertEqual(t.render(Context({'date': date})), value)
 
     def test_compact_date(self):
@@ -1888,8 +2166,10 @@ class FiltersTest(BaseTest):
         self.check_compact_date(dt, default, format='one')
         self.check_compact_date(dt, default, format='one,two')
         self.check_compact_date(dt, dt.strftime('%H:%M'))
-        dt2 = dt - timedelta(days=1)  # little fail: do not work on Jan, 1st, because the year changes as well
-        self.check_compact_date(dt2, dt2.strftime('%d %b').lower())  # filter's 'b' is lowercase
+        # little fail: do not work on Jan, 1st, because the year changes as well
+        dt2 = dt - timedelta(days=1)
+        self.check_compact_date(dt2, dt2.strftime(
+            '%d %b').lower())  # filter's 'b' is lowercase
         dt2 = dt - timedelta(days=365)
         self.check_compact_date(dt2, dt2.strftime('%d/%m/%y'))
 
@@ -1898,6 +2178,7 @@ class ContextProcessorsTest(BaseTest):
     """
     Test the context processors.
     """
+
     def _check_inbox(self, urlname, num_extra_queries, value=''):
         url = reverse('postman:' + urlname)
         # SELECT "django_session"."... -------------\
@@ -1907,7 +2188,8 @@ class ContextProcessorsTest(BaseTest):
         # SELECT COUNT(*) ...          -- when authenticated, +1 if the variable is evaluated
         with self.assertNumQueries(2 + num_extra_queries):
             response = self.client.get(url)
-        self.assertEqual(response.content, value.encode())  # content is bytestring
+        self.assertEqual(response.content, value.encode()
+                         )  # content is bytestring
 
     def check_inbox_without_eval(self, num_extra_queries=0):
         return self._check_inbox('no_context_processors', num_extra_queries)
@@ -1922,10 +2204,12 @@ class ContextProcessorsTest(BaseTest):
         self.assertTrue(self.client.login(username='foo', password='pass'))
         self.check_inbox_without_eval(2)
         self.check_inbox_with_eval(3, '0')
-        Message.objects.create(subject='s', recipient=self.user1)  # its status is not enough
+        # its status is not enough
+        Message.objects.create(subject='s', recipient=self.user1)
         self.check_inbox_without_eval(2)
         self.check_inbox_with_eval(3, '0')
-        Message.objects.create(subject='s', recipient=self.user1, moderation_status=STATUS_ACCEPTED)
+        Message.objects.create(
+            subject='s', recipient=self.user1, moderation_status=STATUS_ACCEPTED)
         self.check_inbox_without_eval(2)
         self.check_inbox_with_eval(3, '1')
 
@@ -1934,8 +2218,10 @@ class TagsTest(BaseTest):
     """
     Test the template tags.
     """
+
     def check_postman_unread(self, value, user=None, asvar=''):
-        t = Template("{% load postman_tags %}{% postman_unread " + asvar +" %}")
+        t = Template(
+            "{% load postman_tags %}{% postman_unread " + asvar + " %}")
         ctx = Context({'user': user} if user else {})
         self.assertEqual(t.render(ctx), value)
         return ctx
@@ -1947,48 +2233,65 @@ class TagsTest(BaseTest):
         self.check_postman_unread('0', self.user1)
         Message.objects.create(subject='s', recipient=self.user1)
         self.check_postman_unread('0', self.user1)
-        Message.objects.create(subject='s', recipient=self.user1, moderation_status=STATUS_ACCEPTED)
+        Message.objects.create(
+            subject='s', recipient=self.user1, moderation_status=STATUS_ACCEPTED)
         self.check_postman_unread('1', self.user1)
         ctx = self.check_postman_unread('', self.user1, 'as var')
         self.assertEqual(ctx['var'], '1')
-        self.assertRaises(TemplateSyntaxError, self.check_postman_unread, '', self.user1, 'as var extra')
-        self.assertRaises(TemplateSyntaxError, self.check_postman_unread, '', self.user1, 'As var')
+        self.assertRaises(
+            TemplateSyntaxError, self.check_postman_unread, '', self.user1, 'as var extra')
+        self.assertRaises(TemplateSyntaxError,
+                          self.check_postman_unread, '', self.user1, 'As var')
 
     def check_order_by(self, keyword, value_list, context=None):
-        t = Template("{% load postman_tags %}{% postman_order_by " + keyword +" %}")
+        t = Template(
+            "{% load postman_tags %}{% postman_order_by " + keyword + " %}")
         r = t.render(Context({'gets': QueryDict(context)} if context else {}))
         self.assertEqual(r[0], '?')
-        self.assertEqual(set(r[1:].split('&')), set([k+'='+v for k, v in value_list]))
+        self.assertEqual(set(r[1:].split('&')), set(
+            [k+'='+v for k, v in value_list]))
 
     def test_order_by(self):
         "Test 'postman_order_by'."
         for k, v in ORDER_BY_MAPPER.items():
             self.check_order_by(k, [(ORDER_BY_KEY, v)])
-        self.check_order_by('subject', [(ORDER_BY_KEY, 's')], ORDER_BY_KEY+'=foo')
-        self.check_order_by('subject', [(ORDER_BY_KEY, 'S')], ORDER_BY_KEY+'=s')
-        self.check_order_by('subject', [(ORDER_BY_KEY, 's'), ('page', '12')], 'page=12')
-        self.check_order_by('subject', [('foo', 'bar'), (ORDER_BY_KEY, 's'), ('baz', 'qux')], 'foo=bar&'+ORDER_BY_KEY+'=S&baz=qux')
+        self.check_order_by(
+            'subject', [(ORDER_BY_KEY, 's')], ORDER_BY_KEY+'=foo')
+        self.check_order_by(
+            'subject', [(ORDER_BY_KEY, 'S')], ORDER_BY_KEY+'=s')
+        self.check_order_by(
+            'subject', [(ORDER_BY_KEY, 's'), ('page', '12')], 'page=12')
+        self.check_order_by('subject', [(
+            'foo', 'bar'), (ORDER_BY_KEY, 's'), ('baz', 'qux')], 'foo=bar&'+ORDER_BY_KEY+'=S&baz=qux')
         self.assertRaises(TemplateSyntaxError, self.check_order_by, '', None)
-        self.assertRaises(TemplateSyntaxError, self.check_order_by, 'subject extra', None)
-        self.assertRaises(TemplateSyntaxError, self.check_order_by, 'unknown', None)
+        self.assertRaises(TemplateSyntaxError,
+                          self.check_order_by, 'subject extra', None)
+        self.assertRaises(TemplateSyntaxError,
+                          self.check_order_by, 'unknown', None)
 
 
 class UtilsTest(BaseTest):
     """
     Test helper functions.
     """
+
     def test_format_body(self):
         "Test format_body()."
         header = "\n\nfoo wrote:\n"
         footer = "\n"
-        self.assertEqual(format_body(self.user1, "foo bar"), header+"> foo bar"+footer)
-        self.assertEqual(format_body(self.user1, "foo bar", indent='|_'), header+"|_foo bar"+footer)
-        self.assertEqual(format_body(self.user1, width=10, body="34 67 90"), header+"> 34 67 90"+footer)
-        self.assertEqual(format_body(self.user1, width=10, body="34 67 901"), header+"> 34 67\n> 901"+footer)
-        self.assertEqual(format_body(self.user1, width=10, body="> 34 67 901"), header+"> > 34 67 901"+footer)
+        self.assertEqual(format_body(self.user1, "foo bar"),
+                         header+"> foo bar"+footer)
+        self.assertEqual(format_body(self.user1, "foo bar",
+                         indent='|_'), header+"|_foo bar"+footer)
         self.assertEqual(format_body(self.user1, width=10,
-            body=    "34 67\n"   "\n" "  \n"   "  .\n"   "End"),
-            header+"> 34 67\n" "> \n" "> \n" ">   .\n" "> End"+footer)
+                         body="34 67 90"), header+"> 34 67 90"+footer)
+        self.assertEqual(format_body(self.user1, width=10,
+                         body="34 67 901"), header+"> 34 67\n> 901"+footer)
+        self.assertEqual(format_body(self.user1, width=10,
+                         body="> 34 67 901"), header+"> > 34 67 901"+footer)
+        self.assertEqual(format_body(self.user1, width=10,
+                                     body="34 67\n"   "\n" "  \n"   "  .\n"   "End"),
+                         header+"> 34 67\n" "> \n" "> \n" ">   .\n" "> End"+footer)
 
     def test_format_subject(self):
         "Test format_subject()."
@@ -2001,9 +2304,11 @@ class UtilsTest(BaseTest):
         subject_template = 'postman/email_visitor_subject.txt'
         message_template_name = 'postman_for_tests/' + message_template_name
         if not parts:
-            self.assertRaises(TemplateDoesNotExist, email, subject_template, message_template_name, recipient_list, object, action, site)
+            self.assertRaises(TemplateDoesNotExist, email, subject_template,
+                              message_template_name, recipient_list, object, action, site)
         else:
-            email(subject_template, message_template_name, recipient_list, object, action, site)
+            email(subject_template, message_template_name,
+                  recipient_list, object, action, site)
             self.assertEqual(len(mail.outbox), 1)
             msg = mail.outbox[0].message()
             payload = msg.get_payload()
@@ -2011,7 +2316,8 @@ class UtilsTest(BaseTest):
                 self.assertEqual(msg.is_multipart(), True)
                 for i, mimetype in ((0, 'text/plain'), (1, 'text/html')):
                     part = payload[i]
-                    self.assertTupleEqual((part.get_content_type(), part.get_payload()), (mimetype, parts[i]))
+                    self.assertTupleEqual(
+                        (part.get_content_type(), part.get_payload()), (mimetype, parts[i]))
             else:
                 self.assertEqual(msg.is_multipart(), False)
                 self.assertEqual(payload, parts)
@@ -2022,15 +2328,21 @@ class UtilsTest(BaseTest):
         recipient_list = ['recipient@domain.tld']
         action = 'some_action'
         site = self.get_site()
-        self.check_email('nonexistent_template', recipient_list, m, action, site)
-        self.check_email('email_txt_only', recipient_list, m, action, site, 'Text only\n')
-        self.check_email('email_html_only', recipient_list, m, action, site, ('Html only\n', '<div>Html only</div>\n'))
-        self.check_email('email_html_and_empty_txt', recipient_list, m, action, site, ('Html and empty Text\n', '<div>Html and empty Text</div>\n'))
-        self.check_email('email_html_and_txt', recipient_list, m, action, site, ('Alternate Text\n', '<div>Html and Text</div>\n'))
+        self.check_email('nonexistent_template',
+                         recipient_list, m, action, site)
+        self.check_email('email_txt_only', recipient_list,
+                         m, action, site, 'Text only\n')
+        self.check_email('email_html_only', recipient_list, m,
+                         action, site, ('Html only\n', '<div>Html only</div>\n'))
+        self.check_email('email_html_and_empty_txt', recipient_list, m, action,
+                         site, ('Html and empty Text\n', '<div>Html and empty Text</div>\n'))
+        self.check_email('email_html_and_txt', recipient_list, m, action,
+                         site, ('Alternate Text\n', '<div>Html and Text</div>\n'))
 
     def check_from_email(self, subject_template, message_template_name, recipient_list, object, action, site, from_email):
         mail.outbox = []
-        email(subject_template, message_template_name, recipient_list, object, action, site)
+        email(subject_template, message_template_name,
+              recipient_list, object, action, site)
         self.assertEqual(mail.outbox[0].from_email, from_email)
 
     def test_from_email(self):
@@ -2043,25 +2355,30 @@ class UtilsTest(BaseTest):
         message_template_name = 'postman_for_tests/email_txt_only'
 
         # default case
-        self.check_from_email(subject_template, message_template_name, recipient_list, m, action, site, settings.DEFAULT_FROM_EMAIL)
+        self.check_from_email(subject_template, message_template_name,
+                              recipient_list, m, action, site, settings.DEFAULT_FROM_EMAIL)
 
         # a constant
         custom_from_email = '<str> postman@host.tld'
         settings.POSTMAN_FROM_EMAIL = custom_from_email
         self.reload_modules()
-        self.check_from_email(subject_template, message_template_name, recipient_list, m, action, site, custom_from_email)
+        self.check_from_email(subject_template, message_template_name,
+                              recipient_list, m, action, site, custom_from_email)
 
         # a function
         custom_from_email = '<fct> postman@host.tld'
         settings.POSTMAN_FROM_EMAIL = lambda context: custom_from_email
         self.reload_modules()
-        self.check_from_email(subject_template, message_template_name, recipient_list, m, action, site, custom_from_email)
+        self.check_from_email(subject_template, message_template_name,
+                              recipient_list, m, action, site, custom_from_email)
 
         # a path to a function
-        custom_from_email = '{}_{}@domain.tld'.format(m.sender.username, action)
+        custom_from_email = '{}_{}@domain.tld'.format(
+            m.sender.username, action)
         settings.POSTMAN_FROM_EMAIL = 'postman.module_for_tests.from_email'
         self.reload_modules()
-        self.check_from_email(subject_template, message_template_name, recipient_list, m, action, site, custom_from_email)
+        self.check_from_email(subject_template, message_template_name,
+                              recipient_list, m, action, site, custom_from_email)
 
     def check_params_email(self, m, action, site, setting, username, header):
         mail.outbox = []
@@ -2102,7 +2419,8 @@ class UtilsTest(BaseTest):
         }, username, header)
 
         # a path to a function
-        self.check_params_email(m, action, site, 'postman.module_for_tests.params_email', m.sender.username, action)
+        self.check_params_email(
+            m, action, site, 'postman.module_for_tests.params_email', m.sender.username, action)
 
     def check_notification_approval(self, m, setting, mail_number, email=None):
         settings.POSTMAN_NOTIFICATION_APPROVAL = setting
@@ -2121,25 +2439,31 @@ class UtilsTest(BaseTest):
         # a constant
         self.check_notification_approval(m, False, *args)
         # a function
-        self.check_notification_approval(m, lambda user, action, site: None, *args)
-        self.check_notification_approval(m, lambda user, action, site: False, *args)
-        self.check_notification_approval(m, lambda user, action, site: True, 1, self.user2.email)
+        self.check_notification_approval(
+            m, lambda user, action, site: None, *args)
+        self.check_notification_approval(
+            m, lambda user, action, site: False, *args)
+        self.check_notification_approval(
+            m, lambda user, action, site: True, 1, self.user2.email)
         self.check_notification_approval(m,
-                lambda user, action, site: '{}_{}@domain.tld'.format(user.username, action),
-                1, self.user2.email if notification else 'bar_acceptance@domain.tld')
+                                         lambda user, action, site: '{}_{}@domain.tld'.format(
+                                             user.username, action),
+                                         1, self.user2.email if notification else 'bar_acceptance@domain.tld')
         # for the following syntaxes, the other returned value variants are already checked with the preceding lambda functions
         # a method name
-        self.user2.notification_approval = lambda action, site: 'bar_' + action  # patch to emulate a method of a custom user model
+        self.user2.notification_approval = lambda action, site: 'bar_' + \
+            action  # patch to emulate a method of a custom user model
         self.check_notification_approval(m, 'notification_approval',
-                1, self.user2.email if notification else 'bar_acceptance')
+                                         1, self.user2.email if notification else 'bar_acceptance')
         # a path to a function
         self.check_notification_approval(m, 'postman.module_for_tests.notification_approval',
-                1, self.user2.email if notification else 'bar_acceptance@domain.tld')
+                                         1, self.user2.email if notification else 'bar_acceptance@domain.tld')
 
     def test_get_order_by(self):
         "Test get_order_by()."
         self.assertEqual(get_order_by({}), None)
-        self.assertEqual(get_order_by({ORDER_BY_KEY: 'f'}), 'sender__{0}'.format(get_user_model().USERNAME_FIELD))
+        self.assertEqual(get_order_by({ORDER_BY_KEY: 'f'}), 'sender__{0}'.format(
+            get_user_model().USERNAME_FIELD))
         self.assertEqual(get_order_by({ORDER_BY_KEY: 'D'}), '-sent_at')
 
     def test_get_user_representation(self):
@@ -2157,7 +2481,8 @@ class UtilsTest(BaseTest):
         self.assertEqual(get_user_representation(self.user1), "foo@domain.com")
         # a method name
         # can't use get_full_name(), an empty string in our case
-        settings.POSTMAN_SHOW_USER_AS = 'natural_key'  # avoid get_username(), already used for the default representation
+        # avoid get_username(), already used for the default representation
+        settings.POSTMAN_SHOW_USER_AS = 'natural_key'
         self.assertEqual(get_user_representation(self.user1), "('foo',)")
         # a function
         settings.POSTMAN_SHOW_USER_AS = lambda u: u.natural_key()
@@ -2178,7 +2503,8 @@ class UtilsTest(BaseTest):
         # a property name
         settings.POSTMAN_NAME_USER_AS = 'email'
         self.assertEqual(get_user_name(self.user1), "foo@domain.com")
-        settings.POSTMAN_NAME_USER_AS = 'id'  # a string is always returned even for not character types
+        # a string is always returned even for not character types
+        settings.POSTMAN_NAME_USER_AS = 'id'
         self.assertEqual(get_user_name(self.user1), "1")
 
 
@@ -2186,6 +2512,7 @@ class ApiTest(BaseTest):
     """
     Test the API functions.
     """
+
     def check_message(self, m, subject='s', body='b', recipient_username='bar'):
         "Check some message properties."
         self.assertEqual(m.subject, subject)
@@ -2196,10 +2523,11 @@ class ApiTest(BaseTest):
 
     def test_pm_broadcast(self):
         "Test the case of a single recipient."
-        pm_broadcast(sender=self.user1, recipients=self.user2, subject='s', body='b')
+        pm_broadcast(sender=self.user1, recipients=self.user2,
+                     subject='s', body='b')
         m = Message.objects.get()
         self.check_status(m, status=STATUS_ACCEPTED, moderation_date=True,
-            sender_archived=True, sender_deleted_at=True)
+                          sender_archived=True, sender_deleted_at=True)
         self.check_now(m.sender_deleted_at)
         self.check_now(m.moderation_date)
         self.check_message(m)
@@ -2207,19 +2535,22 @@ class ApiTest(BaseTest):
 
     def test_pm_broadcast_skip_notification(self):
         "Test the notification skipping."
-        pm_broadcast(sender=self.user1, recipients=self.user2, subject='s', skip_notification=True)
+        pm_broadcast(sender=self.user1, recipients=self.user2,
+                     subject='s', skip_notification=True)
         self.assertEqual(len(mail.outbox), 0)
 
     def test_pm_broadcast_multi(self):
         "Test the case of more than a single recipient."
-        pm_broadcast(sender=self.user1, recipients=[self.user2, self.user3], subject='s', body='b')
+        pm_broadcast(sender=self.user1, recipients=[
+                     self.user2, self.user3], subject='s', body='b')
         msgs = list(Message.objects.all())
         self.check_message(msgs[0], recipient_username='baz')
         self.check_message(msgs[1])
 
     def test_pm_write(self):
         "Test the basic minimal use."
-        msg = pm_write(sender=self.user1, recipient=self.user2, subject='s', body='b')
+        msg = pm_write(sender=self.user1, recipient=self.user2,
+                       subject='s', body='b')
         self.assertTrue(isinstance(msg, Message))
         m = Message.objects.get()
         self.check_status(m, status=STATUS_ACCEPTED, moderation_date=True)
@@ -2229,35 +2560,42 @@ class ApiTest(BaseTest):
 
     def test_pm_write_skip_notification(self):
         "Test the notification skipping."
-        msg = pm_write(sender=self.user1, recipient=self.user2, subject='s', skip_notification=True)
+        msg = pm_write(sender=self.user1, recipient=self.user2,
+                       subject='s', skip_notification=True)
         self.assertTrue(isinstance(msg, Message))
         self.assertEqual(len(mail.outbox), 0)
 
     def test_pm_write_auto_archive(self):
         "Test the auto_archive parameter."
-        msg = pm_write(sender=self.user1, recipient=self.user2, subject='s', auto_archive=True)
+        msg = pm_write(sender=self.user1, recipient=self.user2,
+                       subject='s', auto_archive=True)
         self.assertTrue(isinstance(msg, Message))
         m = Message.objects.get()
-        self.check_status(m, status=STATUS_ACCEPTED, moderation_date=True, sender_archived=True)
+        self.check_status(m, status=STATUS_ACCEPTED,
+                          moderation_date=True, sender_archived=True)
 
     def test_pm_write_auto_delete(self):
         "Test the auto_delete parameter."
-        msg = pm_write(sender=self.user1, recipient=self.user2, subject='s', auto_delete=True)
+        msg = pm_write(sender=self.user1, recipient=self.user2,
+                       subject='s', auto_delete=True)
         self.assertTrue(isinstance(msg, Message))
         m = Message.objects.get()
-        self.check_status(m, status=STATUS_ACCEPTED, moderation_date=True, sender_deleted_at=True)
+        self.check_status(m, status=STATUS_ACCEPTED,
+                          moderation_date=True, sender_deleted_at=True)
         self.check_now(m.sender_deleted_at)
 
     def test_pm_write_auto_moderators_accepted(self):
         "Test the auto_moderators parameter, moderate as accepted."
-        msg = pm_write(sender=self.user1, recipient=self.user2, subject='s', auto_moderators=lambda m: True)
+        msg = pm_write(sender=self.user1, recipient=self.user2,
+                       subject='s', auto_moderators=lambda m: True)
         self.assertTrue(isinstance(msg, Message))
         m = Message.objects.get()
         self.check_status(m, status=STATUS_ACCEPTED, moderation_date=True)
 
     def test_pm_write_auto_moderators_pending(self):
         "Test the auto_moderators parameter, no moderation decision is taken. Test the parameter as a list."
-        msg = pm_write(sender=self.user1, recipient=self.user2, subject='s', auto_moderators=[lambda m: None])
+        msg = pm_write(sender=self.user1, recipient=self.user2,
+                       subject='s', auto_moderators=[lambda m: None])
         self.assertTrue(isinstance(msg, Message))
         m = Message.objects.get()
         self.check_status(m)
@@ -2265,32 +2603,41 @@ class ApiTest(BaseTest):
 
     def test_pm_write_auto_moderators_rejected(self):
         "Test the auto_moderators parameter, moderate as rejected. Test the parameter as a tuple."
-        msg = pm_write(sender=self.user1, recipient=self.user2, subject='s', auto_moderators=(lambda m: False, ))
+        msg = pm_write(sender=self.user1, recipient=self.user2,
+                       subject='s', auto_moderators=(lambda m: False, ))
         self.assertTrue(isinstance(msg, Message))
         m = Message.objects.get()
-        self.check_status(m, status=STATUS_REJECTED, moderation_date=True, recipient_deleted_at=True)
+        self.check_status(m, status=STATUS_REJECTED,
+                          moderation_date=True, recipient_deleted_at=True)
         self.check_now(m.moderation_date)
         self.check_now(m.recipient_deleted_at)
-        self.assertEqual(len(mail.outbox), 0)  # sender is not notified in the case of auto moderation
+        # sender is not notified in the case of auto moderation
+        self.assertEqual(len(mail.outbox), 0)
 
 
 class CommandTest(BaseTest):
     """
     Test the custom commands.
     """
+
     def test_cleanup_empty(self):
         "Basic, without messages."
         out = StringIO()
-        call_command('postman_cleanup', verbosity=1, stdout=out)  # 1 is the only implemented verbosity level
+        # 1 is the only implemented verbosity level
+        call_command('postman_cleanup', verbosity=1, stdout=out)
         self.assertTrue(out.getvalue().startswith('Erase messages '))
 
     def test_cleanup_messages(self):
         "Only individual messages."
         good_date = now() - timedelta(days=30)  # the default delay
         m1 = self.create()
-        m2 = self.create(sender_deleted_at=good_date, recipient_deleted_at=good_date)  # the only good candidate
-        m3 = self.create(sender_deleted_at=good_date, recipient_deleted_at=now())
-        m4 = self.create(sender_deleted_at=now(), recipient_deleted_at=good_date)
+        # the only good candidate
+        m2 = self.create(sender_deleted_at=good_date,
+                         recipient_deleted_at=good_date)
+        m3 = self.create(sender_deleted_at=good_date,
+                         recipient_deleted_at=now())
+        m4 = self.create(sender_deleted_at=now(),
+                         recipient_deleted_at=good_date)
         m5 = self.create(sender_deleted_at=good_date)
         m6 = self.create(recipient_deleted_at=good_date)
         out = StringIO()
@@ -2309,29 +2656,43 @@ class CommandTest(BaseTest):
         #       ok   ------>|   ok
         #  missing   <------|   ok      one message not deleted by one of the participants (could be any of the four dates)
         good_date = now() - timedelta(days=30)  # the default delay
-        c1_m1 = self.c12(sender_deleted_at=good_date, recipient_deleted_at=good_date)
-        c1_m1.thread = c1_m1; c1_m1.save()
-        c1_m2 = self.c21(parent=c1_m1, thread=c1_m1.thread, sender_deleted_at=good_date, recipient_deleted_at=good_date)
+        c1_m1 = self.c12(sender_deleted_at=good_date,
+                         recipient_deleted_at=good_date)
+        c1_m1.thread = c1_m1
+        c1_m1.save()
+        c1_m2 = self.c21(parent=c1_m1, thread=c1_m1.thread,
+                         sender_deleted_at=good_date, recipient_deleted_at=good_date)
 
-        c2_m1 = self.c12(sender_deleted_at=good_date, recipient_deleted_at=good_date)
-        c2_m1.thread = c2_m1; c2_m1.save()
-        c2_m2 = self.c21(parent=c2_m1, thread=c2_m1.thread, sender_deleted_at=now(), recipient_deleted_at=good_date)
+        c2_m1 = self.c12(sender_deleted_at=good_date,
+                         recipient_deleted_at=good_date)
+        c2_m1.thread = c2_m1
+        c2_m1.save()
+        c2_m2 = self.c21(parent=c2_m1, thread=c2_m1.thread,
+                         sender_deleted_at=now(), recipient_deleted_at=good_date)
 
-        c3_m1 = self.c12(sender_deleted_at=good_date, recipient_deleted_at=good_date)
-        c3_m1.thread = c3_m1; c3_m1.save()
-        c3_m2 = self.c21(parent=c3_m1, thread=c3_m1.thread, sender_deleted_at=good_date)  # missing recipient_deleted_at
-        
+        c3_m1 = self.c12(sender_deleted_at=good_date,
+                         recipient_deleted_at=good_date)
+        c3_m1.thread = c3_m1
+        c3_m1.save()
+        # missing recipient_deleted_at
+        c3_m2 = self.c21(parent=c3_m1, thread=c3_m1.thread,
+                         sender_deleted_at=good_date)
+
         out = StringIO()
         call_command('postman_cleanup', verbosity=0, stdout=out)
         self.assertEqual(out.getvalue(), '')
-        self.assertListEqual(list(Message.objects.all()), [c3_m2, c3_m1, c2_m2, c2_m1])
+        self.assertListEqual(list(Message.objects.all()),
+                             [c3_m2, c3_m1, c2_m2, c2_m1])
 
     def test_cleanup_days(self):
         "Test the 'days' option."
         delay = 5  # any but the default delay
         good_date = now() - timedelta(days=delay)
-        m1 = self.create(sender_deleted_at=good_date, recipient_deleted_at=good_date)  # the only good candidate
-        m2 = self.create(sender_deleted_at=good_date, recipient_deleted_at=good_date + timedelta(days=1))
+        # the only good candidate
+        m1 = self.create(sender_deleted_at=good_date,
+                         recipient_deleted_at=good_date)
+        m2 = self.create(sender_deleted_at=good_date,
+                         recipient_deleted_at=good_date + timedelta(days=1))
         out = StringIO()
         call_command('postman_cleanup', verbosity=0, stdout=out, days=delay)
         self.assertEqual(out.getvalue(), '')
@@ -2340,9 +2701,11 @@ class CommandTest(BaseTest):
     def test_checkup_empty(self):
         "Basic, without messages."
         out = StringIO()
-        call_command('postman_checkup', verbosity=1, stdout=out)  # 1 is the only implemented verbosity level
+        # 1 is the only implemented verbosity level
+        call_command('postman_checkup', verbosity=1, stdout=out)
         lines = out.getvalue().splitlines()
-        self.assertTrue(lines[0].startswith('Checking messages ', 9))  # begin with "HH:MM:SS "
+        # begin with "HH:MM:SS "
+        self.assertTrue(lines[0].startswith('Checking messages ', 9))
         self.assertTrue(lines[1].startswith('All is correct.', 9))
 
     def check_checkup(self, reasons):
@@ -2350,7 +2713,8 @@ class CommandTest(BaseTest):
         out, err = StringIO(), StringIO()
         call_command('postman_checkup', verbosity=1, stdout=out, stderr=err)
         lines = out.getvalue().splitlines()
-        self.assertTrue(lines[-1].startswith('Number of inconsistencies found: {0}'.format(count), 9))
+        self.assertTrue(
+            lines[-1].startswith('Number of inconsistencies found: {0}'.format(count), 9))
         lines = err.getvalue().splitlines()
         for i, reason in enumerate(reasons):
             # because of possible WARNINGS in some Dj versions, do a reverse read, from the end
@@ -2358,7 +2722,8 @@ class CommandTest(BaseTest):
 
     def test_checkup_parties(self):
         m = self.create()
-        self.check_checkup(["Visitor's email is missing.", 'Sender and Recipient cannot be both undefined.'])
+        self.check_checkup(["Visitor's email is missing.",
+                           'Sender and Recipient cannot be both undefined.'])
 
     def test_checkup_email(self):
         m = self.c12(email=self.email)
@@ -2402,12 +2767,14 @@ class CommandTest(BaseTest):
     def test_checkup_reply(self):
         p = self.c12()
         m = self.c21(parent=p)  # thread is missing
-        self.check_checkup(["The message cannot be a reply without being in a conversation."])
+        self.check_checkup(
+            ["The message cannot be a reply without being in a conversation."])
 
     def test_checkup_in_conversation(self):
         p = self.c12()  # thread is missing
         m = self.c21(parent=p, thread=p)
-        self.check_checkup(["The reply and its parent are not in a conversation in common."])
+        self.check_checkup(
+            ["The reply and its parent are not in a conversation in common."])
 
     def test_checkup_same_conversation(self):
         """
@@ -2419,4 +2786,5 @@ class CommandTest(BaseTest):
         fake = self.c12()
         p = self.c12(thread=fake)  # thread is incorrect
         m = self.c21(parent=p, thread=p)
-        self.check_checkup(["The reply and its parent are not in a conversation in common."])
+        self.check_checkup(
+            ["The reply and its parent are not in a conversation in common."])

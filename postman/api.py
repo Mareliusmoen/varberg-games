@@ -3,7 +3,8 @@ This module provides an API to the django-postman application,
 for an easy usage from other applications in the project.
 
 Sample:
-Suppose an application managing Event objects. Whenever a new Event is generated,
+Suppose an application managing Event objects. Whenever a new Event is 
+generated,
 you want to broadcast an announcement to Users who have subscribed
 to be informed of the availability of such a kind of Event.
 
@@ -25,8 +26,10 @@ from postman.models import Message, STATUS_PENDING, STATUS_ACCEPTED
 
 
 def _get_site():
-    # do not require the sites framework to be installed ; and no request object is available here
-    return Site.objects.get_current() if apps.is_installed('django.contrib.sites') else None
+    # do not require the sites framework to be installed ; 
+    # and no request object is available here
+    return Site.objects.get_current() if apps.is_installed(
+        'django.contrib.sites') else None
 
 
 @sensitive_variables('subject', 'body')
@@ -35,15 +38,16 @@ def pm_broadcast(sender, recipients, subject, body='', skip_notification=False):
     Broadcast a message to multiple Users.
     For an easier cleanup, all these messages are directly marked as archived
     and deleted on the sender side.
-    The message is expected to be issued from a trusted application, so moderation
+    The message is expected to be issued from a trusted application,
+    so moderation
     is not necessary and the status is automatically set to 'accepted'.
 
     Optional argument:
         ``skip_notification``: if the normal notification event is not wished
     """
     message = Message(subject=subject, body=body, sender=sender,
-        sender_archived=True, sender_deleted_at=now(),
-        moderation_status=STATUS_ACCEPTED, moderation_date=now())
+                    sender_archived=True, sender_deleted_at=now(),
+                    moderation_status=STATUS_ACCEPTED, moderation_date=now())
     if not isinstance(recipients, (tuple, list)):
         recipients = (recipients,)
     for recipient in recipients:
@@ -56,7 +60,7 @@ def pm_broadcast(sender, recipients, subject, body='', skip_notification=False):
 
 @sensitive_variables('subject', 'body')
 def pm_write(sender, recipient, subject, body='', skip_notification=False,
-        auto_archive=False, auto_delete=False, auto_moderators=None):
+            auto_archive=False, auto_delete=False, auto_moderators=None):
     """
     Write a message to a User.
     Contrary to pm_broadcast(), the message is archived and/or deleted on
@@ -70,7 +74,8 @@ def pm_write(sender, recipient, subject, body='', skip_notification=False,
         ``auto_delete``: to mark the message as deleted on the sender side
         ``auto_moderators``: a list of auto-moderation functions
     """
-    message = Message(subject=subject, body=body, sender=sender, recipient=recipient)
+    message = Message(subject=subject, body=body,
+                      sender=sender, recipient=recipient)
     initial_status = message.moderation_status
     if auto_moderators:
         message.auto_moderate(auto_moderators)

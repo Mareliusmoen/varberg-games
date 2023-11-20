@@ -36,7 +36,8 @@ STATUS_CHOICES = (
 # ordering constants
 ORDER_BY_KEY = 'o'  # as 'order'
 ORDER_BY_FIELDS = {}  # setting is deferred in setup()
-ORDER_BY_MAPPER = {'sender': 'f', 'recipient': 't', 'subject': 's', 'date': 'd'}  # for templatetags usage
+ORDER_BY_MAPPER = {'sender': 'f', 'recipient': 't',
+                   'subject': 's', 'date': 'd'}  # for templatetags usage
 
 
 def setup():
@@ -46,7 +47,8 @@ def setup():
 
     """
     from django.contrib.auth import get_user_model
-    name_user_as = getattr(settings, 'POSTMAN_NAME_USER_AS', get_user_model().USERNAME_FIELD)
+    name_user_as = getattr(settings, 'POSTMAN_NAME_USER_AS',
+                           get_user_model().USERNAME_FIELD)
     ORDER_BY_FIELDS.update({
         'f': 'sender__' + name_user_as,     # as 'from'
         't': 'recipient__' + name_user_as,  # as 'to'
@@ -95,7 +97,8 @@ def get_user_representation(user):
             return force_str(show_user_as(user))
         except:
             pass
-    return force_str(user)  # default value, or in case of empty attribute or exception
+    # default value, or in case of empty attribute or exception
+    return force_str(user)
 
 
 def get_user_name(user):
@@ -113,7 +116,8 @@ class MessageManager(models.Manager):
 
     def _folder(self, related, filters, option=None, order_by=None, query_dict=None):
         """Base code, in common to the folders."""
-        qs = self.all() if option == OPTION_MESSAGES else QuerySet(self.model, PostmanQuery(self.model), using=self._db)
+        qs = self.all() if option == OPTION_MESSAGES else QuerySet(
+            self.model, PostmanQuery(self.model), using=self._db)
         if related:
             qs = qs.select_related(*related)
         if order_by:
@@ -130,11 +134,12 @@ class MessageManager(models.Manager):
             # should not be necessary. Otherwise add:
             # .extra(select={'count': 'SELECT 1'})
         else:
-            qs = qs.annotate(count=RawSQL('{0}.count'.format(qs.query.pm_alias_prefix), ()))
+            qs = qs.annotate(count=RawSQL(
+                '{0}.count'.format(qs.query.pm_alias_prefix), ()))
             qs.query.pm_set_extra(table=(
                 self.filter(lookups, thread_id__isnull=True)\
-                    # Dj 4.0 imposes its col aliases (as 'colN'), for combinator sql, if not explicitly defined.
-                    # can't reuse 'id' because "ValueError: The annotation 'id' conflicts with a field on the model.".
+                # Dj 4.0 imposes its col aliases (as 'colN'), for combinator sql, if not explicitly defined.
+                # can't reuse 'id' because "ValueError: The annotation 'id' conflicts with a field on the model.".
                     .annotate(**{qs.query.pm_alias_id: models.F('pk')})\
                     .annotate(count=models.Value(0, models.IntegerField()))\
                     .values_list(qs.query.pm_alias_id, 'count').order_by(),
@@ -230,7 +235,8 @@ class MessageManager(models.Manager):
         """
         return self.select_related('sender', 'recipient').filter(
             filter,
-            (models.Q(recipient=user) & models.Q(moderation_status=STATUS_ACCEPTED)) | models.Q(sender=user),
+            (models.Q(recipient=user) & models.Q(
+                moderation_status=STATUS_ACCEPTED)) | models.Q(sender=user),
         ).order_by('sent_at')
 
     def as_recipient(self, user, filter):
@@ -274,27 +280,36 @@ class Message(models.Model):
     SUBJECT_MAX_LENGTH = 120
 
     sender = models.ForeignKey(User, on_delete=models.CASCADE)
-    recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='recipient_messages')
+    recipient = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='recipient_messages')
     subject = models.CharField(max_length=255)
     body = models.TextField()
-    email = models.EmailField(_("visitor"), blank=True)  # instead of either sender or recipient, for an AnonymousUser
+    # instead of either sender or recipient, for an AnonymousUser
+    email = models.EmailField(_("visitor"), blank=True)
     parent = models.ForeignKey('self', on_delete=models.CASCADE, related_name='next_messages',
-        null=True, blank=True, verbose_name=_("parent message"))
+                               null=True, blank=True, verbose_name=_("parent message"))
     thread = models.ForeignKey('self', on_delete=models.CASCADE, related_name='child_messages',
-        null=True, blank=True, verbose_name=_("root message"))
+                               null=True, blank=True, verbose_name=_("root message"))
     sent_at = models.DateTimeField(_("sent at"), default=now)
     read_at = models.DateTimeField(_("read at"), null=True, blank=True)
     replied_at = models.DateTimeField(_("replied at"), null=True, blank=True)
-    sender_archived = models.BooleanField(_("archived by sender"), default=False)
-    recipient_archived = models.BooleanField(_("archived by recipient"), default=False)
-    sender_deleted_at = models.DateTimeField(_("deleted by sender at"), null=True, blank=True)
-    recipient_deleted_at = models.DateTimeField(_("deleted by recipient at"), null=True, blank=True)
+    sender_archived = models.BooleanField(
+        _("archived by sender"), default=False)
+    recipient_archived = models.BooleanField(
+        _("archived by recipient"), default=False)
+    sender_deleted_at = models.DateTimeField(
+        _("deleted by sender at"), null=True, blank=True)
+    recipient_deleted_at = models.DateTimeField(
+        _("deleted by recipient at"), null=True, blank=True)
     # moderation fields
-    moderation_status = models.CharField(_("status"), max_length=1, choices=STATUS_CHOICES, default=STATUS_ACCEPTED)
+    moderation_status = models.CharField(
+        _("status"), max_length=1, choices=STATUS_CHOICES, default=STATUS_ACCEPTED)
     moderation_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='moderated_messages',
-        null=True, blank=True, verbose_name=_("moderator"))
-    moderation_date = models.DateTimeField(_("moderated at"), null=True, blank=True)
-    moderation_reason = models.CharField(_("rejection reason"), max_length=120, blank=True)
+                                      null=True, blank=True, verbose_name=_("moderator"))
+    moderation_date = models.DateTimeField(
+        _("moderated at"), null=True, blank=True)
+    moderation_reason = models.CharField(
+        _("rejection reason"), max_length=120, blank=True)
 
     objects = MessageManager()
 
@@ -313,9 +328,11 @@ class Message(models.Model):
     def is_pending(self):
         """Tell if the message is in the pending state."""
         return self.moderation_status == STATUS_PENDING
+
     def is_rejected(self):
         """Tell if the message is in the rejected state."""
         return self.moderation_status == STATUS_REJECTED
+
     def is_accepted(self):
         """Tell if the message is in the accepted state."""
         return self.moderation_status == STATUS_ACCEPTED
@@ -342,13 +359,16 @@ class Message(models.Model):
         """
         email = self.email
         data = email + settings.SECRET_KEY
-        digest = hashlib.md5(data.encode()).hexdigest()  # encode(): py3 needs a buffer of bytes
-        shrunken_digest = '..'.join((digest[:4], digest[-4:]))  # 32 characters is too long and is useless
+        # encode(): py3 needs a buffer of bytes
+        digest = hashlib.md5(data.encode()).hexdigest()
+        # 32 characters is too long and is useless
+        shrunken_digest = '..'.join((digest[:4], digest[-4:]))
         bits = email.split('@')
         if len(bits) != 2:
             return ''
         domain = bits[1]
-        return '@'.join((shrunken_digest, domain.rsplit('.', 1)[0]))  # leave off the TLD to gain some space
+        # leave off the TLD to gain some space
+        return '@'.join((shrunken_digest, domain.rsplit('.', 1)[0]))
 
     def admin_sender(self):
         """
@@ -405,7 +425,8 @@ class Message(models.Model):
     @sensitive_variables('values')
     def quote(self, format_subject, format_body=None):
         """Return a dictionary of quote values to initiate a reply."""
-        values = {'subject': format_subject(self.subject)[:self.SUBJECT_MAX_LENGTH]}
+        values = {'subject': format_subject(
+            self.subject)[:self.SUBJECT_MAX_LENGTH]}
         if format_body:
             values['body'] = format_body(self.obfuscated_sender, self.body)
         return values
@@ -476,9 +497,11 @@ class Message(models.Model):
                 # Bypass: for an online user, no need to notify when rejection is immediate.
                 # Only useful for a visitor as an archive copy of the message, otherwise lost.
                 if not (self.sender_id is not None and is_auto_moderated):
-                    (notify_user if self.sender_id is not None else email_visitor)(self, 'rejection', site)
+                    (notify_user if self.sender_id is not None else email_visitor)(
+                        self, 'rejection', site)
             elif self.is_accepted():
-                (notify_user if self.recipient_id is not None else email_visitor)(self, 'acceptance', site)
+                (notify_user if self.recipient_id is not None else email_visitor)(
+                    self, 'acceptance', site)
 
     def get_dates(self):
         """Get some dates to restore later."""
@@ -511,15 +534,19 @@ class Message(models.Model):
             moderators = (moderators,)
         for moderator in moderators:
             rating = moderator(self)
-            if rating is None: continue
+            if rating is None:
+                continue
             if isinstance(rating, tuple):
                 percent, reason = rating
             else:
                 percent = rating
                 reason = getattr(moderator, 'default_reason', '')
-            if percent is False: percent = 0
-            if percent is True: percent = 100
-            if not 0 <= percent <= 100: continue
+            if percent is False:
+                percent = 0
+            if percent is True:
+                percent = 100
+            if not 0 <= percent <= 100:
+                continue
             if percent == 0:
                 auto = False
                 final_reason = reason
@@ -531,7 +558,8 @@ class Message(models.Model):
             reasons.append(reason)
         if auto is None and percents:
             average = float(sum(percents)) / len(percents)
-            final_reason = ', '.join([r for i, r in enumerate(reasons) if r and not r.isspace() and percents[i] < 50])
+            final_reason = ', '.join([r for i, r in enumerate(
+                reasons) if r and not r.isspace() and percents[i] < 50])
             auto = average >= 50
         if auto is None:
             auto = getattr(settings, 'POSTMAN_AUTO_MODERATE_AS', None)
