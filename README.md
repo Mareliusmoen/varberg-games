@@ -458,7 +458,8 @@ To ensure the quality and readability of the Python code in this project, all Py
 The PEP8 linter checks for issues like line lengths, whitespace usage, variable naming conventions, docstrings and more. Passing the PEP8 linter test means that the code adheres to these standards, making it easier to read and maintain.
 
 You can check the PEP8 linter here: [PEP8 linter](https://pep8ci.herokuapp.com/)
----
+
+
 ## Deployment
 You find the deployed app here: LINK
 The app is deployed to Heroku and the database to ElephantSQL.
@@ -466,8 +467,7 @@ The app is deployed to Heroku and the database to ElephantSQL.
 The project was deployed to [Heroku](https://www.heroku.com) using the below procedure:-    
   
 - **Log in to Heroku** or create an account if required.
--
-**click** the button labeled **New** from the dashboard in the top right corner, just below the header.
+- **click** the button labeled **New** from the dashboard in the top right corner, just below the header.
 - From the drop-down menu **select "Create new app"**.
 - **Enter a unique app name**. I combined my GitHub user name and the game's name with a dash between them (dnlbowers-battleship) for this project.
 - Once the web portal shows the green tick to confirm the name is original **select the relevant region.** In my case, I chose Europe as I am in Sweden.
