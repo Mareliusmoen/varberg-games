@@ -2,8 +2,8 @@
 {% if user.is_authenticated %}
 {% block content %}
 <h1 class="text-center">Upcoming Events</h1>
-<div class="d-flex justify-content-center flex-wrap">
-    <div class="w-75 mb-3 rounded-5 card-bg">
+<div class="justify-content-center flex-wrap">
+    <div class="justify-content-center mb-3 rounded-5 card-bg">
         <div class="text-center mb-3">
             <a href="{% url 'create_event' %}" class="btn signupbtn orange-btn">Create new event <i
                     class="fa-regular fa-calendar-plus"></i></a>

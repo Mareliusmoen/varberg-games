@@ -375,4 +375,7 @@ select.form-control:focus {
         max-width: 70vw !important;
         height: auto;
     }
+    #event-cards {
+        width: 95%;
+    }
 }
