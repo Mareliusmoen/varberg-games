@@ -429,6 +429,12 @@ def generate_access_code():
 ---
 ## Testing
 
+### PEP8
+To ensure the quality and readability of the Python code in this project, all Python files were checked with the PEP8 linter provided by Code Institute. This tool helps enforce the PEP8 style guide, which is widely accepted in the Python community for coding standards. 
+
+The PEP8 linter checks for issues like line lengths, whitespace usage, variable naming conventions, docstrings and more. Passing the PEP8 linter test means that the code adheres to these standards, making it easier to read and maintain.
+
+You can check the PEP8 linter here: [PEP8 linter](https://pep8ci.herokuapp.com/)
 ---
 ## Deployment
 You find the deployed app here: LINK
@@ -535,7 +541,7 @@ The project was deployed to [Heroku](https://www.heroku.com) using the below pro
 
 
 ## Credits
-- [Postman](https://django-postman.readthedocs.io/en/latest/) is used to allow registered users to message eachother within the site. Thanks for providing a almost 'out-of-the-box' experience.
+- [Postman](https://django-postman.readthedocs.io/en/latest/) is used to allow registered users to message eachother within the site. Thanks for providing a almost 'out-of-the-box' experience, so most of this code is not written by me only modified to fit the needs of this project.
 - [Bootstrap 5](https://getbootstrap.com/docs/5.0/getting-started/introduction/) and it's detailed documentation made the frontend part of the programming very smooth and easy.
 - [Adobe Illustrator](https://www.adobe.com/products/illustrator.html) and it's detailed documentation made the creation of the background very smooth and easy.
 - This [Stackoverflow post](https://stackoverflow.com/questions/13932653/increase-displaying-time-of-django-messages) for explaining how to make the Django response messages be auto deleted after a set time.
