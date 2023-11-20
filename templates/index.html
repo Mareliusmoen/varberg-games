@@ -11,8 +11,8 @@
         Explore events, message gamers, and trade cards/games in our marketplace. Get in on the action -
         create your
         account today!</p>
-    <button class="signupbtn btn orange-btn"><a class="" href="{% url 'account_signup' %}">Sign up here!</a></button>
-    <button class="signupbtn btn orange-btn"><a class="" href="{% url 'account_login' %}">Login</a></button>
+    <a class="signupbtn btn orange-btn" href="{% url 'account_signup' %}">Sign up here!</a>
+    <a class="signupbtn btn orange-btn" href="{% url 'account_login' %}">Login</a>
     {% endif %}
 </div>
 {% for message in messages %}
