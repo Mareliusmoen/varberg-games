@@ -17,6 +17,15 @@ class Command(BaseCommand):
     more than a minimal number of days ago."""
 
     def add_arguments(self, parser):
+        """
+        Adds the necessary arguments to the argument parser.
+
+        :param parser: The argument parser object to which the arguments
+        will be added.
+        :type parser: ArgumentParser
+
+        :return: None
+        """
         parser.add_argument(*ARGUMENT_ARGS, type=int,
                             help=(
                                 'The minimal number of days a message is kept'
@@ -28,6 +37,17 @@ class Command(BaseCommand):
 
     # no more NoArgsCommand and handle_noargs with Dj >= 1.8
     def handle(self, *args, **options):
+        """
+        Deletes messages and conversations marked as deleted before a
+        specified date.
+
+        Parameters:
+            *args: Variable length argument list.
+            **options: Keyword arguments.
+
+        Returns:
+            None
+        """
         verbose = int(options.get('verbosity'))
         days = options.get('days')
         date = now() - timedelta(days=days)

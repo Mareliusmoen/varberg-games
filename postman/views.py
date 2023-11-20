@@ -37,6 +37,17 @@ sensitive_post_parameters_m = method_decorator(
 ##########
 
 def autocomplete_recipients(request):
+    """
+    Autocompletes the recipients for a given search term.
+
+    Args:
+        request (django.http.HttpRequest): The request object containing
+        the search term.
+
+    Returns:
+        django.http.JsonResponse: A JSON response containing a list of
+        usernames that match the search term.
+    """
     search_term = request.GET.get('term', '')
     users = User.objects.filter(
         Q(username__icontains=search_term) |
@@ -77,6 +88,19 @@ class IndexView(RedirectView):
     permanent = True
 
     def get_redirect_url(self, *args, **kwargs):
+        """
+        Get the redirect URL for the given arguments.
+
+        Args:
+            *args: The positional arguments.
+            **kwargs: The keyword arguments.
+
+        Returns:
+            str: The redirect URL.
+
+        Raises:
+            NoReverseMatch: If the reverse lookup fails.
+        """
         return reverse(self.pattern_name,
                        args=args, kwargs=kwargs,
                        current_app=self.request.resolver_match.namespace)
@@ -86,6 +110,18 @@ class NamespaceMixin(object):
     """Common code to manage the namespace."""
 
     def render_to_response(self, context, **response_kwargs):
+        """
+        Renders the response with a given context and additional
+        response keyword arguments.
+
+        Args:
+            context (dict): The context to render the response with.
+            **response_kwargs: Additional keyword arguments to pass to
+                the super class's render_to_response() method.
+
+        Returns:
+            HttpResponse: The rendered response.
+        """
         self.request.current_app = self.request.resolver_match.namespace
         return super().render_to_response(context, **response_kwargs)
 
@@ -100,6 +136,16 @@ class FolderMixin(NamespaceMixin, object):
         return super().dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
+        """
+        Retrieves the context data for the view and adds additional
+        data to it.
+
+        Parameters:
+            **kwargs (dict): Additional keyword arguments.
+
+        Returns:
+            dict: The updated context data.
+        """
         context = super().get_context_data(**kwargs)
         params = {'query_dict': self.request.GET}
         option = kwargs.get('option')
@@ -118,9 +164,10 @@ class FolderMixin(NamespaceMixin, object):
             'by_message': option == OPTION_MESSAGES,
             'by_conversation_url':
                 reverse(viewname, current_app=current_instance),
-            'by_message_url': reverse(viewname, args=[OPTION_MESSAGES], current_app=current_instance),
+            'by_message_url': reverse(viewname, args=[OPTION_MESSAGES],
+                                      current_app=current_instance),
             'current_url': self.request.get_full_path(),
-            'gets': self.request.GET,  # useful to postman_order_by template tag
+            'gets': self.request.GET,
         })
         return context
 
@@ -207,6 +254,13 @@ class ComposeMixin(NamespaceMixin, object):
     auto_moderators = []
 
     def get_form_kwargs(self):
+        """
+        Returns a dictionary of keyword arguments to be passed to
+        the form class.
+
+        Returns:
+            dict: A dictionary containing the keyword arguments.
+        """
         kwargs = super().get_form_kwargs()
         if self.request.method == 'POST':
             kwargs.update({
@@ -220,13 +274,22 @@ class ComposeMixin(NamespaceMixin, object):
 
     def get_success_url(self):
         return (
-            _get_safe_internal_url(self.request.GET.get('next')) 
-            or self.success_url 
-            or _get_referer(self.request) 
+            _get_safe_internal_url(self.request.GET.get('next'))
+            or self.success_url
+            or _get_referer(self.request)
             or 'postman:inbox'
         )
 
     def form_valid(self, form):
+        """
+        Handle the form validation for the view.
+
+        :param form: The form object that contains the data to be validated.
+        :type form: Form
+
+        :return: A redirect response to the success URL.
+        :rtype: HttpResponse
+        """
         params = {'auto_moderators': self.auto_moderators}
         if hasattr(self, 'parent'):  # only in the ReplyView case
             params['parent'] = self.parent
@@ -241,6 +304,12 @@ class ComposeMixin(NamespaceMixin, object):
         return redirect(self.get_success_url())
 
     def get_context_data(self, **kwargs):
+        """
+        Retrieves the context data for the view.
+
+        :param **kwargs: Additional keyword arguments.
+        :return: The updated context data.
+        """
         context = super().get_context_data(**kwargs)
         context.update({
             'autocompleter_app': autocompleter_app,
@@ -273,31 +342,66 @@ class WriteView(ComposeMixin, FormView):
     @never_cache_m
     @csrf_protect_m
     def dispatch(self, *args, **kwargs):
+        """
+        A decorator function that wraps the dispatch method of a class.
+        It adds the following decorators to the method:
+        - @sensitive_post_parameters_m: Marks the method as requiring
+        sensitive post parameters
+        - @never_cache_m: Prevents the method from being cached
+        - @csrf_protect_m: Protects the method from CSRF attacks
+
+        The dispatch method is responsible for handling incoming requests.
+        It accepts any number of positional and keyword arguments.
+        If the 'POSTMAN_DISALLOW_ANONYMOUS' setting is enabled, the method
+        requires authentication by using the login_required decorator on the
+        super().dispatch() method.
+        Otherwise, it simply calls the super().dispatch() method.
+
+        Parameters:
+        - *args: Any positional arguments passed to the method
+        - **kwargs: Any keyword arguments passed to the method
+
+        Returns:
+        - The return value of the super().dispatch() method
+        """
         if getattr(settings, 'POSTMAN_DISALLOW_ANONYMOUS', False):
             return login_required(super().dispatch)(*args, **kwargs)
         return super().dispatch(*args, **kwargs)
 
     def get_form_class(self):
-        return self.form_classes[0 if self.request.user.is_authenticated else 1]
+        return self.form_classes[
+            0 if self.request.user.is_authenticated else 1
+        ]
 
     def get_initial(self):
+        """
+        Retrieves the initial data for the form.
+
+        Returns:
+            A dictionary containing the initial data for the form.
+
+        Raises:
+            None.
+        """
         initial = super().get_initial()
         if self.request.method == 'GET':
             # allow optional initializations by query string
             initial.update(self.request.GET.items())
             recipients = self.kwargs.get('recipients')
             if recipients:
-                # order_by() is not mandatory, but: a) it doesn't hurt; b) it 
+                # order_by() is not mandatory, but: a) it doesn't hurt; b) it
                 # eases the test suite
                 # and anyway the original ordering cannot be respected.
                 user_model = get_user_model()
                 name_user_as = getattr(
-                    settings, 'POSTMAN_NAME_USER_AS', user_model.USERNAME_FIELD)
+                    settings, 'POSTMAN_NAME_USER_AS',
+                    user_model.USERNAME_FIELD)
                 usernames = list(
                     user_model.objects.values_list(name_user_as, flat=True)
                     .filter(is_active=True,
                             **{'{0}__in'.format(name_user_as): [
-                                r.strip() for r in recipients.split(':') if r and not r.isspace()
+                                r.strip() for r in recipients.split(
+                                    ':') if r and not r.isspace()
                             ]})
                     .order_by(name_user_as)
                 )
@@ -306,15 +410,36 @@ class WriteView(ComposeMixin, FormView):
         return initial
 
     def get_form_kwargs(self):
+        """
+        Get the keyword arguments for the form.
+
+        Returns:
+            dict: The keyword arguments for the form.
+        """
         kwargs = super().get_form_kwargs()
-        if isinstance(self.autocomplete_channels, tuple) and len(self.autocomplete_channels) == 2:
-            channel = self.autocomplete_channels[1 if self.request.user.is_anonymous else 0]
+        if isinstance(self.autocomplete_channels, tuple) and len(
+            self.autocomplete_channels
+        ) == 2:
+            channel = self.autocomplete_channels[
+                1 if self.request.user.is_anonymous else 0
+            ]
         else:
             channel = self.autocomplete_channels
             kwargs['channel'] = channel
         return kwargs
 
     def form_valid(self, form):
+        """
+        Validates the form data and filters the list of recipients based
+        on the usernames provided.
+
+        Args:
+            form (Form): The form object containing the cleaned data.
+
+        Returns:
+            HttpResponse: The response generated by the super class's
+            form_valid method.
+        """
         recipients = form.cleaned_data.get('recipients')
         subject = form.cleaned_data.get('subject')
         body = form.cleaned_data.get('body')
@@ -349,11 +474,40 @@ class ReplyView(ComposeMixin, FormView):
     @csrf_protect_m
     @login_required_m
     def dispatch(self, request, message_id, *args, **kwargs):
+        """
+        Dispatches the request to the appropriate method handler and
+        returns the response.
+
+        Parameters:
+            - request: The HTTP request object.
+            - message_id: The ID of the message.
+            - *args: Variable length arguments.
+            - **kwargs: Keyword arguments.
+
+        Returns:
+            - The response returned by the method handler.
+        """
         perms = Message.objects.perms(request.user)
         self.parent = get_object_or_404(Message, perms, pk=message_id)
         return super().dispatch(request, *args, **kwargs)
 
     def get_initial(self):
+        """
+        Retrieves the initial data for the form.
+
+        Returns:
+            dict: The initial data for the form.
+
+        Description:
+            This method retrieves the initial data for the form.
+            It will also be partially used in the `get_form_kwargs()` method.
+
+        Parameters:
+            self: The instance of the class.
+
+        Returns:
+            dict: The initial data for the form.
+        """
         # will also be partially used in get_form_kwargs()
         self.initial = self.parent.quote(*self.formatters)
         if self.request.method == 'GET':
@@ -362,6 +516,12 @@ class ReplyView(ComposeMixin, FormView):
         return self.initial
 
     def get_form_kwargs(self):
+        """
+        Get the keyword arguments required to instantiate the form.
+
+        Returns:
+            dict: The keyword arguments for the form instantiation.
+        """
         kwargs = super().get_form_kwargs()
         kwargs['channel'] = self.autocomplete_channel
         if self.request.method == 'POST':
@@ -398,9 +558,34 @@ class DisplayMixin(NamespaceMixin, object):
     @never_cache_m
     @login_required_m
     def dispatch(self, *args, **kwargs):
+        """
+        Dispatches the request to the appropriate handler method.
+
+        Parameters:
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
+
+        Returns:
+            The result of the dispatched handler method.
+        """
         return super().dispatch(*args, **kwargs)
 
     def get(self, request, *args, **kwargs):
+        """
+        Retrieves a list of messages for a specific user and filter.
+
+        Args:
+            request (HttpRequest): The HTTP request object.
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
+
+        Returns:
+            HttpResponse: The HTTP response object.
+
+        Raises:
+            Http404: If no messages are found.
+
+        """
         user = request.user
         self.msgs = Message.objects.thread(user, self.filter)
         if not self.msgs:
@@ -412,16 +597,24 @@ class DisplayMixin(NamespaceMixin, object):
         return super().get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
+        """
+        Retrieves the context data for the view.
+
+        :param kwargs: Additional keyword arguments.
+        :return: The context data.
+        """
         context = super().get_context_data(**kwargs)
         user = self.request.user
         # are all messages archived ?
         for m in self.msgs:
-            if not getattr(m, ('sender' if m.sender == user else 'recipient') + '_archived'):
+            if not getattr(m, (
+                    'sender'
+                    if m.sender == user else 'recipient') + '_archived'):
                 archived = False
                 break
         else:
             archived = True
-        # look for the most recent received message (and non-deleted to comply with the future perms() control), if any
+
         for m in reversed(self.msgs):
             if m.recipient == user and not m.recipient_deleted_at:
                 received = m
@@ -432,8 +625,12 @@ class DisplayMixin(NamespaceMixin, object):
             'pm_messages': self.msgs,
             'archived': archived,
             'reply_to_pk': received.pk if received else None,
-            'form': self.form_class(initial=received.quote(*self.formatters)) if received else None,
-            'next_url': self.request.GET.get('next') or reverse('postman:inbox', current_app=self.request.resolver_match.namespace),
+            'form': self.form_class(initial=received.quote(
+                *self.formatters)) if received else None,
+            'next_url': self.request.GET.get(
+                'next') or reverse(
+                    'postman:inbox',
+                    current_app=self.request.resolver_match.namespace),
         })
         return context
 
@@ -473,9 +670,32 @@ class UpdateMessageMixin(object):
     @csrf_protect_m
     @login_required_m
     def dispatch(self, *args, **kwargs):
+        """
+        Dispatches the request to the appropriate method of the view based
+        on the HTTP method used.
+
+        :param args: The positional arguments passed to the method.
+        :param kwargs: The keyword arguments passed to the method.
+
+        :return: The result returned by the dispatched method.
+        """
         return super().dispatch(*args, **kwargs)
 
     def post(self, request, *args, **kwargs):
+        """
+        Handles the HTTP POST request for the view.
+
+        Args:
+            request (HttpRequest): The HTTP request object.
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
+
+        Returns:
+            HttpResponseRedirect: The HTTP response redirect object.
+
+        Raises:
+            None.
+        """
         next_url = _get_referer(request) or 'postman:inbox'
         pks = request.POST.getlist('pks')
         tpks = request.POST.getlist('tpks')
@@ -484,7 +704,9 @@ class UpdateMessageMixin(object):
             filter = Q(pk__in=pks) | Q(thread__in=tpks)
             self._action(user, filter)
             messages.success(request, self.success_msg, fail_silently=True)
-            return redirect(_get_safe_internal_url(request.GET.get('next')) or self.success_url or next_url)
+            return redirect(
+                _get_safe_internal_url(request.GET.get(
+                    'next')) or self.success_url or next_url)
         else:
             messages.warning(request, _(
                 "Select at least one object."), fail_silently=True)
@@ -493,14 +715,53 @@ class UpdateMessageMixin(object):
 
 class UpdateDualMixin(UpdateMessageMixin):
     def _action(self, user, filter):
-        (criteria_key, criteria_val) = ('', not (self.field_value)) if isinstance(self.field_value, bool)\
+        """
+        This function performs an action based on the given user and filter.
+        It takes two parameters:
+
+        - `user`: The user for whom the action is performed.
+        - `filter`: The filter used to determine which messages are
+        affected by the action.
+
+        The function first determines the `criteria_key` and `criteria_val`
+        based on the `self.field_value`. If `self.field_value` is a boolean,
+        `criteria_key` is set to an empty string and `criteria_val` is set to
+        the negation of `self.field_value`. Otherwise, `criteria_key` is set
+        to `__isnull` and `criteria_val` is set to the boolean representation
+        of `self.field_value`.
+
+        The function then updates the recipient rows in the `Message` model
+        hat match the specified criteria. It filters the rows based on the
+        `recipient_{0}{1}` format, where `{0}` is replaced with
+        `self.field_bit` and `{1}` is replaced with `criteria_key`.
+        The `recipient_{0}` field is updated with `self.field_value`.
+
+        Next, the function updates the sender rows in the `Message` model
+        that match the specified criteria. It filters the rows based on the
+        `sender_{0}{1}` format, where `{0}` is replaced with `self.field_bit`
+        and `{1}` is replaced with `criteria_key`. The `sender_{0}` field is
+        updated with `self.field_value`.
+
+        If no recipient rows or sender rows were updated, the function raises
+        an `Http404` exception.
+
+        Note: This function assumes that the `Message` model has `as_recipient`
+        and `as_sender` methods to filter rows based on the recipient and
+        sender respectively.
+        """
+        (criteria_key, criteria_val) = (
+            '', not (self.field_value)) if isinstance(self.field_value, bool)\
             else ('__isnull', bool(self.field_value))
         recipient_rows = Message.objects.as_recipient(user, filter)\
-            .filter(**{'recipient_{0}{1}'.format(self.field_bit, criteria_key): criteria_val})\
-            .update(**{'recipient_{0}'.format(self.field_bit): self.field_value})
+            .filter(**{'recipient_{0}{1}'.format(
+                self.field_bit, criteria_key): criteria_val})\
+            .update(**{'recipient_{0}'.format(
+                self.field_bit): self.field_value})
         sender_rows = Message.objects.as_sender(user, filter)\
-            .filter(**{'sender_{0}{1}'.format(self.field_bit, criteria_key): criteria_val})\
-            .update(**{'sender_{0}'.format(self.field_bit): self.field_value})
+            .filter(**{'sender_{0}{1}'.format(
+                self.field_bit, criteria_key): criteria_val})\
+            .update(**{'sender_{0}'.format(
+                self.field_bit): self.field_value})
         if not (recipient_rows or sender_rows):
             raise Http404  # abnormal enough, like forged ids
 
@@ -531,9 +792,9 @@ class UndeleteView(UpdateDualMixin, View):
 class UpdateRecipientMixin(UpdateMessageMixin):
     def _action(self, user, filter):
         recipient_rows = Message.objects.as_recipient(user, filter)\
-            .filter(**{'{0}__isnull'.format(self.field_bit): bool(self.field_value)})\
+            .filter(**{'{0}__isnull'.format(
+                self.field_bit): bool(self.field_value)})\
             .update(**{self.field_bit: self.field_value})
-        # an empty set cannot be estimated as an error, it may be just a badly chosen selection
 
 
 class MarkReadView(UpdateRecipientMixin, View):

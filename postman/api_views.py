@@ -41,5 +41,16 @@ class AjaxUnreadCountView(AjaxMixin, View):
     http_method_names = ['get']
 
     def get(self, request, *args, **kwargs):
+        """
+        A function that handles the GET request for the API endpoint.
+
+        Args:
+            request (HttpRequest): The HTTP request object.
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
+
+        Returns:
+            JsonResponse: A JSON response containing the unread message count.
+        """
         return JsonResponse(
             {'unread_count': Message.objects.inbox_unread_count(request.user)})

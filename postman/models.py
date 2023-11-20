@@ -20,8 +20,7 @@ from django.views.decorators.debug import sensitive_variables
 from .query import PostmanQuery
 from .utils import email_visitor, notify_user
 
-# options
-# Translators: keep consistency with the <option> parameter in url translations ; 'm' stands for 'messages'
+
 OPTION_MESSAGES = pgettext_lazy('postman_url', 'm')
 
 # moderation constants
@@ -59,10 +58,12 @@ def setup():
 
 def get_order_by(query_dict):
     """
-    Return a field name, optionally prefixed for descending order, or None if not found.
+    Return a field name, optionally prefixed for descending order, or None
+    if not found.
 
     Argument:
-    ``query_dict``: a dictionary to look for a key dedicated to ordering purpose
+    ``query_dict``: a dictionary to look for a key dedicated to
+    ordering purpose
 
     """
     if ORDER_BY_KEY in query_dict:
@@ -76,15 +77,17 @@ def get_order_by(query_dict):
 
 def get_user_representation(user):
     """
-    Return a User representation for display, configurable through an optional setting.
+    Return a User representation for display, configurable through
+    an optional setting.
     """
     show_user_as = getattr(settings, 'POSTMAN_SHOW_USER_AS', None)
     if isinstance(show_user_as, str):
         if '.' in show_user_as:
             mod_path, _, attr_name = show_user_as.rpartition('.')
             try:
-                return force_str(getattr(import_module(mod_path), attr_name)(user))
-            except:  # ImportError, AttributeError, TypeError (not callable)
+                return force_str(getattr(
+                    import_module(mod_path), attr_name)(user))
+            finally:
                 pass
         else:
             attr = getattr(user, show_user_as, None)
@@ -95,7 +98,7 @@ def get_user_representation(user):
     elif callable(show_user_as):
         try:
             return force_str(show_user_as(user))
-        except:
+        finally:
             pass
     # default value, or in case of empty attribute or exception
     return force_str(user)
@@ -114,7 +117,9 @@ def get_user_name(user):
 class MessageManager(models.Manager):
     """The manager for Message."""
 
-    def _folder(self, related, filters, option=None, order_by=None, query_dict=None):
+    def _folder(
+            self, related, filters,
+            option=None, order_by=None, query_dict=None):
         """Base code, in common to the folders."""
         qs = self.all() if option == OPTION_MESSAGES else QuerySet(
             self.model, PostmanQuery(self.model), using=self._db)
@@ -130,38 +135,36 @@ class MessageManager(models.Manager):
             lookups = models.Q(**filters)
         if option == OPTION_MESSAGES:
             qs = qs.filter(lookups)
-            # Adding a 'count' attribute, to be similar to the by-conversation case,
+            # Adding a 'count' attribute, similar to the by-conversation case,
             # should not be necessary. Otherwise add:
             # .extra(select={'count': 'SELECT 1'})
         else:
             qs = qs.annotate(count=RawSQL(
                 '{0}.count'.format(qs.query.pm_alias_prefix), ()))
             qs.query.pm_set_extra(table=(
-                self.filter(lookups, thread_id__isnull=True)\
-                # Dj 4.0 imposes its col aliases (as 'colN'), for combinator sql, if not explicitly defined.
-                # can't reuse 'id' because "ValueError: The annotation 'id' conflicts with a field on the model.".
-                    .annotate(**{qs.query.pm_alias_id: models.F('pk')})\
-                    .annotate(count=models.Value(0, models.IntegerField()))\
+                self.filter(lookups, thread_id__isnull=True)
+                    .annotate(**{qs.query.pm_alias_id: models.F('pk')})
+                    .annotate(count=models.Value(0, models.IntegerField()))
                     .values_list(qs.query.pm_alias_id, 'count').order_by(),
-                # use separate annotate() to keep control of the necessary order
-                self.filter(lookups, thread_id__isnull=False).values('thread')\
-                    .annotate(**{qs.query.pm_alias_id: models.Max('pk')})\
-                    .annotate(count=models.Count('pk'))\
+                self.filter(lookups, thread_id__isnull=False).values('thread')
+                    .annotate(**{qs.query.pm_alias_id: models.Max('pk')})
+                    .annotate(count=models.Count('pk'))
                     .values_list(qs.query.pm_alias_id, 'count').order_by(),
             ))
         if query_dict:
             limit = query_dict.get('limit')
-            if limit:  # at end because doc says "Further filtering or ordering of a sliced queryset is prohibited..."
+            if limit:
                 try:
                     i = int(limit)
                     qs = qs[:i]
-                except:  # just ignore any bad format
+                finally:
                     pass
         return qs
 
     def inbox(self, user, related=True, **kwargs):
         """
-        Return accepted messages received by a user but not marked as archived or deleted.
+        Return accepted messages received by a user but not marked
+        as archived or deleted.
         """
         related = ('sender',) if related else None
         filters = {
@@ -182,11 +185,14 @@ class MessageManager(models.Manager):
         Designed for context_processors.py and templatetags/postman_tags.py.
 
         """
-        return self.inbox(user, related=False, option=OPTION_MESSAGES).filter(read_at__isnull=True).count()
+        return self.inbox(
+            user, related=False, option=OPTION_MESSAGES).filter(
+                read_at__isnull=True).count()
 
     def sent(self, user, **kwargs):
         """
-        Return all messages sent by a user but not marked as archived or deleted.
+        Return all messages sent by a user but not marked as
+        archived or deleted.
         """
         related = ('recipient',)
         filters = {
@@ -241,24 +247,30 @@ class MessageManager(models.Manager):
 
     def as_recipient(self, user, filter):
         """
-        Return messages matching a filter AND being visible to a user as the recipient.
+        Return messages matching a filter AND being visible to
+        a user as the recipient.
         """
-        return self.filter(filter, recipient=user, moderation_status=STATUS_ACCEPTED)
+        return self.filter(
+            filter, recipient=user, moderation_status=STATUS_ACCEPTED)
 
     def as_sender(self, user, filter):
         """
-        Return messages matching a filter AND being visible to a user as the sender.
+        Return messages matching a filter AND being visible
+        to a user as the sender.
         """
         return self.filter(filter, sender=user)  # any status is fine
 
     def perms(self, user):
         """
-        Return a field-lookups filter as a permission controller for a reply request.
+        Return a field-lookups filter as a permission controller
+        for a reply request.
 
         The user must be the recipient of the accepted, non-deleted, message.
 
         """
-        return models.Q(recipient=user) & models.Q(moderation_status=STATUS_ACCEPTED) & models.Q(recipient_deleted_at__isnull=True)
+        return models.Q(recipient=user) & models.Q(
+            moderation_status=STATUS_ACCEPTED) & models.Q(
+                recipient_deleted_at__isnull=True)
 
     def set_read(self, user, filter):
         """
@@ -286,10 +298,14 @@ class Message(models.Model):
     body = models.TextField()
     # instead of either sender or recipient, for an AnonymousUser
     email = models.EmailField(_("visitor"), blank=True)
-    parent = models.ForeignKey('self', on_delete=models.CASCADE, related_name='next_messages',
-                               null=True, blank=True, verbose_name=_("parent message"))
-    thread = models.ForeignKey('self', on_delete=models.CASCADE, related_name='child_messages',
-                               null=True, blank=True, verbose_name=_("root message"))
+    parent = models.ForeignKey(
+        'self', on_delete=models.CASCADE, related_name='next_messages',
+        null=True, blank=True,
+        verbose_name=_("parent message"))
+    thread = models.ForeignKey(
+        'self', on_delete=models.CASCADE, related_name='child_messages',
+        null=True, blank=True,
+        verbose_name=_("root message"))
     sent_at = models.DateTimeField(_("sent at"), default=now)
     read_at = models.DateTimeField(_("read at"), null=True, blank=True)
     replied_at = models.DateTimeField(_("replied at"), null=True, blank=True)
@@ -303,9 +319,13 @@ class Message(models.Model):
         _("deleted by recipient at"), null=True, blank=True)
     # moderation fields
     moderation_status = models.CharField(
-        _("status"), max_length=1, choices=STATUS_CHOICES, default=STATUS_ACCEPTED)
-    moderation_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='moderated_messages',
-                                      null=True, blank=True, verbose_name=_("moderator"))
+        _("status"), max_length=1, choices=STATUS_CHOICES,
+        default=STATUS_ACCEPTED)
+    moderation_by = models.ForeignKey(settings.AUTH_USER_MODEL,
+                                      on_delete=models.CASCADE,
+                                      related_name='moderated_messages',
+                                      null=True, blank=True,
+                                      verbose_name=_("moderator"))
     moderation_date = models.DateTimeField(
         _("moderated at"), null=True, blank=True)
     moderation_reason = models.CharField(
@@ -322,7 +342,8 @@ class Message(models.Model):
         return f'{self.sender} to {self.recipient}: {self.subject}'
 
     def get_absolute_url(self):
-        "Usage is deprecated since v3.3.0, because it doesn't integrate well with the addition of namespaces."
+        """Usage is deprecated since v3.3.0, because it doesn't
+        integrate well with the addition of namespaces."""
         return reverse('postman:view', args=[self.pk])
 
     def is_pending(self):
@@ -352,7 +373,8 @@ class Message(models.Model):
         Return the email field as obfuscated, to keep it undisclosed.
 
         Format is:
-            first 4 characters of the hash email + '..' + last 4 characters of the hash email + '@' + domain without TLD
+            first 4 characters of the hash email + '..' + last 4
+            characters of the hash email + '@' + domain without TLD
         Example:
             foo@domain.com -> 1a2b..e8f9@domain
 
@@ -388,7 +410,8 @@ class Message(models.Model):
 
     @property
     def obfuscated_sender(self):
-        """Return the sender either as a username or as an undisclosed email."""
+        """Return the sender either as a username or as an
+        undisclosed email."""
         if self.sender:
             return get_user_representation(self.sender)
         else:
@@ -412,7 +435,8 @@ class Message(models.Model):
 
     @property
     def obfuscated_recipient(self):
-        """Return the recipient either as a username or as an undisclosed email."""
+        """Return the recipient either as a username or as
+        an undisclosed email."""
         if self.recipient:
             return get_user_representation(self.recipient)
         else:
@@ -420,7 +444,8 @@ class Message(models.Model):
 
     def get_replies_count(self):
         """Return the number of accepted responses."""
-        return self.next_messages.filter(moderation_status=STATUS_ACCEPTED).count()
+        return self.next_messages.filter(
+            moderation_status=STATUS_ACCEPTED).count()
 
     @sensitive_variables('values')
     def quote(self, format_subject, format_body=None):
@@ -442,14 +467,14 @@ class Message(models.Model):
             self.moderation_date = now()
             self.moderation_by = user
             if self.is_rejected():
-                # even if maybe previously deleted during a temporary 'accepted' stay
                 self.recipient_deleted_at = now()
             elif initial_status == STATUS_REJECTED:
                 # rollback
                 self.recipient_deleted_at = None
 
     def clean_for_visitor(self):
-        """Do some auto-read and auto-delete, because there is no one to do it (no account)."""
+        """Do some auto-read and auto-delete, because there is
+        no one to do it (no account)."""
         if self.sender_id is None:
             # no need to wait for a final moderation status to mark as deleted
             if not self.sender_deleted_at:
@@ -474,7 +499,9 @@ class Message(models.Model):
             parent = self.parent
             if self.is_accepted():
                 # keep the very first date; no need to do differently
-                if parent and (not parent.replied_at or self.sent_at < parent.replied_at):
+                if parent and (
+                        not parent.replied_at
+                        or self.sent_at < parent.replied_at):
                     parent.replied_at = self.sent_at
                     parent.save()
             elif initial_status == STATUS_ACCEPTED:
@@ -482,7 +509,8 @@ class Message(models.Model):
                     # rollback, but there may be some other valid replies
                     try:
                         other_date = parent.next_messages\
-                            .exclude(pk=self.pk).filter(moderation_status=STATUS_ACCEPTED)\
+                            .exclude(pk=self.pk).filter(
+                                moderation_status=STATUS_ACCEPTED)\
                             .values_list('sent_at', flat=True)\
                             .order_by('sent_at')[:1].get()
                         parent.replied_at = other_date
@@ -491,21 +519,25 @@ class Message(models.Model):
                     parent.save()
 
     def notify_users(self, initial_status, site, is_auto_moderated=True):
-        """Notify the rejection (to sender) or the acceptance (to recipient) of the message."""
+        """Notify the rejection (to sender) or the acceptance
+        (to recipient) of the message."""
         if initial_status == STATUS_PENDING:
             if self.is_rejected():
-                # Bypass: for an online user, no need to notify when rejection is immediate.
-                # Only useful for a visitor as an archive copy of the message, otherwise lost.
                 if not (self.sender_id is not None and is_auto_moderated):
-                    (notify_user if self.sender_id is not None else email_visitor)(
+                    (notify_user
+                     if self.sender_id is not None
+                     else email_visitor)(
                         self, 'rejection', site)
             elif self.is_accepted():
-                (notify_user if self.recipient_id is not None else email_visitor)(
+                (notify_user
+                 if self.recipient_id is not None
+                 else email_visitor)(
                     self, 'acceptance', site)
 
     def get_dates(self):
         """Get some dates to restore later."""
-        return (self.sender_deleted_at, self.recipient_deleted_at, self.read_at)
+        return (self.sender_deleted_at,
+                self.recipient_deleted_at, self.read_at)
 
     def set_dates(self, sender_deleted_at, recipient_deleted_at, read_at):
         """Restore some dates."""
@@ -515,7 +547,9 @@ class Message(models.Model):
 
     def get_moderation(self):
         """Get moderation information to restore later."""
-        return (self.moderation_status, self.moderation_by_id, self.moderation_date, self.moderation_reason)
+        return (
+            self.moderation_status, self.moderation_by_id,
+            self.moderation_date, self.moderation_reason)
 
     def set_moderation(self, status, by_id, date, reason):
         """Restore moderation information."""

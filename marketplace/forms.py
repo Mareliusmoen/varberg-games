@@ -8,6 +8,16 @@ class ProductForm(forms.ModelForm):
         fields = ['title', 'description', 'price', 'category', 'card_name']
 
     def __init__(self, *args, **kwargs):
+        """
+        Initializes a new instance of the class.
+
+        Args:
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
+
+        Returns:
+            None
+        """
         super().__init__(*args, **kwargs)
         self.fields['title'].widget = forms.TextInput(
             attrs={'placeholder': 'What are you selling'}

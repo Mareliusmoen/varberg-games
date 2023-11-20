@@ -14,6 +14,17 @@ class Command(BaseCommand):
     # no more NoArgsCommand and handle_noargs with Dj >= 1.8
 
     def handle(self, *args, **options):
+        """
+        Handle the command by checking messages and conversations for errors.
+
+        Args:
+            *args: Variable length argument list.
+            **options: Arbitrary keyword arguments.
+
+        Returns:
+            None. Outputs the number of inconsistencies found or
+            "All is correct" if no inconsistencies are found.
+        """
         verbose = int(options.get('verbosity'))
         if verbose >= 1:
             self.stdout.write(datetime.now().strftime(
@@ -90,6 +101,40 @@ class Command(BaseCommand):
 
 
 def report_errors(self, reason, msgs):
+    """
+    Report errors and display messages.
+
+    Args:
+        self (object): The current instance of the class.
+        reason (str): The reason for the error.
+        msgs (list): A list of messages to be displayed.
+
+    Returns:
+        None
+
+    Description:
+        This function takes in a reason and a list of messages and reports
+        the errors by writing the reason to the standard error output.
+        It then displays the messages in a tabular format.
+
+        The function first writes the reason to the standard error output
+        using the `write` method of the `stderr` object.
+
+        It then formats and writes the header row of the table using the
+        `write` method of the `stderr` object. 
+        The header row contains the following columns: "Id", "From", "To",
+        "Email", "Parent", "Thread", "Sent", "Read", "Replied".
+
+        Next, it iterates over each message in the `msgs` list and formats
+        and writes each message in a row of 
+        the table using the `write` method of the `stderr` object.
+        Each row contains the following columns: 
+        "Id", "From", "To", "Email", "Parent", "Thread",
+        "Sent", "Read", "Replied".
+
+        The function does not return any value.
+
+    """
     self.stderr.write(reason)
     self.stderr.write(
         "{0:6} {1:5} {2:5} {3:10} {4:6} {5:6} {6:16} {7:16} {8:16}".format(

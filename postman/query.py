@@ -12,9 +12,32 @@ class Proxy(object):
     """
 
     def __init__(self, target):
+        """
+        Initializes a new instance of the class.
+
+        Args:
+            target: The target value to be assigned to the '_target' attribute.
+
+        Returns:
+            None
+        """
         self._target = target
 
     def __getattr__(self, name):
+        """
+        Retrieve the attribute with the given name from the target object.
+
+        Parameters:
+            name (str): The name of the attribute to retrieve.
+
+        Returns:
+            The value of the attribute with the given name from the
+            target object.
+
+        Raises:
+            AttributeError: If the attribute with the given name does not
+            exist in the target object.
+        """
         target = self._target
         f = getattr(target, name)
         if isinstance(f, MethodType):
@@ -41,6 +64,17 @@ class CompilerProxy(Proxy, SQLCompiler):
 
     # @Override
     def as_sql(self, *args, **kwargs):
+        """
+        Generates the SQL and parameter values for the given query.
+        
+        Args:
+            *args: Variable length list of positional arguments.
+            **kwargs: Arbitrary keyword arguments.
+            
+        Returns:
+            Tuple[str, Tuple]: A tuple containing the generated SQL
+            and parameter values.
+        """
         sql, params = self._target.as_sql(*args, **kwargs)
         if not sql:  # is the case with a Paginator on an empty folder
             return sql, params
@@ -63,25 +97,32 @@ class CompilerProxy(Proxy, SQLCompiler):
         new_sql = [
             sql[:index],
             ' {0} ({1}) {2} ON ({3}.{4} = {2}.{5})'.format(
-                INNER, extra_table, self.query.pm_alias_prefix, qn(alias), qn2_pk_col, self.query.pm_alias_id),
+                INNER, extra_table, self.query.pm_alias_prefix, qn(
+                    alias), qn2_pk_col, self.query.pm_alias_id),
         ]
         if index < len(sql):
             new_sql.append(sql[index:])
         new_sql = ''.join(new_sql)
         heading_param_count = sql[:index].count('%s')
-        return new_sql, params[:heading_param_count] + extra_params + params[heading_param_count:]
+        return new_sql, params[:heading_param_count] + extra_params + params[
+            heading_param_count:]
 
     def union(self, querysets):
         """
-        Join several querysets by a UNION clause. Returns the SQL string and the list of parameters.
+        Join several querysets by a UNION clause. Returns the SQL string
+        and the list of parameters.
         """
         # union() is "New in Django 1.11." (docs site)
-        # but buggy in 2.0, with a backport in 1.11.8 ; my ticket 29229, fixed in 1.11.12 & 2.0.4.
+        # but buggy in 2.0, with a backport in 1.11.8 ; my ticket 29229,
+        # fixed in 1.11.12 & 2.0.4.
         # For simplicity, let's even ignore the usable 1.11.0-7 frame.
-        # Ticket 29286 reintroduced a bug in 1.11.13 & 2.0.5, by considering only the annotate() case and not the extra().
-        # Ticket 29694 fixed the missing extra() case, but is only effective as of 2.1.1,
+        # Ticket 29286 reintroduced a bug in 1.11.13 & 2.0.5, by considering
+        # only the annotate() case and not the extra().
+        # Ticket 29694 fixed the missing extra() case, but is only effective
+        # as of 2.1.1,
         # because extra() is destined to be deprecated.
-        # So the final solution here was to replace all extra() by annotate() in this app.
+        # So the final solution here was to replace all extra() by annotate()
+        # in this app.
         if VERSION < (1, 11, 12) or (2, 0) <= VERSION < (2, 0, 4):
             result_sql, result_params = [], []
             for qs in querysets:

@@ -8,6 +8,16 @@ class EventForm(forms.ModelForm):
         fields = ['title', 'description', 'date', 'is_private']
 
     def __init__(self, *args, **kwargs):
+        """
+        Initializes the object.
+
+        Args:
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
+
+        Returns:
+            None
+        """
         super().__init__(*args, **kwargs)
         self.fields['title'].widget = forms.TextInput(
             attrs={'placeholder': 'The title of your event'}

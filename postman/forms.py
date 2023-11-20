@@ -40,6 +40,24 @@ class BaseWriteForm(forms.ModelForm):
     required_css_class = 'required'
 
     def __init__(self, *args, **kwargs):
+        """
+        Initializes the class instance with the provided arguments.
+
+        Parameters:
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
+
+        Keyword Parameters:
+            sender (object): The sender object.
+            exchange_filter (object): The exchange filter object.
+            user_filter (object): The user filter object.
+            max (object): The maximum value.
+            channel (object): The channel object.
+            site (object): The site object.
+
+        Returns:
+            None
+        """
         sender = kwargs.pop('sender', None)
         exchange_filter = kwargs.pop('exchange_filter', None)
         user_filter = kwargs.pop('user_filter', None)
@@ -53,12 +71,14 @@ class BaseWriteForm(forms.ModelForm):
         if exchange_filter:
             self.exchange_filter = exchange_filter
         if 'recipients' in self.fields:
-            if user_filter and hasattr(self.fields['recipients'], 'user_filter'):
+            if user_filter and hasattr(
+                    self.fields['recipients'], 'user_filter'):
                 self.fields['recipients'].user_filter = user_filter
 
             if getattr(settings, 'POSTMAN_DISALLOW_MULTIRECIPIENTS', False):
                 max = 1
-            if max is not None and hasattr(self.fields['recipients'], 'set_max') \
+            if max is not None and hasattr(
+                self.fields['recipients'], 'set_max') \
                     and getattr(self, 'can_overwrite_limits', True):
                 self.fields['recipients'].set_max(max)
 
@@ -87,7 +107,9 @@ class BaseWriteForm(forms.ModelForm):
                         recipients.remove(u)
                         filtered_names.append(
                             self.error_messages[
-                                'filtered_user_with_reason' if reason else 'filtered_user'
+                                'filtered_user_with_reason'
+                                if reason
+                                else 'filtered_user'
                             ].format(username=get_user_name(u), reason=reason)
                         )
                 except forms.ValidationError as e:
@@ -114,10 +136,9 @@ class BaseWriteForm(forms.ModelForm):
 
         """
         recipients = self.cleaned_data.get('recipients', [])
-        if parent and not parent.thread_id:  # at the very first reply, make it a conversation
+        if parent and not parent.thread_id:
             parent.thread = parent
             parent.save()
-            # but delay the setting of parent.replied_at to the moderation step
         if parent:
             self.instance.parent = parent
             self.instance.thread_id = parent.thread_id
@@ -125,7 +146,8 @@ class BaseWriteForm(forms.ModelForm):
         initial_dates = self.instance.get_dates()
         initial_status = self.instance.moderation_status
         if recipient:
-            if isinstance(recipient, get_user_model()) and recipient in recipients:
+            if isinstance(
+                    recipient, get_user_model()) and recipient in recipients:
                 recipients.remove(recipient)
             recipients.insert(0, recipient)
         is_successful = True
@@ -135,7 +157,7 @@ class BaseWriteForm(forms.ModelForm):
             else:
                 self.instance.recipient = None
                 self.instance.email = r
-            self.instance.pk = None  # force_insert=True is not accessible from here
+            self.instance.pk = None
             self.instance.auto_moderate(auto_moderators)
             self.instance.clean_moderation(initial_status)
             self.instance.clean_for_visitor()
@@ -154,11 +176,15 @@ class BaseWriteForm(forms.ModelForm):
 
 class WriteForm(BaseWriteForm):
     recipients = CommaSeparatedUserField(
-        help_text='', widget=forms.TextInput(attrs={'placeholder': 'Recipient'}))
+        help_text='', widget=forms.TextInput(
+            attrs={'placeholder': 'Recipient'}))
     subject = forms.CharField(label=_("Subject"), widget=forms.TextInput(
         attrs={'placeholder': 'Subject'}))
     body = forms.CharField(label=_("Message"), widget=forms.Textarea(attrs={
-                           'cols': WRAP_WIDTH, 'rows': 12, 'class': 'custom-textarea', 'placeholder': 'Write your message here...'}))
+        'cols': WRAP_WIDTH,
+        'rows': 12,
+        'class': 'custom-textarea',
+        'placeholder': 'Write your message here...'}))
 
     class Meta(BaseWriteForm.Meta):
         fields = ('recipients', 'subject', 'body')
@@ -167,7 +193,8 @@ class WriteForm(BaseWriteForm):
 class AnonymousWriteForm(BaseWriteForm):
     """The form for an anonymous user, to compose a message."""
     # The 'max' customization should not be permitted here.
-    # The features available to anonymous users should be kept to the strict minimum.
+    # The features available to anonymous users should be kept
+    # to the strict minimum.
     can_overwrite_limits = False
 
     email = forms.EmailField(label=_("Email"))
@@ -187,7 +214,8 @@ class BaseReplyForm(BaseWriteForm):
         self.recipient = recipient
 
     def clean(self):
-        """Check that the recipient is correctly initialized and no filter prohibits the exchange."""
+        """Check that the recipient is correctly initialized and no
+        filter prohibits the exchange."""
         if not self.recipient:
             raise forms.ValidationError(gettext("Undefined recipient."))
 
@@ -197,11 +225,15 @@ class BaseReplyForm(BaseWriteForm):
                 reason = exchange_filter(
                     self.instance.sender, self.recipient, None)
                 if reason is not None:
-                    raise forms.ValidationError(self.error_messages['filtered'].format(
-                        users=self.error_messages[
-                            'filtered_user_with_reason' if reason else 'filtered_user'
-                        ].format(username=get_user_name(self.recipient), reason=reason)
-                    ))
+                    raise forms.ValidationError(
+                        self.error_messages['filtered'].format(
+                            users=self.error_messages[
+                                'filtered_user_with_reason'
+                                if reason
+                                else 'filtered_user'
+                            ].format(username=get_user_name(
+                                self.recipient), reason=reason)
+                        ))
             except forms.ValidationError as e:
                 raise forms.ValidationError(e.messages)
         return super().clean()
@@ -212,9 +244,11 @@ class BaseReplyForm(BaseWriteForm):
 
 class QuickReplyForm(BaseReplyForm):
     """
-    The form to use in the view of a message or a conversation, for a quick reply.
+    The form to use in the view of a message or a conversation,
+    for a quick reply.
 
-    The recipient is imposed and a default value for the subject will be provided.
+    The recipient is imposed and a default value for the subject will
+    be provided.
 
     """
     pass
