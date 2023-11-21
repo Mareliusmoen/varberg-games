@@ -594,8 +594,6 @@ The project was deployed to [Heroku](https://www.heroku.com) using the below pro
 
 - Mark messages as read/unread. The postman code provided did not pass the PEP8 linter so I needed to reformat parts of the code to fit the 79 character maximum per line, and I havent found the bug that causes this not function anymore.
 
-- When on smaller devices the navbar dropdown is not on top of certain inputfields and buttons, I have tried to set the z-index of the dreopdown to 9999 but it still doesnt work as intended.
-
 - On certain screensizes the buttons for edit, and delete product are a little bit off vertically.
 
 - The hour and minute sliders of the datetimepicker are in some way hidden, you can click where they are supposed to be shown and it registers your choice, but the bars themselves are not visible.
