@@ -453,9 +453,9 @@ Manual tests where done to make sure all user experience features work as intend
 | Sign Out with Registered User    | User can sign out from their registered account. | User is successfully signed out from their account. | ✅ |
 
 ### PEP8
-To ensure the quality and readability of the Python code in this project, all Python files were checked with the PEP8 linter provided by Code Institute. This tool helps enforce the PEP8 style guide, which is widely accepted in the Python community for coding standards. 
+To ensure the quality and readability of the Python code in this project, all Python files were checked with the PEP8 linter provided by Code Institute. This tool helps enforce the PEP8 style guide, which is widely accepted in the Python community for coding standards.
 
-The PEP8 linter checks for issues like line lengths, whitespace usage, variable naming conventions, docstrings and more. Passing the PEP8 linter test means that the code adheres to these standards, making it easier to read and maintain.
+The PEP8 linter checks for issues like line lengths, whitespace usage, variable naming conventions, docstrings and more. The code in this project has passed the PEP8 linter test without any errors, which means that it adheres to these standards, making it easier to read and maintain.
 
 You can check the PEP8 linter here: [PEP8 linter](https://pep8ci.herokuapp.com/)
 
@@ -465,7 +465,18 @@ You can check the PEP8 linter here: [PEP8 linter](https://pep8ci.herokuapp.com/)
 The CSS code in this project was tested using the [W3C CSS Validator](https://jigsaw.w3.org/css-validator/validator) and passed without any errors.
 
 #### HTML Validator
-The HTML code in this project was tested using the [W3C HTML Validator]() and passed without any errors.
+The HTML code in this project was tested using the [W3C HTML Validator](https://validator.w3.org/#validate_by_uri) and passed without any errors.
+
+#### Dev Tools Lighthouse
+The site has been tested using Lighthouse and has achieved the following scores:
+
+- Performance: 94
+- Accessibility: 95
+- Best Practices: 100
+- SEO: 100
+
+These scores indicate the site's high performance, accessibility, adherence to best practices, and search engine optimization. 
+![Lighthouse test results screenshot](static/images/Lighthouse-screenshot.png)
 
 ### Deployed vs Local
 The final version of the Full-Stack application was deployed to Heroku, while the database was deployed to ElephantSQL. This deployed version was thoroughly tested to ensure its functionality matches the version in the development environment.
