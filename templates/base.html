@@ -40,68 +40,70 @@
 
 <body class="d-flex h-100 text-center text-white">
     <div class="logobtn cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
-        <h1><a class="logobtn orange-btn" style="display: flex;
+        <div class="d-flex justify-content-between align-items-center">
+            <h1><a class="logobtn orange-btn" style="display: flex;
             align-items: start;
             justify-content: start;" href="/"> VBG Games</a></h1>
-        <header class="mb-auto end-0 top-0">
-            <nav class="navbar navbar-expand-lg navbar-dark bg-dark d-flex justify-content-between rounded-5">
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse position-relative" id="navbarNav">
-                    <ul class="navbar-nav">
-                        {% if user.is_authenticated %}
-                        <li class="nav-item">
+            <header class="mb-auto end-0 top-0">
+                <nav class="navbar navbar-expand-lg navbar-dark bg-dark d-flex justify-content-between rounded-5">
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse position-relative" id="navbarNav">
+                        <ul class="navbar-nav">
+                            {% if user.is_authenticated %}
+                            <li class="nav-item">
+                                <div class="dropdown">
+                                    <button class="btn dropdown-toggle orange-btn" type="button"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                        Events
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item orange-btn" href="{% url 'event_list' %}">List
+                                                of events</a></li>
+                                        <li><a class="dropdown-item orange-btn" href="{% url 'joined_events' %}">Joined
+                                                events</a></li>
+                                        <li><a class="dropdown-item orange-btn" href="{% url 'create_event' %}">Create
+                                                event</a></li>
+                                    </ul>
+                                </div>
+                            <li class="nav-item">
+                                <a class="nav-link orange-btn" aria-current="page"
+                                    href="{% url 'postman:inbox' %}">Messages</a>
+                            </li>
                             <div class="dropdown">
                                 <button class="btn dropdown-toggle orange-btn" type="button" data-bs-toggle="dropdown"
                                     aria-expanded="false">
-                                    Events
+                                    Marketplace
                                 </button>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item orange-btn" href="{% url 'event_list' %}">List
-                                            of events</a></li>
-                                    <li><a class="dropdown-item orange-btn" href="{% url 'joined_events' %}">Joined
-                                            events</a></li>
-                                    <li><a class="dropdown-item orange-btn" href="{% url 'create_event' %}">Create
-                                            event</a></li>
+                                    <li><a class="dropdown-item orange-btn" href="{% url 'product_list' %}">Items for
+                                            sale</a></li>
+                                    <li><a class="dropdown-item orange-btn" href="{% url 'create_product' %}">New item
+                                            for sale</a></li>
+                                    <li><a class="dropdown-item orange-btn" href="{% url 'your_product_list' %}">Your
+                                            sale items</a></li>
                                 </ul>
                             </div>
-                        <li class="nav-item">
-                            <a class="nav-link orange-btn" aria-current="page"
-                                href="{% url 'postman:inbox' %}">Messages</a>
-                        </li>
-                        <div class="dropdown">
-                            <button class="btn dropdown-toggle orange-btn" type="button" data-bs-toggle="dropdown"
-                                aria-expanded="false">
-                                Marketplace
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item orange-btn" href="{% url 'product_list' %}">Items for
-                                        sale</a></li>
-                                <li><a class="dropdown-item orange-btn" href="{% url 'create_product' %}">New item
-                                        for sale</a></li>
-                                <li><a class="dropdown-item orange-btn" href="{% url 'your_product_list' %}">Your
-                                        sale items</a></li>
-                            </ul>
-                        </div>
-                        <li class="nav-item">
-                            <a class="nav-link orange-btn" aria-current="page"
-                                href="{% url 'account_logout' %}">Logout</a>
-                        </li>
-                        {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link orange-btn" aria-current="page"
-                                href="{% url 'account_signup' %}">Register</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link orange-btn" href="{% url 'account_login' %}">Login</a>
-                        </li>
-                        {% endif %}
-                    </ul>
-                </div>
-            </nav>
-        </header>
+                            <li class="nav-item">
+                                <a class="nav-link orange-btn" aria-current="page"
+                                    href="{% url 'account_logout' %}">Logout</a>
+                            </li>
+                            {% else %}
+                            <li class="nav-item">
+                                <a class="nav-link orange-btn" aria-current="page"
+                                    href="{% url 'account_signup' %}">Register</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link orange-btn" href="{% url 'account_login' %}">Login</a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </nav>
+            </header>
+        </div>
         <div class="container d-flex flex-column justify-content-center">
             <div class="row justify-content-center">
                 <div class="col-12 col-md-6 bg-dark rounded-5">

@@ -237,6 +237,9 @@ Add a filter option in the marketplace to sort products by category.
 **Sort products in the markedplace by sold/available** <br>
 Add a filter option in the marketplace to sort products by sold/available.
 
+**Add a display next to the navbar that shows which user is logged in** <br>
+Add a display next to the navbar that makes it easy for the user to make sure he/she is logged in correctly.
+
 ---
 
 ## Design
