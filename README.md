@@ -256,6 +256,23 @@ Background image is created by me (Marelius Moen) in Adobe Illustrator, the desi
 
 ### Wireframes
 Before starting the development of the VBG Games site, wireframes were created to plan and visualize the layout and structure of the different pages. These wireframes served as a blueprint for the design process, ensuring a cohesive and user-friendly interface.
+
+<details>
+
+![Wireframe design](static/images/wireframes/20231121_101654.jpg)
+
+![Wireframe design](static/images/wireframes/20231121_101707.jpg)
+
+![Wireframe design](static/images/wireframes/20231121_101721.jpg)
+
+![Wireframe design](static/images/wireframes/20231121_101743.jpg)
+
+![Wireframe design](static/images/wireframes/20231121_101753.jpg)
+
+![Wireframe design](static/images/wireframes/20231121_101812.jpg)
+
+![Wireframe design](static/images/wireframes/20231121_101824.jpg)
+</details>
 ---
 
 ## Information Architecture
