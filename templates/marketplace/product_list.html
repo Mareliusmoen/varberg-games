@@ -17,17 +17,20 @@
     <div class="row">
         {% for product in products %}
         <div class="col-md-6 mb-6">
-            <div class="card-bg-opacity rounded-5 product-card m-2 {% if product.sold %}sold{% endif %}" data-id="{{ product.id }}">
+            <div class="card-bg-opacity rounded-5 product-card m-2 {% if product.sold %}sold{% endif %}"
+                data-id="{{ product.id }}">
                 <div class="product-item">
-                    <h5 class="card-title">
-                        <a href="#" class="logobtn orange-btn product-title"
-                            data-card_image_url="{{ product.card_image_url }}" data-toggle="modal"
-                            data-target="#productModal" data-title="{{ product.title }}"
-                            data-description="{{ product.description }}" data-price="{{ product.price }}"
-                            data-category="{{ product.category.name }}" data-seller="{{ product.seller.username }}"
-                            data-created="{{ product.created_at }}">
-                            {{ product.title|slice:":25" }}{% if product.title|length > 25 %}...{% endif %}
-                        </a>
+                    <div class="text-center text-border">
+                        <h5 class="card-title text-center">
+                    </div>
+                    <a href="#" class="orange-btn product-title"
+                        data-card_image_url="{{ product.card_image_url }}" data-toggle="modal"
+                        data-target="#productModal" data-title="{{ product.title }}"
+                        data-description="{{ product.description }}" data-price="{{ product.price }}"
+                        data-category="{{ product.category.name }}" data-seller="{{ product.seller.username }}"
+                        data-created="{{ product.created_at }}">
+                        {{ product.title|slice:":25" }}{% if product.title|length > 25 %}...{% endif %}
+                    </a>
                     </h5>
                     <p>{{ product.description|slice:":25" }}{% if product.description|length > 25 %}...{% endif %}</p>
                     <p class="card-text">Price: {{ product.price }} SEK</p>
@@ -38,12 +41,17 @@
                         <a href="{% url 'edit_product' product.id %}" class="btn signupbtn orange-btn m-1 btn-sm">Edit
                             product</a>
                         <button class="btn sold-button sold-btn orange-btn btn-sm">Mark as Sold</button>
-                        <a href="{% url 'delete_product' product.id %}" class="btn deletebtn product-delete-btn btn-sm">Delete product</a>
+                        <a href="{% url 'delete_product' product.id %}"
+                            class="btn deletebtn product-delete-btn btn-sm">Delete product</a>
                         {% endif %}
                         {% if product.sold %}
-                        <div class="sold-overlay active"><h1>Sold</h1></div>
+                        <div class="sold-overlay active">
+                            <h1>Sold</h1>
+                        </div>
                         {% else %}
-                        <div class="sold-overlay"><h1>Sold</h1></div>
+                        <div class="sold-overlay">
+                            <h1>Sold</h1>
+                        </div>
                         {% endif %}
                     </div>
                 </div>
@@ -105,45 +113,45 @@
             $('#productModal').modal('show');
         });
     });
-$(document).ready(function () {
-    // Function to get csrf token from cookies
-    function getCookie(name) {
-        var cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            var cookies = document.cookie.split(';');
-            for (var i = 0; i < cookies.length; i++) {
-                var cookie = jQuery.trim(cookies[i]);
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
+    $(document).ready(function () {
+        // Function to get csrf token from cookies
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = jQuery.trim(cookies[i]);
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
                 }
             }
+            return cookieValue;
         }
-        return cookieValue;
-    }
-    
-    var csrftoken = getCookie('csrftoken');
-    
-    $('.sold-button').on('click', function() {
-        var productId = $(this).closest('.product-card').data('id');
 
-        $.ajax({
-            url: "{% url 'product_sold' %}",
-            type: 'POST',
-            beforeSend: function(xhr) {
-                xhr.setRequestHeader("X-CSRFToken", csrftoken);
-            },
-            data: {
-                'product_id': productId
-            },
-            success: function(response) {
-                if (response.success) {
-                    $('.product-card[data-id="' + productId + '"]').addClass('sold').find('.sold-overlay').addClass('active');
+        var csrftoken = getCookie('csrftoken');
+
+        $('.sold-button').on('click', function () {
+            var productId = $(this).closest('.product-card').data('id');
+
+            $.ajax({
+                url: "{% url 'product_sold' %}",
+                type: 'POST',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                },
+                data: {
+                    'product_id': productId
+                },
+                success: function (response) {
+                    if (response.success) {
+                        $('.product-card[data-id="' + productId + '"]').addClass('sold').find('.sold-overlay').addClass('active');
+                    }
                 }
-            }
+            });
         });
     });
-});
 </script>
 {% endblock %}
 {% endblock %}

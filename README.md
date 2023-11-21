@@ -571,6 +571,13 @@ The project was deployed to [Heroku](https://www.heroku.com) using the below pro
 
 - Unread message count as a integer in the messages text of the navbar button.
 
+- Undeleting messages after they have been deleted. The postman code provided did not pass the PEP8 linter so I needed to reformat parts of the code to fit the 79 character maximum per line, and I havent found the bug that causes this not function anymore.
+
+- Mark messages as read/unread. The postman code provided did not pass the PEP8 linter so I needed to reformat parts of the code to fit the 79 character maximum per line, and I havent found the bug that causes this not function anymore.
+
+- When on smaller devices the navbar dropdown is not on top of certain inputfields and buttons, I have tried to set the z-index of the dreopdown to 9999 but it still doesnt work as intended.
+
+
 
 ## Credits
 - [Postman](https://django-postman.readthedocs.io/en/latest/) is used to allow registered users to message eachother within the site. Thanks for providing a almost 'out-of-the-box' experience, so most of this code is not written by me only modified to fit the needs of this project.

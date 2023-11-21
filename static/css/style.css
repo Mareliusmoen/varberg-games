@@ -29,7 +29,7 @@ textarea {
 
 /* Items background styling*/
 .bg-dark {
-    --bs-bg-opacity: .95;
+    --bs-bg-opacity: .8;
     background-color: rgba(var(--bs-dark-rgb), var(--bs-bg-opacity)) !important;
 }
 
@@ -98,6 +98,7 @@ textarea {
 .product-title {
     border: 1px solid rgba(237, 105, 102, 0.5);
     border-radius: 5px;
+    
 }
 
 .product-title:hover {
@@ -362,7 +363,7 @@ select.form-control:focus {
 }
 
 .product-item {
-    position: relative; /* Add this line */
+    position: relative;
 }
 
 .card-text {
