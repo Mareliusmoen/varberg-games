@@ -90,6 +90,7 @@ textarea {
 }
 
 /* Buttons styling */
+
 .product-delete-btn {
     margin-bottom: 20px;
 }
@@ -114,6 +115,8 @@ textarea {
 .logobtn,
 .orange-btn {
     color: rgb(237, 105, 102);
+    margin-bottom: 10px;
+    border-radius: 5px;
 }
 
 .orange-btn:hover {
@@ -136,19 +139,19 @@ textarea {
 }
 
 .sold-btn {
-    background-color: rgb(56, 67, 109);
-    border: 1px solid rgb(23, 38, 65);
+    background-color: rgb(23, 38, 65);
+    border: 1px solid rgb(56, 67, 109);
     color: rgb(237, 105, 102);
 }
 
 .sold-btn:hover {
     background-color: rgb(23, 38, 65);
-    border: 1px solid rgb(56, 67, 109);
+    border: 1px solid rgb(185, 24, 24);
     color: rgb(185, 24, 24);
 }
 .signupbtn {
-    background-color: rgb(56, 67, 109);
-    border: 1px solid rgb(23, 38, 65);
+    background-color: rgb(23, 38, 65);
+    border: 1px solid rgb(56, 67, 109);
     color: rgb(237, 105, 102);
     margin: 20px 0px;
 }
@@ -160,7 +163,7 @@ textarea {
 
 .signupbtn:hover {
     background-color: rgb(23, 38, 65);
-    border: 1px solid rgb(56, 67, 109);
+    border: 1px solid rgb(185, 24, 24);
     color: rgb(185, 24, 24);
 }
 
@@ -207,14 +210,17 @@ select.form-control:focus {
     font-size: 14px;
     background-color: rgb(23, 38, 65);
     border: 1px solid #ccc;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
 }
 
 #datetimepicker {
-    background-color: rgba(23, 38, 65, 0.5);
+    background-color: rgba(23, 38, 65, 0.9);
     color: white;
 }
 
+.ui-slider {
+    color: white;
+}
 
 /* comments font styling */
 .author-time-comment-font {
@@ -230,15 +236,14 @@ select.form-control:focus {
 }
 
 .ui-widget-content {
-    background-color: rgba(23, 38, 65, 0.5);
     height: auto;
     padding: 10px 0;
 }
 
 
 .postman-nav-btn {
-    background-color: rgb(56, 67, 109);
-    border: 1px solid rgb(23, 38, 65);
+    background-color: rgb(23, 38, 65);
+    border: 1px solid rgb(56, 67, 109);
     color: rgb(237, 105, 102);
 }
 
@@ -249,13 +254,13 @@ select.form-control:focus {
 
 .postman-nav-btn:hover {
     background-color: rgb(23, 38, 65);
-    border: 1px solid rgb(56, 67, 109);
+    border: 1px solid rgb(185, 24, 24);
     color: rgb(185, 24, 24);
 }
 
 .pm_action {
-    background-color: rgb(56, 67, 109);
-    border: 1px solid rgb(23, 38, 65);
+    background-color: rgb(23, 38, 65);
+    border: 1px solid rgb(56, 67, 109);
     color: rgb(237, 105, 102);
     padding: 3px;
     border-radius: 5px;
@@ -270,7 +275,7 @@ select.form-control:focus {
 
 .pm_btn:hover {
     background-color: rgb(23, 38, 65);
-    border: 1px solid rgb(56, 67, 109);
+    border: 1px solid rgb(185, 24, 24);
     color: rgb(185, 24, 24);
 }
 
