@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="justify-content-center align-items-center">
+    <h1>Ohh it seems like something went wrong, <br>
+    I don't know why... Do you?</h1>
+</div>
+{% for message in messages %}
+{% if message.tags %}
+<div class="{{ message.tags }} message">
+{% endif %}
+{{ message }}
+</div>
+{% endfor %}
+{% endblock %}

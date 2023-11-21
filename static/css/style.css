@@ -8,6 +8,7 @@ body {
     background-attachment: fixed;
 }
 
+
 textarea {
     background-color: rgba(23, 38, 65, 0.5);
     border-radius: 10px;
@@ -58,7 +59,9 @@ textarea {
 
 .dropdown-menu,
 .navbar {
-    position: relative;
+    position: absolute;
+    right: 0;
+    top: 0;
     background-color: rgba(23, 38, 65, 0.9) !important;
     border-radius: 10px;
     z-index: 999999 !important;
@@ -98,12 +101,11 @@ textarea {
 .product-title {
     border: 1px solid rgba(237, 105, 102, 0.5);
     border-radius: 5px;
-    
+
 }
 
 .product-title:hover {
-    border: 1px solid
-    rgb(185, 24, 24)
+    border: 1px solid rgb(185, 24, 24)
 }
 
 .logobtn {
@@ -149,6 +151,7 @@ textarea {
     border: 1px solid rgb(185, 24, 24);
     color: rgb(185, 24, 24);
 }
+
 .signupbtn {
     background-color: rgb(23, 38, 65);
     border: 1px solid rgb(56, 67, 109);
@@ -280,11 +283,11 @@ select.form-control:focus {
 }
 
 .pm_date {
-    color : rgba(211, 211, 211, 0.6);
+    color: rgba(211, 211, 211, 0.6);
 }
 
 .pm_subject {
-    color : rgba(211, 211, 211, 0.6);
+    color: rgba(211, 211, 211, 0.6);
 }
 
 .pm_header {
@@ -318,7 +321,11 @@ select.form-control:focus {
     padding: 3px;
 }
 
-#delete-btn, #archive-btn, #mark-read-btn, #mark-unread-btn, .pm_btn {
+#delete-btn,
+#archive-btn,
+#mark-read-btn,
+#mark-unread-btn,
+.pm_btn {
     margin-top: 15px;
     margin-bottom: 20px;
 }
@@ -367,7 +374,8 @@ select.form-control:focus {
 
 .card-text {
     margin-bottom: 0;
-    padding-bottom: 20px; /* or whatever your margin was */
+    padding-bottom: 20px;
+    /* or whatever your margin was */
 }
 
 
@@ -376,13 +384,16 @@ select.form-control:focus {
     .create_event {
         width: 100% !important;
     }
+
     .form-width-small-screen {
         max-width: 70vw !important;
         height: auto;
     }
+
     #event-cards {
         width: 95%;
     }
+
     body {
         font-size: 12px;
     }
