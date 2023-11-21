@@ -577,7 +577,9 @@ The project was deployed to [Heroku](https://www.heroku.com) using the below pro
 
 - When on smaller devices the navbar dropdown is not on top of certain inputfields and buttons, I have tried to set the z-index of the dreopdown to 9999 but it still doesnt work as intended.
 
+- On certain screensizes the buttons for edit, and delete product are a little bit off vertically.
 
+- The hour and minute sliders of the datetimepicker are in some way hidden, you can click where they are supposed to be shown and it registers your choice, but the bars themselves are not visible.
 
 ## Credits
 - [Postman](https://django-postman.readthedocs.io/en/latest/) is used to allow registered users to message eachother within the site. Thanks for providing a almost 'out-of-the-box' experience, so most of this code is not written by me only modified to fit the needs of this project.
