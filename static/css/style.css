@@ -383,4 +383,7 @@ select.form-control:focus {
     #event-cards {
         width: 95%;
     }
+    body {
+        font-size: 12px;
+    }
 }
