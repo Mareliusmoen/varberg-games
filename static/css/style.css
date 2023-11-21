@@ -385,16 +385,13 @@ select.form-control:focus {
     .create_event {
         width: 100% !important;
     }
-
     .form-width-small-screen {
         max-width: 70vw !important;
         height: auto;
     }
-
     #event-cards {
         width: 95%;
-    }
-
+    }   
     body {
         font-size: 12px;
     }

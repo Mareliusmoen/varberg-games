@@ -125,6 +125,7 @@ This Django project is made for those that:
     - **Postman:** Facilitates internal messaging service.
 
 ## Features
+The whole page is responsive for different screensizes AND browser based zoom, wich makes the site very smooth to operate no matter how big or small you like the text and content.
 ---
 **Landing page/Homepage** <br>
 A straightforward landing page with a short welcome-message, links to register or sign in right next to the welcome-message. There is also a nav-bar that only contains the options login or register before you sign in.
