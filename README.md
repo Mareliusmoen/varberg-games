@@ -459,6 +459,14 @@ The PEP8 linter checks for issues like line lengths, whitespace usage, variable 
 
 You can check the PEP8 linter here: [PEP8 linter](https://pep8ci.herokuapp.com/)
 
+### Validators
+
+#### CSS Validator
+The CSS code in this project was tested using the [W3C CSS Validator](https://jigsaw.w3.org/css-validator/validator) and passed without any errors.
+
+#### HTML Validator
+The HTML code in this project was tested using the [W3C HTML Validator]() and passed without any errors.
+
 ### Deployed vs Local
 The final version of the Full-Stack application was deployed to Heroku, while the database was deployed to ElephantSQL. This deployed version was thoroughly tested to ensure its functionality matches the version in the development environment.
 
